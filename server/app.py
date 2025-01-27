@@ -23,6 +23,6 @@ def urmom():
 
         posts_list = [dict(row) for row in posts]
 
-        return jsonify(status=200,hackers=posts_list)
+        return jsonify(status=200,message="urmom",hackers=posts_list)
     except Exception as e:
         return jsonify(status=400,message=str(e))
