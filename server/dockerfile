@@ -1,0 +1,14 @@
+FROM --platform=linux/amd64 python:3.12
+
+WORKDIR /server
+
+COPY requirements.txt requirements.txt
+RUN pip3 install -r requirements.txt
+
+COPY . .
+
+# Expose the application on port 8000
+EXPOSE 8000
+
+# Run the application using Gunicorn]
+CMD ["sh", "-c", "python3 ./init_db.py && gunicorn -b 0.0.0.0:8000 app:app"]
