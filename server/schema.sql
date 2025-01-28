@@ -8,9 +8,9 @@ CREATE TABLE hackers (
     firstName TEXT NOT NULL,
     lastName TEXT NOT NULL,
     password TEXT NOT NULL,
-    email TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
     school TEXT NOT NULL,
-    discord TEXT,
+    discord TEXT UNIQUE,
     confirmationNumber NUMBER,
     isConfirmed BOOLEAN
 );
