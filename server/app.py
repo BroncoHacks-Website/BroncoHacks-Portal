@@ -38,7 +38,11 @@ def urmom():
         posts = conn.execute('SELECT * FROM hackers').fetchall()
         conn.close()
 
-        posts_list = [dict(row) for row in posts]
+        posts_list = []
+        for row in posts:
+            hacker = dict(row)
+            hacker['password'] = hacker['password'].decode('utf-8')  # Convert bytes to string
+            posts_list.append(hacker)
 
         return jsonify(status=200,hackers=posts_list)
     except Exception as e:
