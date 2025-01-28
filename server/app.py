@@ -1,7 +1,9 @@
 from flask import Flask, jsonify, request
 import sqlite3
 import uuid
+import random
 import bcrypt
+import string
 
 
 app = Flask(__name__)
@@ -25,6 +27,9 @@ def hash_password(password):
     salt = bcrypt.gensalt()
     hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
     return hashed
+
+def generate_confirmation_number(length=6):
+    return ''.join(random.choices(string.digits, k=length))
 
 @app.route("/")
 def index():
@@ -65,7 +70,7 @@ def create_hacker():
         school = data['school']
         discord = data.get('discord', None)
         teamID = None
-        confirmationNumber = None
+        confirmationNumber = generate_confirmation_number()
         isConfirmed = False
         hacker_uuid = str(uuid.uuid4())
     
