@@ -1,5 +1,6 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import sqlite3
+import uuid
 
 
 app = Flask(__name__)
@@ -26,3 +27,29 @@ def urmom():
         return jsonify(status=200,hackers=posts_list)
     except Exception as e:
         return jsonify(status=400,message=str(e))
+
+@app.route("/hacker", methods=['POST'])
+def create_hacker():
+    try:
+        data = request.get_json()
+        firstName = data['firstName']
+        lastName = data['lastName']
+        password = data['password']
+        email = data['email']
+        school = data['school']
+        discord = data.get('discord', "")
+        teamID = ""
+        confirmationNumber = ""
+        isConfirmed = False
+        hacker_uuid = str(uuid.uuid4())
+    
+        conn = get_db_connection()
+        conn.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+               (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed))
+
+        conn.commit()
+        conn.close()
+
+        return jsonify(status=201, message="Hacker created successfully")
+    except Exception as e:
+     return jsonify(status=400, message=str(e))
