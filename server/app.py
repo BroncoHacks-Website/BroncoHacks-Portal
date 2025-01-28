@@ -28,7 +28,7 @@ def urmom():
         return jsonify(status=400,message=str(e))
     
     
-@app.route("/oneHacker", methods=['GET'])
+@app.route("/hacker", methods=['GET'])
 def getOneHacker():
     # get req param from url
     uuid = request.args.get('uuid')
