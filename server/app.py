@@ -35,7 +35,7 @@ def getOneHacker():
     
     try:
         conn = get_db_connection()
-        hacker = conn.execute('SELECT * FROM hackers WHERE UUID=?', (uuid,)).fetchall()
+        hacker = conn.execute('SELECT UUID, teamID, firstName, lastName, email, school, discord, confirmationNumber, isConfirmed FROM hackers WHERE UUID=?', (uuid,)).fetchall()
         conn.close
         
         hacker_list = [dict(row) for row in hacker]
