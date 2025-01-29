@@ -26,3 +26,19 @@ def urmom():
         return jsonify(status=200,message="urmom",hackers=posts_list)
     except Exception as e:
         return jsonify(status=400,message=str(e))
+    
+@app.route("/", methods=['GET'])
+def get_hackers_and_teams():    
+
+    try:
+        conn = get_db_connection()
+        hackers = conn.execute("SELECT * FROM hackers").fetchall()
+        teams = conn.execute("SELECT * FROM teams").fetchall()
+        conn.close()
+
+        hackers_list = [dict(row) for row in hackers]
+        teams_list = [dict(row) for row in teams]
+
+        return jsonify(hackers=hackers_list, teams=teams_list), 200
+    except Exception as e:
+        return jsonify(status=400, message=str(e))
