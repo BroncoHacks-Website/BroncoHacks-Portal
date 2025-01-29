@@ -90,3 +90,22 @@ def create_tuah():
         return jsonify({"error": "server error"}), 500
     finally:
         conn.close()
+    
+@app.route("/hacker", methods=['GET'])
+def getOneHacker():
+    # get req param from url
+    uuid = request.args.get('uuid')
+    
+    try:
+        conn = get_db_connection()
+        hacker = conn.execute('SELECT UUID, teamID, firstName, lastName, email, school, discord, confirmationNumber, isConfirmed FROM hackers WHERE UUID=?', (uuid,)).fetchall()
+        conn.close
+        
+        hacker_list = [dict(row) for row in hacker]
+        
+        if len(hacker_list) == 0:
+            return jsonify(status=404, message="Hacker Not Found")
+        else:
+            return jsonify(status=200, message="Hacker Found", hacker=hacker_list)
+    except Exception as e:
+        return jsonify(status=400, message=str(e))
