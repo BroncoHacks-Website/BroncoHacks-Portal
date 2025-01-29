@@ -28,19 +28,19 @@ def urmom():
         return jsonify(status=400,message=str(e))
     
 @app.route("/hacker", methods=['PUT'])
-def update_hacker(uuid: int):
+def update_hacker():
     try:
         data = request.get_json()
         # check if data is empty
         if not data:
             return jsonify(status=404, message="no data provided")
         
-        uuid = data.get('UUID', '')
-        first_name = data.get('firstName', '')
-        last_name = data.get('lastName', '')
-        password = data.get('password', '')
-        school = data.get('school', '')
-        discord = data.get('discord', '')
+        uuid = data.get('UUID', None)
+        first_name = data.get('firstName', None)
+        last_name = data.get('lastName', None)
+        password = data.get('password', None)
+        school = data.get('school', None)
+        discord = data.get('discord', None)
         
         conn = get_db_connection()
         cursor = conn.cursor()
