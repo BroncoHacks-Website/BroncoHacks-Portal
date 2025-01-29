@@ -27,7 +27,7 @@ def urmom():
     except Exception as e:
         return jsonify(status=400,message=str(e))
     
-@app.route("/hacker/<int:uuid>", methods=['PUT'])
+@app.route("/hacker", methods=['PUT'])
 def update_hacker(uuid: int):
     try:
         data = request.get_json()
@@ -35,6 +35,7 @@ def update_hacker(uuid: int):
         if not data:
             return jsonify(status=404, message="no data provided")
         
+        uuid = data.get('UUID', '')
         first_name = data.get('firstName', '')
         last_name = data.get('lastName', '')
         password = data.get('password', '')
@@ -43,17 +44,19 @@ def update_hacker(uuid: int):
         
         conn = get_db_connection()
         cursor = conn.cursor()
-        
-        if first_name:
-            cursor.execute("UPDATE hackers SET firstName = ? WHERE uuid = ?", (first_name, uuid))
-        if last_name:
-            cursor.execute("UPDATE hackers SET lastName = ? WHERE uuid = ?", (last_name, uuid))
-        if password:
-            cursor.execute("UPDATE hackers SET password = ? WHERE uuid = ?", (password, uuid))
-        if school:
-            cursor.execute("UPDATE hackers SET school = ? WHERE uuid = ?", (school, uuid))
-        if discord:
-            cursor.execute("UPDATE hackers SET discord = ? WHERE uuid = ?", (discord, uuid))
+        if not uuid:
+            return jsonify(status=404, message="uuid not provided")
+        else:
+            if first_name:
+                cursor.execute("UPDATE hackers SET firstName = ? WHERE uuid = ?", (first_name, uuid))
+            if last_name:
+                cursor.execute("UPDATE hackers SET lastName = ? WHERE uuid = ?", (last_name, uuid))
+            if password:
+                cursor.execute("UPDATE hackers SET password = ? WHERE uuid = ?", (password, uuid))
+            if school:
+                cursor.execute("UPDATE hackers SET school = ? WHERE uuid = ?", (school, uuid))
+            if discord:
+                cursor.execute("UPDATE hackers SET discord = ? WHERE uuid = ?", (discord, uuid))
         conn.commit()
 
         cursor.execute('SELECT * FROM hackers WHERE uuid = ?', (uuid,))
