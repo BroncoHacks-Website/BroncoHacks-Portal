@@ -52,7 +52,9 @@ def create_tuah():
         owner = data.get("ownerID")
 
         #find out if the owner is confirmed first
-        owner_confirmation = get_hacker()
+        owner_confirmation = getOneHacker()
+        if owner_confirmation("isConfirmed") == False:
+            return jsonify({"error": "owner is not confirmed"}), 400
 
         #I think Daniel is doing this function so I will just use it when it's done
         existing_teams = get_teams()
@@ -62,9 +64,9 @@ def create_tuah():
         existing_team_names = [team["teamName"] for team in existing_teams]
         existing_team_owners_names = [king["owner"] for king in existing_teams] 
         if team_name in existing_team_names:
-            return jsonify({"error": "team name already in use"})
+            return jsonify({"error": "team name already in use"}), 400
         if owner in existing_team_owners_names:
-            return jsonify({"error": "player is already in a team"})
+            return jsonify({"error": "player is already in a team"}), 400
         
         id = generate_team_id()
         
@@ -109,3 +111,13 @@ def getOneHacker():
             return jsonify(status=200, message="Hacker Found", hacker=hacker_list)
     except Exception as e:
         return jsonify(status=400, message=str(e))
+
+@app.route("/team", methods=['GET'])
+def get_a_team_from_id():
+    uuid = request.args.get("teamID")
+
+
+    conn = get_db_connection()
+
+    
+        
