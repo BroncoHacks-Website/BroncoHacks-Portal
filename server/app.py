@@ -43,6 +43,7 @@ def getOneHacker():
         if len(hacker_list) == 0:
             return jsonify(status=404, message="Hacker Not Found")
         else:
-            return jsonify(status=200, message="Hacker Found", hacker=hacker_list)
+            res = next(iter(hacker_list))
+            return jsonify(status=200, message="Hacker Found", hacker=res)
     except Exception as e:
         return jsonify(status=400, message=str(e))
