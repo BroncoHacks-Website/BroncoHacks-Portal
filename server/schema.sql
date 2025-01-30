@@ -3,14 +3,14 @@ DROP TABLE IF EXISTS hackers;
 DROP TABLE IF EXISTS teams;
 
 CREATE TABLE hackers (
-    UUID TEXT PRIMARY KEY,
-    teamID TEXT,
-    firstName TEXT,
-    lastName TEXT,
-    password TEXT,
-    email TEXT,
-    school TEXT,
-    discord TEXT,
+    UUID INTEGER PRIMARY KEY AUTOINCREMENT,
+    teamID INTEGER,
+    firstName TEXT NOT NULL,
+    lastName TEXT NOT NULL,
+    password TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    school TEXT NOT NULL,
+    discord TEXT UNIQUE,
     confirmationNumber NUMBER,
     isConfirmed BOOLEAN
 );

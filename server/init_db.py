@@ -1,4 +1,10 @@
 import sqlite3
+import bcrypt
+
+def hash_password(password):
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
+    return hashed
 
 connection = sqlite3.connect('database.db')
 
@@ -8,12 +14,12 @@ with open('schema.sql') as f:
 
 cur = connection.cursor()
 
-cur.execute("INSERT INTO hackers (UUID, teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            ('Skibidi', 'ABCDEF', 'Daniel', 'Pasion', 'urmom', 'dpasion@cpp,edu', 'cpp','.theDaniel', '666420', True )
+cur.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            ('123456', 'Daniel', 'Pasion', hash_password('urmom'), 'dpasion@cpp,edu', 'cpp','.theDaniel', 666420, True )
             )
 
 cur.execute("INSERT INTO teams (teamID, teamName, owner) VALUES (?, ?, ?)",
-            ('ABCDEF', "Hawk Tuahers", 'Skibidi')
+            ('123456', "Hawk Tuahers", 1)
             )
 
 connection.commit()
