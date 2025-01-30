@@ -15,7 +15,7 @@ with open('schema.sql') as f:
 cur = connection.cursor()
 
 cur.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            ('123456', 'Daniel', 'Pasion', hash_password('urmom'), 'dpasion@cpp,edu', 'cpp','.theDaniel', '666420', True )
+            ('123456', 'Daniel', 'Pasion', hash_password('urmom'), 'dpasion@cpp,edu', 'cpp','.theDaniel', 666420, True )
             )
 
 cur.execute("INSERT INTO teams (teamID, teamName, owner) VALUES (?, ?, ?)",

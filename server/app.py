@@ -28,8 +28,8 @@ def hash_password(password):
     hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
     return hashed
 
-def generate_confirmation_number(length=6):
-    return ''.join(random.choices(string.digits, k=length))
+def generate_confirmation_number():
+    return random.randint(100000, 999999)
 
 @app.route("/")
 def index():
@@ -47,10 +47,10 @@ def urmom():
         for row in posts:
             hacker = dict(row)
             del hacker["password"]
-            hacker['password'] = hacker['password'].decode('utf-8')  # Convert bytes to string
+            # hacker['password'] = hacker['password'].decode('utf-8')  # Convert bytes to string
             posts_list.append(hacker)
         
-        return jsonify(status=200,message="urmom",hackers=posts_list)
+        return jsonify(status=200,message="succes",hackers=posts_list)
     except Exception as e:
         return jsonify(status=400,message=str(e))
 
@@ -73,7 +73,6 @@ def create_hacker():
         teamID = None
         confirmationNumber = generate_confirmation_number()
         isConfirmed = False
-        hacker_uuid = str(uuid.uuid4())
     
         conn = get_db_connection()
         cursor = conn.cursor()
