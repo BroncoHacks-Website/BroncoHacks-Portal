@@ -34,26 +34,8 @@ def generate_confirmation_number():
 @app.route("/")
 def index():
     return "<p>Server is Running :)</p>"
-    
 
-@app.route("/hackers",  methods=['GET'])
-def urmom():
-    try:
-        conn = get_db_connection() 
-        posts = conn.execute('SELECT * FROM hackers').fetchall()
-        conn.close()
-        posts_list = []
-
-        for row in posts:
-            hacker = dict(row)
-            del hacker["password"]
-            # hacker['password'] = hacker['password'].decode('utf-8')  # Convert bytes to string
-            posts_list.append(hacker)
-        
-        return jsonify(status=200,message="succes",hackers=posts_list)
-    except Exception as e:
-        return jsonify(status=400,message=str(e))
-
+########## Hackers ##########
 @app.route("/hacker", methods=['POST'])
 def create_hacker():
     try:
@@ -100,3 +82,45 @@ def create_hacker():
         return jsonify(status=201, message="Hacker created successfully", hacker=new_hacker)
     except Exception as e:
         return jsonify(status=500, message=str(e))
+    
+    
+@app.route("/hacker", methods=['GET'])
+def getOneHacker():
+    # get req param from url
+    uuid = request.args.get('uuid')
+    try:
+        int(uuid)
+    except:
+        return jsonify(status=422, message="Unprocessable Entity (wrong data type for paramters)")
+    
+    try:
+        conn = get_db_connection()
+        hacker = conn.execute('SELECT UUID, teamID, firstName, lastName, email, school, discord, confirmationNumber, isConfirmed FROM hackers WHERE UUID=?', (uuid,)).fetchall()
+        conn.close
+        
+        hacker_list = [dict(row) for row in hacker]
+        if len(hacker_list) == 0:
+            return jsonify(status=404, message="Hacker Not Found")
+        else:
+            return jsonify(status=200, message="Hacker Found", hacker=next(iter(hacker_list)))
+    except Exception as e:
+        return jsonify(status=400, message=str(e))
+    
+
+@app.route("/hackers",  methods=['GET'])
+def urmom():
+    try:
+        conn = get_db_connection() 
+        posts = conn.execute('SELECT * FROM hackers').fetchall()
+        conn.close()
+        posts_list = []
+
+        for row in posts:
+            hacker = dict(row)
+            del hacker["password"]
+            # hacker['password'] = hacker['password'].decode('utf-8')  # Convert bytes to string
+            posts_list.append(hacker)
+        
+        return jsonify(status=200,message="succes",hackers=posts_list)
+    except Exception as e:
+        return jsonify(status=400,message=str(e))
