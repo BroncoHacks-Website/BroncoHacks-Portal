@@ -16,7 +16,7 @@ CREATE TABLE hackers (
 );
 
 CREATE TABLE teams (
-    teamID TEXT PRIMARY KEY,
+    teamID NUMBER PRIMARY KEY,
     teamName TEXT,
     owner TEXT,
     teamMember1 TEXT,

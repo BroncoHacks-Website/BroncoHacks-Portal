@@ -13,6 +13,9 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
+def generate_team_id():
+    return str(random.randint(100000, 999999))
+
 def get_hacker_by_id(hacker_id):
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -81,13 +84,16 @@ def create_hacker():
 
         return jsonify(status=201, message="Hacker created successfully", hacker=new_hacker)
     except Exception as e:
-        return jsonify(status=500, message=str(e))
-    
+        return jsonify(status=400,message=str(e))
     
 @app.route("/hacker", methods=['GET'])
 def getOneHacker():
     # get req param from url
     uuid = request.args.get('uuid')
+
+    if uuid is None:
+        return jsonify(status=400, message=f"Missing uuid in query paramter")
+    
     try:
         int(uuid)
     except:
@@ -124,3 +130,116 @@ def urmom():
         return jsonify(status=200,message="succes",hackers=posts_list)
     except Exception as e:
         return jsonify(status=400,message=str(e))
+
+########## Team ##########
+
+@app.route("/team", methods=['GET'])
+def get_users_team():
+    #grab uuid from get request
+    uuid = request.args.get("uuid")
+
+    try:
+        conn = get_db_connection()
+        #find a team based on the uuid of one of the members
+        team_info = conn.execute("SELECT * FROM teams WHERE owner = ? OR teamMember1 = ? OR teamMember2 = ? OR teamMember3 = ?", (uuid, uuid, uuid, uuid,)).fetchone()
+
+        #if no team pops up, throw an error
+        if not team_info:
+            return jsonify({"hacker error": "hacker is not in a team"}), 400
+
+        #grab the other team members info
+        team_members = [team_info["owner"], team_info["teamMember1"], team_info["teamMember2"], team_info["teamMember3"]]
+        #remove any null values just in case a team isn't full yet
+        team_members = [non for non in team_members if non]
+
+        #grab particular info on each of the team members, dynamic in case the team isn't full
+        team_members_info = conn.execute(f"SELECT uuid, firstName, lastName, email, school FROM hackers WHERE uuid IN ({','.join(['?']*len(team_members))})", team_members).fetchall()
+
+        #turn it into dictionary for json
+        members_dictionary = [dict(member) for member in team_members_info]
+
+        return jsonify({
+            "message": "success, we got them",
+            "teamInfo": {
+                "teamID" : team_info["teamID"],
+                "teamName" : team_info["teamName"]
+            },
+            "teamMembers" : members_dictionary
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        conn.close()
+
+@app.route("/team", methods=["POST"])
+def create_tuah():
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "no data provided"}), 400
+        
+        required_fields = ['teamName', "owner"]
+        for field in required_fields:
+            if field not in data:
+                return jsonify(status=400, message=f"Missing {field}")
+        
+        team_name = data.get("teamName")
+        owner = data.get("owner")
+
+
+        if team_name == "":
+            return jsonify(status=422, message="Unprocessable Entity (teamName is either empty or invalid data type)")
+        
+        try:
+            int(owner)
+        except:
+            return jsonify(status=422, message="Unprocessable Entity (wrong data type for: owner)")
+
+        conn = get_db_connection()
+        owner_exists = conn.execute("SELECT uuid FROM hackers WHERE uuid = ?", (int(owner),)).fetchone()
+
+        if not owner_exists:
+            return jsonify(status=404, message="Owner does not exist in the database")
+
+
+        owner_confirmation = conn.execute("SELECT isConfirmed FROM hackers WHERE uuid = ?", (owner,)).fetchone()
+        if not owner_confirmation or owner_confirmation[0] == 0:
+            return jsonify({"error": "owner is not confirmed"}), 400
+        
+        existing_teams = conn.execute("SELECT teamName, owner FROM teams").fetchall()
+        existing_team_names = [team["teamName"] for team in existing_teams]
+        existing_team_owners_names = [int(team["owner"]) for team in existing_teams] 
+        if team_name in existing_team_names:
+            return jsonify({"error": "team name already in use"}), 400
+        if owner in existing_team_owners_names:
+            return jsonify({"error": "player is already in a team"}), 400
+    
+        id = generate_team_id()
+        list_of_ids = conn.execute("SELECT teamID FROM teams").fetchall()
+        while id in list_of_ids:
+            id = generate_team_id()
+
+        conn.execute("INSERT INTO teams (teamID, teamName, owner, teamMember1, teamMember2, teamMember3) VALUES (?, ?, ?, ?, ?, ?)", (id, team_name, owner, None, None, None))
+        conn.commit()
+
+        return jsonify({
+            "message": "success !!!! Yippyyyyy",
+            "team" : {
+                "teamID": id,
+                "teamName": team_name,
+                "owner": owner,
+                "teamMember1": None,
+                "teamMember2": None,
+                "teamMember3": None
+            }
+        }), 200
+    except Exception as e:
+        return jsonify(error=str(e),status=500)
+    finally:
+        conn.close()
+
+if __name__ == "__main__":
+    app.run(debug=True)
+    
+        
