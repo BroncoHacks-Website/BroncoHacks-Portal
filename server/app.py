@@ -40,40 +40,37 @@ def urmom():
     
 @app.route("/team", methods=["POST"])
 def create_tuah():
-    conn = get_db_connection()
 
     try:
         #getting the parameters from frontend
         data = request.get_json()
         if not data:
             return jsonify({"error": "no data provided"}), 400
-        
         team_name = data.get("teamName")
-        owner = data.get("ownerID")
-
-        #find out if the owner is confirmed first
-        owner_confirmation = getOneHacker()
-        if owner_confirmation("isConfirmed") == False:
-            return jsonify({"error": "owner is not confirmed"}), 400
-
-        #I think Daniel is doing this function so I will just use it when it's done
-        existing_teams = get_teams()
-
-        #check from the existing team names and owners in each team
-        #deny if owner is already in a team or if the team name already exists
-        existing_team_names = [team["teamName"] for team in existing_teams]
-        existing_team_owners_names = [king["owner"] for king in existing_teams] 
-        if team_name in existing_team_names:
-            return jsonify({"error": "team name already in use"}), 400
-        if owner in existing_team_owners_names:
-            return jsonify({"error": "player is already in a team"}), 400
+        owner = data.get("owner")
         
         id = generate_team_id()
         
-        with conn.cursor() as cursor:
-            sql = "INSERT INTO `hackers` (`teamID`, `teamName`, `owner`, `teamMember1`, `teamMember2`, `teamMember3`) VALUES (%s, %s, %s, %s, %s, %s)"
-            cursor.execute(sql, (id, team_name, owner, None, None, None))
-            print(f"team {team_name} created with {owner} as the owner")
+        conn = get_db_connection()
+
+        #find out if the owner is confirmed first
+        owner_confirmation = conn.execute("SELECT isConfirmed FROM hackers WHERE uuid = ?", (owner,)).fetchone()
+        if not owner_confirmation or owner_confirmation[0] == 0:
+            return jsonify({"confirmation error": "owner is not confirmed"}), 400
+        
+        #check from the existing team names and owners in each team
+        #deny if owner is already in a team or if the team name already exists
+        existing_teams = conn.execute("SELECT teamName, owner FROM teams").fetchall()
+        existing_team_names = [team["teamName"] for team in existing_teams]
+        existing_team_owners_names = [team["owner"] for team in existing_teams] 
+        if team_name in existing_team_names:
+            return jsonify({"team error": "team name already in use"}), 400
+        if owner in existing_team_owners_names:
+            return jsonify({"owner error": "player is already in a team"}), 400
+    
+        conn.execute("INSERT INTO teams (teamID, teamName, owner, teamMember1, teamMember2, teamMember3) VALUES (?, ?, ?, ?, ?, ?)", (id, team_name, owner, None, None, None))
+        print(f"team {team_name} created with {owner} as the owner")
+
         conn.commit()
 
         return jsonify({
@@ -89,7 +86,7 @@ def create_tuah():
         }), 200
     except Exception as e:
         print("nahh the team creation didn't work")
-        return jsonify({"error": "server error"}), 500
+        return jsonify({"500 error": str(e)}), 500
     finally:
         conn.close()
     
@@ -115,9 +112,16 @@ def getOneHacker():
 @app.route("/team", methods=['GET'])
 def get_a_team_from_id():
     uuid = request.args.get("teamID")
-
-
     conn = get_db_connection()
 
+    try:
+        team_info = conn.execute(f"SELECT teamID, teamName, owner WHERE teamID = {uuid}")
+    except Exception as e:
+        return jsonify(status=400, message=str(e))
+    finally:
+        conn.close()
+
+if __name__ == "__main__":
+    app.run(debug=True)
     
         
