@@ -48,9 +48,8 @@ def create_tuah():
             return jsonify({"error": "no data provided"}), 400
         team_name = data.get("teamName")
         owner = data.get("owner")
-        
-        id = generate_team_id()
-        
+
+        #connect to db
         conn = get_db_connection()
 
         #find out if the owner is confirmed first
@@ -68,9 +67,17 @@ def create_tuah():
         if owner in existing_team_owners_names:
             return jsonify({"owner error": "player is already in a team"}), 400
     
+        #secure a unique id for the new team once the teamName and owner cases pass verification
+        id = generate_team_id()
+        list_of_ids = conn.execute("SELECT teamID FROM teams").fetchall()
+        while id in list_of_ids:
+            id = generate_team_id()
+
+        #insert into teams table
         conn.execute("INSERT INTO teams (teamID, teamName, owner, teamMember1, teamMember2, teamMember3) VALUES (?, ?, ?, ?, ?, ?)", (id, team_name, owner, None, None, None))
         print(f"team {team_name} created with {owner} as the owner")
 
+        #save changes
         conn.commit()
 
         return jsonify({
