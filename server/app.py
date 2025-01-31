@@ -153,7 +153,7 @@ def get_users_team():
 
         #if no team pops up, throw an error
         if not team:
-            return jsonify({"hacker error": "hacker is not in a team"}), 400
+            return jsonify(message= "hacker is not in a team", status=406)
         
         owner = conn.execute("SELECT uuid, firstName, lastName, email, school FROM hackers WHERE uuid = ?", (team["owner"],)).fetchone()
         team_member_1 = conn.execute("SELECT uuid, firstName, lastName, email, school FROM hackers WHERE uuid = ?", (team["teamMember1"],)).fetchone()
