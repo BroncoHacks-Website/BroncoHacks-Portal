@@ -138,33 +138,63 @@ def get_users_team():
     #grab uuid from get request
     uuid = request.args.get("uuid")
 
+    if uuid is None:
+        return jsonify(status=400, message=f"Missing uuid in query paramter")
+    
+    try:
+        int(uuid)
+    except:
+        return jsonify(status=422, message="Unprocessable Entity (wrong data type for paramters)")
+
     try:
         conn = get_db_connection()
         #find a team based on the uuid of one of the members
-        team_info = conn.execute("SELECT * FROM teams WHERE owner = ? OR teamMember1 = ? OR teamMember2 = ? OR teamMember3 = ?", (uuid, uuid, uuid, uuid,)).fetchone()
+        team = conn.execute("SELECT * FROM teams WHERE owner = ? OR teamMember1 = ? OR teamMember2 = ? OR teamMember3 = ?", (uuid, uuid, uuid, uuid)).fetchone()
 
         #if no team pops up, throw an error
-        if not team_info:
+        if not team:
             return jsonify({"hacker error": "hacker is not in a team"}), 400
-
-        #grab the other team members info
-        team_members = [team_info["owner"], team_info["teamMember1"], team_info["teamMember2"], team_info["teamMember3"]]
-        #remove any null values just in case a team isn't full yet
-        team_members = [non for non in team_members if non]
-
-        #grab particular info on each of the team members, dynamic in case the team isn't full
-        team_members_info = conn.execute(f"SELECT uuid, firstName, lastName, email, school FROM hackers WHERE uuid IN ({','.join(['?']*len(team_members))})", team_members).fetchall()
-
-        #turn it into dictionary for json
-        members_dictionary = [dict(member) for member in team_members_info]
-
+        
+        owner = conn.execute("SELECT uuid, firstName, lastName, email, school FROM hackers WHERE uuid = ?", (team["owner"],)).fetchone()
+        team_member_1 = conn.execute("SELECT uuid, firstName, lastName, email, school FROM hackers WHERE uuid = ?", (team["teamMember1"],)).fetchone()
+        team_member_2 = conn.execute("SELECT uuid, firstName, lastName, email, school FROM hackers WHERE uuid = ?", (team["teamMember2"],)).fetchone()
+        team_member_3 = conn.execute("SELECT uuid, firstName, lastName, email, school FROM hackers WHERE uuid = ?", (team["teamMember3"],)).fetchone()
+        
+        #otherwise, return the team id and the team name
         return jsonify({
             "message": "success, we got them",
-            "teamInfo": {
-                "teamID" : team_info["teamID"],
-                "teamName" : team_info["teamName"]
+            "team": {
+                "teamID" : team["teamID"],
+                "teamName" : team["teamName"] 
             },
-            "teamMembers" : members_dictionary
+            "owner" : {
+                "uuid" : owner["uuid"] if owner else None,
+                "firstName" : owner["firstName"] if owner else None,
+                "lastName" : owner["lastName"] if owner else None,
+                "email": owner["email"] if owner else None,
+                "school": owner["school"] if owner else None,
+            },
+            "teamMember1" : {
+                "uuid" : team_member_1["uuid"] if team_member_1 else None,
+                "firstName" : team_member_1["firstName"] if team_member_1 else None,
+                "lastName" : team_member_1["lastName"] if team_member_1 else None,
+                "email": team_member_1["email"] if team_member_1 else None,
+                "school": team_member_1["school"] if team_member_1 else None,
+            },
+            "teamMember2" : {
+                "uuid" : team_member_2["uuid"] if team_member_2 else None,
+                "firstName" : team_member_2["firstName"] if team_member_2 else None,
+                "lastName" : team_member_2["lastName"] if team_member_2 else None,
+                "email": team_member_2["email"] if team_member_2 else None,
+                "school": team_member_2["school"] if team_member_2 else None,
+            },
+            "teamMember3" : {
+                "uuid" : team_member_3["uuid"] if team_member_3 else None,
+                "firstName" : team_member_3["firstName"] if team_member_3 else None,
+                "lastName" : team_member_3["lastName"] if team_member_3 else None,
+                "email": team_member_3["email"] if team_member_3 else None,
+                "school": team_member_3["school"] if team_member_3 else None
+            }
         }), 200
 
     except Exception as e:
