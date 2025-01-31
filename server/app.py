@@ -131,14 +131,14 @@ def update_hacker():
         data = request.get_json()
         # check if data is empty
         if not data:
-            return jsonify(status=404, message="no data provided")
+            return jsonify(status=404, error="no data provided")
         
         UUID = data.get('UUID', None)
         first_name = data.get('firstName', None)
         last_name = data.get('lastName', None)
         school = data.get('school', None)
         discord = data.get('discord', None)
-        
+
         try:
             int(UUID)
         except:
@@ -153,6 +153,13 @@ def update_hacker():
         if not uuid:
             return jsonify(status=404, message="uuid not provided")
         else:
+            # check if uuid exists in database
+            cursor.execute("SELECT * FROM hackers WHERE uuid = ?", (uuid,))
+            hacker = cursor.fetchone()
+            if hacker is None:
+                return jsonify({"error": "uuid not found"}), 404
+            
+            # update hacker info
             if first_name:
                 cursor.execute("UPDATE hackers SET firstName = ? WHERE uuid = ?", (first_name, uuid))
             if last_name:
@@ -166,15 +173,15 @@ def update_hacker():
                 cursor.execute("SELECT * FROM hackers WHERE discord = ?", (discord,))
                 if cursor.fetchone():
                     conn.close()
-                return jsonify(status=409, message="Discord already in use")
+                    return jsonify(status=409, message="Discord already in use")
         conn.commit()
 
-        cursor.execute('SELECT * FROM hackers WHERE uuid = ?', (uuid,))
+        cursor.execute('SELECT UUID, teamID, firstName, lastName, email, school, discord, confirmatioNumber, isConfirmed FROM hackers WHERE uuid = ?', (uuid,))
         updated_hacker = cursor.fetchone()
-        
-        conn.close()
 
         return jsonify(status=200, message="successfully updated hacker", hacker=updated_hacker)
 
     except Exception as e:
-        return jsonify(status=400, message=str(e))
+        return jsonify(status=500, error=str(e))
+    finally:
+        conn.close()
