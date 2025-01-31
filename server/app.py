@@ -130,6 +130,68 @@ def urmom():
         return jsonify(status=200,message="succes",hackers=posts_list)
     except Exception as e:
         return jsonify(status=400,message=str(e))
+    
+@app.route("/hacker", methods=['PUT'])
+def update_hacker():
+    try:
+        data = request.get_json()
+        # check if data is empty
+        if not data:
+            return jsonify(status=404, message="no data provided")
+        
+        UUID = data.get('UUID', None)
+        first_name = data.get('firstName', None)
+        last_name = data.get('lastName', None)
+        school = data.get('school', None)
+        discord = data.get('discord', None)
+
+        try:
+            int(UUID)
+        except:
+            return jsonify(status=422, message="Unprocessable Entity (wrong data type for: uuid)")
+        password = data.get('password', None)
+        if password:
+            password = hash_password(data['password'])
+
+        uuid = int(UUID)
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        if not uuid:
+            return jsonify(status=404, message="uuid not provided")
+        else:
+            # check if uuid exists in database
+            cursor.execute("SELECT * FROM hackers WHERE uuid = ?", (uuid,))
+            hacker = cursor.fetchone()
+            if hacker is None:
+                return jsonify(message= "uuid not found",status=404)
+            
+            # update hacker info
+            if first_name:
+                cursor.execute("UPDATE hackers SET firstName = ? WHERE uuid = ?", (first_name, uuid))
+            if last_name:
+                cursor.execute("UPDATE hackers SET lastName = ? WHERE uuid = ?", (last_name, uuid))
+            if password:
+                cursor.execute("UPDATE hackers SET password = ? WHERE uuid = ?", (password, uuid))
+            if school:
+                cursor.execute("UPDATE hackers SET school = ? WHERE uuid = ?", (school, uuid))
+            if discord:
+                cursor.execute("SELECT * FROM hackers WHERE discord = ?", (discord,))
+                if cursor.fetchone():
+                    conn.close()
+                    return jsonify(status=409, message="Discord already in use")
+                cursor.execute("UPDATE hackers SET discord = ? WHERE uuid = ?", (discord, uuid))
+
+        conn.commit()
+
+        cursor.execute('SELECT UUID, teamID, firstName, lastName, email, school, discord, confirmationNumber, isConfirmed FROM hackers WHERE uuid = ?', (uuid,))
+        updated_hacker = cursor.fetchone()
+
+        return jsonify(status=200, message="successfully updated hacker", hacker=dict(updated_hacker))
+
+    except Exception as e:
+        return jsonify(status=500, message=str(e))
+    finally:
+        conn.close()
 
 ########## Team ##########
 
@@ -194,11 +256,12 @@ def get_users_team():
                 "lastName" : team_member_3["lastName"] if team_member_3 else None,
                 "email": team_member_3["email"] if team_member_3 else None,
                 "school": team_member_3["school"] if team_member_3 else None
-            }
-        }), 200
+            },
+            "status":200
+        })
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"message": str(e), "status":500})
     finally:
         conn.close()
 
@@ -207,7 +270,7 @@ def create_tuah():
     try:
         data = request.get_json()
         if not data:
-            return jsonify({"error": "no data provided"}), 400
+            return jsonify({"message": "no data provided","status":400})
         
         required_fields = ['teamName', "owner"]
         for field in required_fields:
@@ -235,15 +298,15 @@ def create_tuah():
 
         owner_confirmation = conn.execute("SELECT isConfirmed FROM hackers WHERE uuid = ?", (owner,)).fetchone()
         if not owner_confirmation or owner_confirmation[0] == 0:
-            return jsonify({"error": "owner is not confirmed"}), 400
+            return jsonify(message="owner is not confirmed",status=400)
         
         existing_teams = conn.execute("SELECT teamName, owner FROM teams").fetchall()
         existing_team_names = [team["teamName"] for team in existing_teams]
         existing_team_owners_names = [int(team["owner"]) for team in existing_teams] 
         if team_name in existing_team_names:
-            return jsonify({"error": "team name already in use"}), 400
+            return jsonify(message="team name already in use",status=400)
         if owner in existing_team_owners_names:
-            return jsonify({"error": "player is already in a team"}), 400
+            return jsonify(message= "player is already in a team",status=400)
     
         id = generate_team_id()
         list_of_ids = conn.execute("SELECT teamID FROM teams").fetchall()
@@ -262,10 +325,10 @@ def create_tuah():
                 "teamMember1": None,
                 "teamMember2": None,
                 "teamMember3": None
-            }
-        }), 200
+            },
+            "status": 200})
     except Exception as e:
-        return jsonify(error=str(e),status=500)
+        return jsonify(message=str(e),status=500)
     finally:
         conn.close()
 
