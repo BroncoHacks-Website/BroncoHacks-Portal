@@ -1,9 +1,7 @@
 from flask import Flask, jsonify, request
 import sqlite3
-import uuid
 import random
 import bcrypt
-import string
 
 
 app = Flask(__name__)
@@ -36,7 +34,55 @@ def generate_confirmation_number():
 
 @app.route("/")
 def index():
-    return "<p>Server is Running :)</p>"
+    string = """
+                <h1>Hackers</h1>
+                <table>
+                    <tr>
+                        <th>UUID</th>
+                        <th>teamID</th>
+                        <th>firstName</th>
+                        <th>lastName</th>
+                        <th>password</th>
+                        <th>email</th>
+                        <th>school</th>
+                        <th>disord</th>
+                        <th>confirmationNumber</th>
+                        <th>isConfirmed</th>
+                        <th>isAdmin</th>
+                    </tr>
+             """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM hackers")
+    hackers = cursor.fetchall()
+
+    for hacker in hackers:
+        string += "<tr>"
+        for attr in hacker:
+            string += "<th>" + str(attr) + "</th>"
+        string += "</tr>"
+    string += """</table>
+                <h1>Teams</h1>
+                <table>
+                    <tr>
+                        <th>teamID</th>
+                        <th>teamName</th>
+                        <th>owner</th>
+                        <th>teamMember1</th>
+                        <th>teamMember2</th>
+                        <th>teamMember3</th>
+                    </tr>
+                """
+    cursor.execute("SELECT * FROM teams")
+    teams = cursor.fetchall()
+
+    for team in teams:
+        string += "<tr>"
+        for attr in team:
+            string += "<th>" + str(attr) + "</th>"
+        string += "</tr>"
+    return string + "</table>"
 
 ########## Hackers ##########
 @app.route("/hacker", methods=['POST'])
@@ -89,19 +135,19 @@ def create_hacker():
 @app.route("/hacker", methods=['GET'])
 def getOneHacker():
     # get req param from url
-    uuid = request.args.get('uuid')
+    UUID = request.args.get('UUID')
 
-    if uuid is None:
-        return jsonify(status=400, message=f"Missing uuid in query paramter")
+    if UUID is None:
+        return jsonify(status=400, message=f"Missing UUID in query paramter")
     
     try:
-        int(uuid)
+        int(UUID)
     except:
         return jsonify(status=422, message="Unprocessable Entity (wrong data type for paramters)")
     
     try:
         conn = get_db_connection()
-        hacker = conn.execute('SELECT UUID, teamID, firstName, lastName, email, school, discord, confirmationNumber, isConfirmed FROM hackers WHERE UUID=?', (uuid,)).fetchall()
+        hacker = conn.execute('SELECT UUID, teamID, firstName, lastName, email, school, discord, confirmationNumber, isConfirmed FROM hackers WHERE UUID=?', (UUID,)).fetchall()
         conn.close
         
         hacker_list = [dict(row) for row in hacker]
@@ -148,42 +194,42 @@ def update_hacker():
         try:
             int(UUID)
         except:
-            return jsonify(status=422, message="Unprocessable Entity (wrong data type for: uuid)")
+            return jsonify(status=422, message="Unprocessable Entity (wrong data type for: UUID)")
         password = data.get('password', None)
         if password:
             password = hash_password(data['password'])
 
-        uuid = int(UUID)
+        UUID = int(UUID)
         conn = get_db_connection()
         cursor = conn.cursor()
-        if not uuid:
-            return jsonify(status=404, message="uuid not provided")
+        if not UUID:
+            return jsonify(status=404, message="UUID not provided")
         else:
-            # check if uuid exists in database
-            cursor.execute("SELECT * FROM hackers WHERE uuid = ?", (uuid,))
+            # check if UUID exists in database
+            cursor.execute("SELECT * FROM hackers WHERE UUID = ?", (UUID,))
             hacker = cursor.fetchone()
             if hacker is None:
-                return jsonify(message= "uuid not found",status=404)
+                return jsonify(message= "UUID not found",status=404)
             
             # update hacker info
             if first_name:
-                cursor.execute("UPDATE hackers SET firstName = ? WHERE uuid = ?", (first_name, uuid))
+                cursor.execute("UPDATE hackers SET firstName = ? WHERE UUID = ?", (first_name, UUID))
             if last_name:
-                cursor.execute("UPDATE hackers SET lastName = ? WHERE uuid = ?", (last_name, uuid))
+                cursor.execute("UPDATE hackers SET lastName = ? WHERE UUID = ?", (last_name, UUID))
             if password:
-                cursor.execute("UPDATE hackers SET password = ? WHERE uuid = ?", (password, uuid))
+                cursor.execute("UPDATE hackers SET password = ? WHERE UUID = ?", (password, UUID))
             if school:
-                cursor.execute("UPDATE hackers SET school = ? WHERE uuid = ?", (school, uuid))
+                cursor.execute("UPDATE hackers SET school = ? WHERE UUID = ?", (school, UUID))
             if discord:
                 cursor.execute("SELECT * FROM hackers WHERE discord = ?", (discord,))
                 if cursor.fetchone():
                     conn.close()
                     return jsonify(status=409, message="Discord already in use")
-                cursor.execute("UPDATE hackers SET discord = ? WHERE uuid = ?", (discord, uuid))
+                cursor.execute("UPDATE hackers SET discord = ? WHERE UUID = ?", (discord, UUID))
 
         conn.commit()
 
-        cursor.execute('SELECT UUID, teamID, firstName, lastName, email, school, discord, confirmationNumber, isConfirmed FROM hackers WHERE uuid = ?', (uuid,))
+        cursor.execute('SELECT UUID, teamID, firstName, lastName, email, school, discord, confirmationNumber, isConfirmed FROM hackers WHERE UUID = ?', (UUID,))
         updated_hacker = cursor.fetchone()
 
         return jsonify(status=200, message="successfully updated hacker", hacker=dict(updated_hacker))
@@ -197,30 +243,30 @@ def update_hacker():
 
 @app.route("/team", methods=['GET'])
 def get_users_team():
-    #grab uuid from get request
-    uuid = request.args.get("uuid")
+    #grab UUID from get request
+    UUID = request.args.get("UUID")
 
-    if uuid is None:
-        return jsonify(status=400, message=f"Missing uuid in query paramter")
+    if UUID is None:
+        return jsonify(status=400, message=f"Missing UUID in query paramter")
     
     try:
-        int(uuid)
+        int(UUID)
     except:
         return jsonify(status=422, message="Unprocessable Entity (wrong data type for paramters)")
 
     try:
         conn = get_db_connection()
-        #find a team based on the uuid of one of the members
-        team = conn.execute("SELECT * FROM teams WHERE owner = ? OR teamMember1 = ? OR teamMember2 = ? OR teamMember3 = ?", (uuid, uuid, uuid, uuid)).fetchone()
+        #find a team based on the UUID of one of the members
+        team = conn.execute("SELECT * FROM teams WHERE owner = ? OR teamMember1 = ? OR teamMember2 = ? OR teamMember3 = ?", (UUID, UUID, UUID, UUID)).fetchone()
 
         #if no team pops up, throw an error
         if not team:
             return jsonify(message= "hacker is not in a team", status=406)
         
-        owner = conn.execute("SELECT uuid, firstName, lastName, email, school FROM hackers WHERE uuid = ?", (team["owner"],)).fetchone()
-        team_member_1 = conn.execute("SELECT uuid, firstName, lastName, email, school FROM hackers WHERE uuid = ?", (team["teamMember1"],)).fetchone()
-        team_member_2 = conn.execute("SELECT uuid, firstName, lastName, email, school FROM hackers WHERE uuid = ?", (team["teamMember2"],)).fetchone()
-        team_member_3 = conn.execute("SELECT uuid, firstName, lastName, email, school FROM hackers WHERE uuid = ?", (team["teamMember3"],)).fetchone()
+        owner = conn.execute("SELECT UUID, firstName, lastName, email, school FROM hackers WHERE UUID = ?", (team["owner"],)).fetchone()
+        team_member_1 = conn.execute("SELECT UUID, firstName, lastName, email, school FROM hackers WHERE UUID = ?", (team["teamMember1"],)).fetchone()
+        team_member_2 = conn.execute("SELECT UUID, firstName, lastName, email, school FROM hackers WHERE UUID = ?", (team["teamMember2"],)).fetchone()
+        team_member_3 = conn.execute("SELECT UUID, firstName, lastName, email, school FROM hackers WHERE UUID = ?", (team["teamMember3"],)).fetchone()
         
         #otherwise, return the team id and the team name
         return jsonify({
@@ -230,28 +276,28 @@ def get_users_team():
                 "teamName" : team["teamName"] 
             },
             "owner" : {
-                "uuid" : owner["uuid"] if owner else None,
+                "UUID" : owner["UUID"] if owner else None,
                 "firstName" : owner["firstName"] if owner else None,
                 "lastName" : owner["lastName"] if owner else None,
                 "email": owner["email"] if owner else None,
                 "school": owner["school"] if owner else None,
             },
             "teamMember1" : {
-                "uuid" : team_member_1["uuid"] if team_member_1 else None,
+                "UUID" : team_member_1["UUID"] if team_member_1 else None,
                 "firstName" : team_member_1["firstName"] if team_member_1 else None,
                 "lastName" : team_member_1["lastName"] if team_member_1 else None,
                 "email": team_member_1["email"] if team_member_1 else None,
                 "school": team_member_1["school"] if team_member_1 else None,
             },
             "teamMember2" : {
-                "uuid" : team_member_2["uuid"] if team_member_2 else None,
+                "UUID" : team_member_2["UUID"] if team_member_2 else None,
                 "firstName" : team_member_2["firstName"] if team_member_2 else None,
                 "lastName" : team_member_2["lastName"] if team_member_2 else None,
                 "email": team_member_2["email"] if team_member_2 else None,
                 "school": team_member_2["school"] if team_member_2 else None,
             },
             "teamMember3" : {
-                "uuid" : team_member_3["uuid"] if team_member_3 else None,
+                "UUID" : team_member_3["UUID"] if team_member_3 else None,
                 "firstName" : team_member_3["firstName"] if team_member_3 else None,
                 "lastName" : team_member_3["lastName"] if team_member_3 else None,
                 "email": team_member_3["email"] if team_member_3 else None,
@@ -290,13 +336,13 @@ def create_tuah():
             return jsonify(status=422, message="Unprocessable Entity (wrong data type for: owner)")
 
         conn = get_db_connection()
-        owner_exists = conn.execute("SELECT uuid FROM hackers WHERE uuid = ?", (int(owner),)).fetchone()
+        owner_exists = conn.execute("SELECT UUID FROM hackers WHERE UUID = ?", (int(owner),)).fetchone()
 
         if not owner_exists:
             return jsonify(status=404, message="Owner does not exist in the database")
 
 
-        owner_confirmation = conn.execute("SELECT isConfirmed FROM hackers WHERE uuid = ?", (owner,)).fetchone()
+        owner_confirmation = conn.execute("SELECT isConfirmed FROM hackers WHERE UUID = ?", (owner,)).fetchone()
         if not owner_confirmation or owner_confirmation[0] == 0:
             return jsonify(message="owner is not confirmed",status=400)
         
@@ -327,6 +373,57 @@ def create_tuah():
                 "teamMember3": None
             },
             "status": 200})
+    except Exception as e:
+        return jsonify(message=str(e),status=500)
+    finally:
+        conn.close()
+
+@app.route("/team", methods=["DELETE"])
+def delete_tuah():
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify(message="no data provided",status=400)
+        
+        required_fields = ['teamID', "owner"]
+        for field in required_fields:
+            if field not in data:
+                return jsonify(status=400, message=f"Missing {field}")
+        
+        team_id = data.get("teamID")
+        owner = data.get("owner")
+
+        try:
+            int(owner)
+        except:
+            return jsonify(status=422, message="Unprocessable Entity (wrong data type for: owner)")
+    
+        try:
+            int(team_id)
+        except:
+            return jsonify(status=422, message="Unprocessable Entity (wrong data type for: owner)")
+
+        conn = get_db_connection()
+
+        team_exists = conn.execute("SELECT teamID FROM teams WHERE teamID = ?", (int(team_id),)).fetchone()
+        if not team_exists:
+            return jsonify(status=404, message="Team does not exist in the database")
+        
+        owner_Leader = conn.execute("SELECT owner FROM teams WHERE teamID = ? AND owner = ?", (int(team_id), int(owner),)).fetchone()
+        if not owner_Leader:
+            return jsonify(status=403, message="User is not Owner of the team")
+        
+        teamcheck = conn.execute("SELECT teamMember1, teamMember2, teamMember3 FROM teams WHERE teamID = ? AND owner = ?", (int(team_id), int(owner),)).fetchone()
+        for teamMember in teamcheck:
+            if teamMember:
+                return jsonify(status=402, message="teammates exist, cannot delete.")
+        
+        conn.execute("DELETE FROM teams WHERE teamID = ?", (int(team_id),))
+        conn.execute("UPDATE hackers SET teamID = NULL where UUID = ?",(int(owner),))
+        conn.commit()
+
+        return jsonify({
+            "message": "team deleted","status":"200"})
     except Exception as e:
         return jsonify(message=str(e),status=500)
     finally:
