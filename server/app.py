@@ -332,6 +332,50 @@ def create_tuah():
     finally:
         conn.close()
 
+@app.route("/team", methods=["DELETE"])
+def delete_tuah():
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "no data provided"}), 400
+        
+        required_fields = ['teamID', "owner"]
+        for field in required_fields:
+            if field not in data:
+                return jsonify(status=400, message=f"Missing {field}")
+        
+        team_id = data.get("teamID")
+        owner = data.get("owner")
+
+        try:
+            int(owner)
+        except:
+            return jsonify(status=422, message="Unprocessable Entity (wrong data type for: owner)")
+
+        conn = get_db_connection()
+
+        team_exists = conn.execute("SELECT teamID FROM teams WHERE teamID = ?", (int(team_id),)).fetchone()
+        if not team_exists:
+            return jsonify(status=404, message="Team does not exist in the database")
+        
+        owner_Leader = conn.execute("SELECT owner FROM teams WHERE teamID = ? AND owner = ?", (int(team_id), int(owner),)).fetchone()
+        if not owner_Leader:
+            return jsonify(status=403, message="User is not Owner of the team")
+        
+        teamcheck = conn.execute("SELECT teamMember1, teamMember2, teamMember3 FROM teams WHERE teamID = ? AND owner = ?", (int(team_id), int(owner),)).fetchone()
+        if teamcheck:
+            return jsonify(status=402, message="teammates exist, cannot delete.")
+        
+        conn.execute("DELETE FROM teams WHERE teamID = ?", (int(team_id),))
+        conn.commit()
+
+        return jsonify({
+            "message": "team deleted",}), 200
+    except Exception as e:
+        return jsonify(error=str(e),status=500)
+    finally:
+        conn.close()
+
 if __name__ == "__main__":
     app.run(debug=True)
     
