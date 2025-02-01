@@ -173,7 +173,7 @@ def urmom():
             # hacker['password'] = hacker['password'].decode('utf-8')  # Convert bytes to string
             posts_list.append(hacker)
         
-        return jsonify(status=200,message="succes",hackers=posts_list)
+        return jsonify(status=200,message="success",hackers=posts_list)
     except Exception as e:
         return jsonify(status=400,message=str(e))
     
@@ -433,3 +433,79 @@ if __name__ == "__main__":
     app.run(debug=True)
     
         
+@app.route("/team/switchOwner", methods=["PUT"])
+def switcheroo():
+    
+    data = request.get_json()
+    owner = data['owner']
+    member = data['teamMember']
+    teamID = data['teamID']
+    
+    # Check if owner and member are ints
+    try:
+        int(owner)
+    except:
+        return jsonify(status=400, message="Unprocessable Entity (Owner is of wrong type)")
+
+    try:
+        int(member)
+    except:
+        return jsonify(status=400, message="Unprocessable Entity (Member is of wrong type)")
+    
+    try:
+        if owner == member:
+            return jsonify(status=400, message="Duplicate Entity")
+    except Exception as e:
+        return jsonify(status=404, message=str(e))
+    
+    # Check if owner and member exist
+    try:
+        conn = get_db_connection()
+        found_hackers = conn.execute('SELECT UUID, teamID, firstName, lastName, email, school, discord, confirmationNumber, isConfirmed FROM hackers WHERE UUID=? OR UUID=?', (owner, member,)).fetchall()
+        conn.close()
+        if len(found_hackers) < 2:
+            return jsonify(status=400, message="Owner or Member does not exist")
+    except Exception as e:
+        return jsonify(status=404, message=str(e))
+    
+    # Check if owner and member are on same team cuz just in case
+    try:
+        conn = get_db_connection()
+        found_teamIDs = conn.execute('SELECT teamID FROM hackers WHERE UUID=? OR UUID=?', (owner, member,)).fetchall()
+        conn.close()
+        teamID_list = [dict(row) for row in found_teamIDs]
+        if teamID_list[0] != teamID_list[1]:
+            return jsonify(status=400, message="Bruh they not even on the same team")
+    except Exception as e:
+        return jsonify(status=404, message=str(e))
+    
+    # Check if owner is actually the owner
+    try:
+        conn = get_db_connection()
+        found_teamID = conn.execute('SELECT teamID FROM hackers WHERE UUID=?', (owner,)).fetchall()
+        convert_teamID = [dict(row) for row in found_teamID]
+        try:
+            int(next(iter(convert_teamID)))
+        except:
+            return jsonify(status=400, message="Dude who is the owner aint even actually on a team")
+        
+        found_owner = conn.execute('SELECT owner from teams WHERE teamID=?', (next(iter(convert_teamID))))
+        conn.close()
+        convert_owner = [dict(row) for row in found_owner]
+        
+        if next(iter(convert_owner)) != owner:
+            return jsonify(status=400, message="Bro is not him")
+    except Exception as e:
+            return jsonify(status=400, message=str(e))
+    
+    
+    # actually switch the ownership
+    # TODO: finish this stupid thing with swithing, gotta find out which teamMember bro is, and also check if member is actually on the team
+    try:
+        conn = get_db_connection()
+        found_memberNum = conn.execute('SELECT teamNumber')
+        update_ownership = conn.execute('UPDATE teams SET owner=? WHERE teamID=?', (member, teamID))
+        update_ownership_again = conn.execute('UPDATE teams SET ')
+        return jsonify(status=200, message=f'owner: {owner}, member to switch with: {member}')
+    except Exception as e:
+        return jsonify(status=404, message="boohoo")
