@@ -84,6 +84,28 @@ def index():
         string += "</tr>"
     return string + "</table>"
 
+@app.route("/", methods=['GET'])
+def get_all_data():
+    try:
+        # retrieve data
+        conn = get_db_connection()
+        hackers = conn.execute("SELECT * FROM hackers").fetchall()
+        teams = conn.execute("SELECT * FROM teams").fetchall()
+        
+        # organize into lists
+        hawk, tuah = [], []
+        for hacker in hackers:
+            hack = dict(hacker)
+            del hack["password"]
+            hawk.append(hack)
+        for team in teams:
+            temu = dict(team)
+            tuah.append(temu)
+        
+        return jsonify(status=200, message="successfully got all data", hackers=hawk, teams=tuah)
+    except Exception as e:
+        return jsonify(status=400, message=str(e))
+
 ########## Hackers ##########
 @app.route("/hacker", methods=['POST'])
 def create_hacker():
