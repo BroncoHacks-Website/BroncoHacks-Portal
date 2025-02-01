@@ -239,7 +239,7 @@ def update_hacker():
     finally:
         conn.close()
 
-########## Team ##########
+########## Team ########## 
 
 @app.route("/team", methods=['GET'])
 def get_users_team():
@@ -428,6 +428,23 @@ def delete_tuah():
         return jsonify(message=str(e),status=500)
     finally:
         conn.close()
+        
+@app.route("/teams", methods=['GET'])
+def get_team():
+    try:
+        conn = get_db_connection()
+        posts = conn.execute('SELECT * FROM teams').fetchall()
+        conn.close()
+        posts_list = []
+        
+        for row in posts:
+            team = dict(row)
+            posts_list.append(team)
+    
+        return jsonify(status=200, message="success", teams=posts_list)
+    except Exception as e:
+        return jsonify(status=400, message=str(e))
+    
 
 if __name__ == "__main__":
     app.run(debug=True)
