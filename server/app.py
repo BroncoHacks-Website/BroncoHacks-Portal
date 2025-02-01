@@ -84,7 +84,7 @@ def index():
         string += "</tr>"
     return string + "</table>"
 
-@app.route("/", methods=['GET'])
+@app.route("/admin", methods=['GET'])
 def get_all_data():
     try:
         # retrieve data
