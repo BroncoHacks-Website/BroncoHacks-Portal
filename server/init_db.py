@@ -14,15 +14,15 @@ with open('schema.sql') as f:
 
 cur = connection.cursor()
 
-cur.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            (123456, 'Daniel', 'Pasion', hash_password('urmom'), 'dpasion@cpp,edu', 'cpp','.theDaniel', 666420, True )
+cur.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (123456, 'Daniel', 'Pasion', hash_password('urmom'), 'dpasion@cpp,edu', 'cpp','.theDaniel', 666420, True, True )
             )
 
-cur.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            (None, 'Cesar Henry', 'de Paula', hash_password('urdad'), 'chdp@cpp,edu', 'cpp','putanginamo', 666420, True ))
+cur.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (None, 'Cesar Henry', 'de Paula', hash_password('urdad'), 'chdp@cpp,edu', 'cpp','putanginamo', 666420, True, False ))
 
-cur.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            (123456, 'LeCaleb', 'chung', hash_password('ursis'), 'lbj@cpp,edu', 'cpp','thebigtig', 666420, True ))
+cur.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (123456, 'LeCaleb', 'chung', hash_password('ursis'), 'lbj@cpp,edu', 'cpp','thebigtig', 666420, True, False ))
 
 cur.execute("INSERT INTO teams (teamID, teamName, owner) VALUES (?, ?, ?)",
             (123456, "Hawk Tuahers", 1)

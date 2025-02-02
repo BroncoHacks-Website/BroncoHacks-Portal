@@ -17,7 +17,7 @@ def generate_team_id():
 def get_hacker_by_id(hacker_id):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT UUID, teamID, firstName, lastName, email, school, discord, confirmationNumber, isConfirmed FROM hackers WHERE UUID = ?", (hacker_id,))
+    cursor.execute("SELECT UUID, teamID, firstName, lastName, email, school, discord, confirmationNumber, isConfirmed, isAdmin FROM hackers WHERE UUID = ?", (hacker_id,))
     hacker = cursor.fetchone()
     conn.close()
     if hacker:
@@ -126,6 +126,7 @@ def create_hacker():
         teamID = None
         confirmationNumber = generate_confirmation_number()
         isConfirmed = False
+        isAdmin = None
     
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -141,8 +142,8 @@ def create_hacker():
                 conn.close()
                 return jsonify(status=409, message="Discord already in use")
         
-        cursor.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", 
-               (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed))
+        cursor.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+               (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed, isAdmin))
         conn.commit()
 
         hacker_id = cursor.lastrowid
@@ -169,8 +170,8 @@ def getOneHacker():
     
     try:
         conn = get_db_connection()
-        hacker = conn.execute('SELECT UUID, teamID, firstName, lastName, email, school, discord, confirmationNumber, isConfirmed FROM hackers WHERE UUID=?', (UUID,)).fetchall()
-        conn.close
+        hacker = conn.execute('SELECT UUID, teamID, firstName, lastName, email, school, discord, confirmationNumber, isConfirmed, isAdmin FROM hackers WHERE UUID=?', (UUID,)).fetchall()
+        conn.close()
         
         hacker_list = [dict(row) for row in hacker]
         if len(hacker_list) == 0:
@@ -206,6 +207,9 @@ def update_hacker():
         # check if data is empty
         if not data:
             return jsonify(status=404, message="no data provided")
+        
+        if "isAdmin" in data:
+            return jsonify(status=406, message="updating admin privileges not allowed")
         
         UUID = data.get('UUID', None)
         first_name = data.get('firstName', None)
@@ -251,7 +255,7 @@ def update_hacker():
 
         conn.commit()
 
-        cursor.execute('SELECT UUID, teamID, firstName, lastName, email, school, discord, confirmationNumber, isConfirmed FROM hackers WHERE UUID = ?', (UUID,))
+        cursor.execute('SELECT UUID, teamID, firstName, lastName, email, school, discord, confirmationNumber, isConfirmed, isAdmin FROM hackers WHERE UUID = ?', (UUID,))
         updated_hacker = cursor.fetchone()
 
         return jsonify(status=200, message="successfully updated hacker", hacker=dict(updated_hacker))
