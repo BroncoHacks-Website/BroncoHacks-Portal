@@ -475,12 +475,51 @@ if __name__ == "__main__":
 @app.route("/team/leave", methods=["PUT"])
 def memberLeave():
     
-    data = request.get_json()
-    teamID = data["teamID"]
-    member = data["teamMember"]
-    
     try:
-        return jsonify(status=200, message="sheeesh")
+        data = request.get_json()
+        
+        if not data:
+            return jsonify(message="No data provided",status=400)
+        
+        required_fields = ['teamID', "teamMember"]
+        for field in required_fields:
+            if field not in data:
+                return jsonify(status=400, message=f"Missing {field}")
+            
+        teamID = data["teamID"]
+        member = data["teamMember"]
+        
+        isMem1 = False
+        isMem2 = False
+        isMem3 = False
+        
+        conn = get_db_connection()
+        
+        # check if team exists
+        find_team = conn.execute('SELECT * FROM teams WHERE teamID=?', (teamID,)).fetchall()
+        convert_team = [dict(row) for row in find_team]
+        if len(find_team) == 0:
+            return jsonify(status=404, message="Team does not exist")
+        
+        # check if member is owner or is not in team
+        teamData = convert_team[0]
+        if teamData["owner"] == member:
+            return jsonify(status=403, message="Owner may not leave team")
+        elif teamData["teamMember1"] == member:
+            isMem1 = True
+        elif teamData["teamMember2"] == member:
+            isMem2 = True
+        elif teamData["teamMember3"] == member:
+            isMem3 = True
+        else:
+            return jsonify(status=404, message="Not a member of team")
+        
+        
+        # TODO: make them leave and then shift everyone over this is gonna be dumb
+        try:
+            return jsonify(status=200, message="sheeesh")
+        except Exception as e:
+            return jsonify(status=404, message="a booboo was made")
     except Exception as e:
-        return jsonify(status=404, message="a booboo was made")
+        return jsonify(status=400, message=str(e))
         
