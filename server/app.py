@@ -436,82 +436,94 @@ if __name__ == "__main__":
 @app.route("/team/owner", methods=["PUT"])
 def switcheroo():
     
-    data = request.get_json()
-    owner = data['owner']
-    member = data['teamMember']
-    teamID = data['teamID']
-    
-    # Check if owner and member are ints
     try:
-        int(owner)
-    except:
-        return jsonify(status=422, message="Unprocessable Entity (Owner is of wrong type)")
+        data = request.get_json()
+        
+        if not data:
+            return jsonify(message="no data provided",status=400)
+        
+        required_fields = ['teamID', 'owner', 'teamMember']
+        for field in required_fields:
+            if field not in data:
+                return jsonify(status=400, message=f"Missing {field}")
+            
+        owner = data['owner']
+        member = data['teamMember']
+        teamID = data['teamID']
+        
+        # Check if owner and member are ints
+        try:
+            int(owner)
+        except:
+            return jsonify(status=422, message="Unprocessable Entity (Owner is of wrong type)")
 
-    try:
-        int(member)
-    except:
-        return jsonify(status=422, message="Unprocessable Entity (Member is of wrong type)")
-    
-    try:
-        if owner == member:
-            return jsonify(status=422, message="Duplicate Entity")
-    except Exception as e:
-        return jsonify(status=404, message=str(e))
-    
-    # Check if owner and member exist AND if owner and member are on the same team
-    try:
-        conn = get_db_connection()
-        found_hackers = conn.execute('SELECT UUID, teamID, firstName, lastName, email, school, discord, confirmationNumber, isConfirmed FROM hackers WHERE UUID=? OR UUID=?', (owner, member,)).fetchall()
-        convert_found = [dict(row) for row in found_hackers]
-        conn.close()
+        try:
+            int(member)
+        except:
+            return jsonify(status=422, message="Unprocessable Entity (Member is of wrong type)")
         
-        if len(found_hackers) < 2:
-            return jsonify(status=400, message="Owner or Member does not exist")
-        elif convert_found[0]["teamID"] != convert_found[1]["teamID"]:
-            return jsonify(status=400, message="brotha they aint on the same team")
-    except Exception as e:
-        return jsonify(status=404, message=str(e))
-    
-    # Check if owner is actually the owner
-    try:
-        conn = get_db_connection()
-        found_owner = conn.execute('SELECT owner FROM teams WHERE teamID=?', (teamID,)).fetchall()
-        conn.close()
-        convert_owner = [dict(row) for row in found_owner]
-        if int(next(iter(convert_owner))["owner"]) != owner:
-            return jsonify(status=400, message="Bro is not him (he not the owner)")
-    except Exception as e:
-            return jsonify(status=400, message=str(e))
-    
-    
-    # actually switch the ownership
-    try:
-        conn = get_db_connection()
+        try:
+            if owner == member:
+                return jsonify(status=422, message="Duplicate Entity")
+        except Exception as e:
+            return jsonify(status=404, message=str(e))
         
-        #switch teamMember to owner
-        update_ownership = conn.execute('UPDATE teams SET owner=? WHERE teamID=?', (member, teamID,))
-        
-        # switch owner to teamMember
-        test_1 = conn.execute('SELECT teamMember1 FROM teams WHERE teamID=?', (teamID,)).fetchall()
-        test_2 = conn.execute('SELECT teamMember2 FROM teams WHERE teamID=?', (teamID,)).fetchall()
-        conv_test_1 = [dict(row) for row in test_1]
-        conv_test_2 = [dict(row) for row in test_2]
-        
-        if int(next(iter(conv_test_1))["teamMember1"]) == member:
-            update_ownership_again = conn.execute('UPDATE teams SET teamMember1=? WHERE teamID=?', (owner, teamID,))
-        elif int(next(iter(conv_test_2))["teamMember2"]) == member:
-            update_ownership_again = conn.execute('UPDATE teams SET teamMember2=? WHERE teamID=?', (owner, teamID,))
-        else:
-            update_ownership_again = conn.execute('UPDATE teams SET teamMember3=? WHERE teamID=?', (owner, teamID,))
+        # Check if owner and member exist AND if owner and member are on the same team
+        try:
+            conn = get_db_connection()
+            found_hackers = conn.execute('SELECT UUID, teamID, firstName, lastName, email, school, discord, confirmationNumber, isConfirmed FROM hackers WHERE UUID=? OR UUID=?', (owner, member,)).fetchall()
+            convert_found = [dict(row) for row in found_hackers]
+            conn.close()
             
-        conn.commit()
+            if len(found_hackers) < 2:
+                return jsonify(status=400, message="Owner or Member does not exist")
+            elif convert_found[0]["teamID"] != convert_found[1]["teamID"]:
+                return jsonify(status=400, message="brotha they aint on the same team")
+        except Exception as e:
+            return jsonify(status=404, message=str(e))
         
-        # get team data for response
-        get_team = conn.execute('SELECT * FROM teams WHERE teamID=?', (teamID,)).fetchall()
-        res = [dict(row) for row in get_team]
+        # Check if owner is actually the owner
+        try:
+            conn = get_db_connection()
+            found_owner = conn.execute('SELECT owner FROM teams WHERE teamID=?', (teamID,)).fetchall()
+            conn.close()
+            convert_owner = [dict(row) for row in found_owner]
+            if int(next(iter(convert_owner))["owner"]) != owner:
+                return jsonify(status=400, message="Bro is not him (he not the owner)")
+        except Exception as e:
+                return jsonify(status=400, message=str(e))
         
-        conn.close()
+        
+        # actually switch the ownership
+        try:
+            conn = get_db_connection()
             
-        return jsonify(status=200, message="Success", team=next(iter(res)))
+            #switch teamMember to owner
+            update_ownership = conn.execute('UPDATE teams SET owner=? WHERE teamID=?', (member, teamID,))
+            
+            # switch owner to teamMember
+            test_1 = conn.execute('SELECT teamMember1 FROM teams WHERE teamID=?', (teamID,)).fetchall()
+            test_2 = conn.execute('SELECT teamMember2 FROM teams WHERE teamID=?', (teamID,)).fetchall()
+            conv_test_1 = [dict(row) for row in test_1]
+            conv_test_2 = [dict(row) for row in test_2]
+            
+            if int(next(iter(conv_test_1))["teamMember1"]) == member:
+                update_ownership_again = conn.execute('UPDATE teams SET teamMember1=? WHERE teamID=?', (owner, teamID,))
+            elif int(next(iter(conv_test_2))["teamMember2"]) == member:
+                update_ownership_again = conn.execute('UPDATE teams SET teamMember2=? WHERE teamID=?', (owner, teamID,))
+            else:
+                update_ownership_again = conn.execute('UPDATE teams SET teamMember3=? WHERE teamID=?', (owner, teamID,))
+                
+            conn.commit()
+            
+            # get team data for response
+            get_team = conn.execute('SELECT * FROM teams WHERE teamID=?', (teamID,)).fetchall()
+            res = [dict(row) for row in get_team]
+            
+            conn.close()
+                
+            return jsonify(status=200, message="Success", team=next(iter(res)))
+        except Exception as e:
+            return jsonify(status=404, message="boohoo")
     except Exception as e:
-        return jsonify(status=404, message="boohoo")
+        return jsonify(status=400, message=str(e))
