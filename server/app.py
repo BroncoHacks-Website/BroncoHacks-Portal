@@ -482,30 +482,40 @@ def switcheroo():
     # Check if owner is actually the owner
     try:
         conn = get_db_connection()
-        found_teamID = conn.execute('SELECT teamID FROM hackers WHERE UUID=?', (owner,)).fetchall()
-        convert_teamID = [dict(row) for row in found_teamID]
-        try:
-            int(next(iter(convert_teamID)))
-        except:
-            return jsonify(status=400, message="Dude who is the owner aint even actually on a team")
-        
-        found_owner = conn.execute('SELECT owner from teams WHERE teamID=?', (next(iter(convert_teamID))))
+
+        found_owner = conn.execute('SELECT owner FROM teams WHERE teamID=?', (teamID,)).fetchall()
         conn.close()
         convert_owner = [dict(row) for row in found_owner]
-        
-        if next(iter(convert_owner)) != owner:
+        if int(next(iter(convert_owner))["owner"]) != owner:
             return jsonify(status=400, message="Bro is not him")
     except Exception as e:
             return jsonify(status=400, message=str(e))
     
     
     # actually switch the ownership
-    # TODO: finish this stupid thing with swithing, gotta find out which teamMember bro is, and also check if member is actually on the team
     try:
         conn = get_db_connection()
-        found_memberNum = conn.execute('SELECT teamNumber')
-        update_ownership = conn.execute('UPDATE teams SET owner=? WHERE teamID=?', (member, teamID))
-        update_ownership_again = conn.execute('UPDATE teams SET ')
-        return jsonify(status=200, message=f'owner: {owner}, member to switch with: {member}')
+        update_ownership = conn.execute('UPDATE teams SET owner=? WHERE teamID=?', (member, teamID,))
+        
+        test_1 = conn.execute('SELECT teamMember1 FROM teams WHERE teamID=?', (teamID,)).fetchall()
+        test_2 = conn.execute('SELECT teamMember2 FROM teams WHERE teamID=?', (teamID,)).fetchall()
+        conv_test_1 = [dict(row) for row in test_1]
+        conv_test_2 = [dict(row) for row in test_2]
+        
+        if int(next(iter(conv_test_1))["teamMember1"]) == member:
+            update_ownership_again = conn.execute('UPDATE teams SET teamMember1=? WHERE teamID=?', (owner, teamID,))
+        elif int(next(iter(conv_test_2))["teamMember2"]) == member:
+            update_ownership_again = conn.execute('UPDATE teams SET teamMember2=? WHERE teamID=?', (owner, teamID,))
+        else:
+            update_ownership_again = conn.execute('UPDATE teams SET teamMember3=? WHERE teamID=?', (owner, teamID,))
+            
+        conn.commit()
+        
+        get_team = conn.execute('SELECT * FROM teams WHERE teamID=?', (teamID,)).fetchall()
+        res = [dict(row) for row in get_team]
+        
+        conn.close()
+            
+        return jsonify(status=200, message="Success", team=next(iter(res)))
     except Exception as e:
         return jsonify(status=404, message="boohoo")
