@@ -472,3 +472,15 @@ if __name__ == "__main__":
     app.run(debug=True)
     
         
+@app.route("/team/leave", methods=["PUT"])
+def memberLeave():
+    
+    data = request.get_json()
+    teamID = data["teamID"]
+    member = data["teamMember"]
+    
+    try:
+        return jsonify(status=200, message="sheeesh")
+    except Exception as e:
+        return jsonify(status=404, message="a booboo was made")
+        
