@@ -433,7 +433,7 @@ if __name__ == "__main__":
     app.run(debug=True)
     
         
-@app.route("/team/switchOwner", methods=["PUT"])
+@app.route("/team/owner", methods=["PUT"])
 def switcheroo():
     
     data = request.get_json()
@@ -462,27 +462,18 @@ def switcheroo():
     try:
         conn = get_db_connection()
         found_hackers = conn.execute('SELECT UUID, teamID, firstName, lastName, email, school, discord, confirmationNumber, isConfirmed FROM hackers WHERE UUID=? OR UUID=?', (owner, member,)).fetchall()
+        convert_found = [dict(row) for row in found_hackers]
         conn.close()
         if len(found_hackers) < 2:
             return jsonify(status=400, message="Owner or Member does not exist")
-    except Exception as e:
-        return jsonify(status=404, message=str(e))
-    
-    # Check if owner and member are on same team cuz just in case
-    try:
-        conn = get_db_connection()
-        found_teamIDs = conn.execute('SELECT teamID FROM hackers WHERE UUID=? OR UUID=?', (owner, member,)).fetchall()
-        conn.close()
-        teamID_list = [dict(row) for row in found_teamIDs]
-        if teamID_list[0] != teamID_list[1]:
-            return jsonify(status=400, message="Bruh they not even on the same team")
+        elif convert_found[0]["teamID"] != convert_found[1]["teamID"]:
+            return jsonify(status=400, message="brotha they aint on the same team")
     except Exception as e:
         return jsonify(status=404, message=str(e))
     
     # Check if owner is actually the owner
     try:
         conn = get_db_connection()
-
         found_owner = conn.execute('SELECT owner FROM teams WHERE teamID=?', (teamID,)).fetchall()
         conn.close()
         convert_owner = [dict(row) for row in found_owner]
