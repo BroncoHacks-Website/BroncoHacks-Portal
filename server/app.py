@@ -503,23 +503,34 @@ def memberLeave():
         
         # check if member is owner or is not in team
         teamData = convert_team[0]
-        if teamData["owner"] == member:
+            
+        if int(teamData["owner"]) == member:
             return jsonify(status=403, message="Owner may not leave team")
-        elif teamData["teamMember1"] == member:
+        elif int(teamData["teamMember1"]) == member:
             isMem1 = True
-        elif teamData["teamMember2"] == member:
+        elif int(teamData["teamMember2"]) == member:
             isMem2 = True
-        elif teamData["teamMember3"] == member:
+        elif int(teamData["teamMember3"]) == member:
             isMem3 = True
         else:
             return jsonify(status=404, message="Not a member of team")
         
+        if (isMem1):
+            shift = conn.execute('UPDATE teams SET teamMember1=?, teamMember2=?, teamMember3=NULL', (teamData["teamMember2"],teamData["teamMember3"],))
+        elif (isMem2):
+            shift = conn.execute('UPDATE teams SET teamMember2=?, teamMember3=NULL', (teamData["teamMember3"],))
+        else:
+            shift = conn.execute('UPDATE teams SET teamMember3=NULL')
+            
+        remove = conn.execute('UPDATE hackers SET teamID=NULL WHERE UUID=?', (member,))
         
-        # TODO: make them leave and then shift everyone over this is gonna be dumb
-        try:
-            return jsonify(status=200, message="sheeesh")
-        except Exception as e:
-            return jsonify(status=404, message="a booboo was made")
+        conn.commit()
+        
+        res = conn.execute('SELECT UUID, teamID FROM hackers WHERE UUID=?', (member,))
+        convert_res = [dict(row) for row in res]
+        conn.close()
+        
+        return jsonify(status=200, message="Success", hacker=next(iter(convert_res)))
     except Exception as e:
         return jsonify(status=400, message=str(e))
         
