@@ -468,17 +468,24 @@ def switcheroo():
         except Exception as e:
             return jsonify(status=404, message=str(e))
         
-        # Check if owner and member exist AND if owner and member are on the same team
+        # check if team exists
+        try:
+            conn = get_db_connection()
+            find_team = conn.execute('SELECT * FROM teams WHERE teamID=?', (teamID,)).fetchall()
+            convert_team = [dict(row) for row in find_team]
+            if len(find_team) == 0:
+                return jsonify(status=404, message="Team Not Found")
+        except Exception as e:
+            return jsonify(status=404, message=str(e))
+        
+        # check if owner and member exist
         try:
             conn = get_db_connection()
             found_hackers = conn.execute('SELECT UUID, teamID, firstName, lastName, email, school, discord, confirmationNumber, isConfirmed FROM hackers WHERE UUID=? OR UUID=?', (owner, member,)).fetchall()
-            convert_found = [dict(row) for row in found_hackers]
             conn.close()
             
             if len(found_hackers) < 2:
                 return jsonify(status=400, message="Owner or Member does not exist")
-            elif convert_found[0]["teamID"] != convert_found[1]["teamID"]:
-                return jsonify(status=400, message="brotha they aint on the same team")
         except Exception as e:
             return jsonify(status=404, message=str(e))
         
@@ -489,10 +496,22 @@ def switcheroo():
             conn.close()
             convert_owner = [dict(row) for row in found_owner]
             if int(next(iter(convert_owner))["owner"]) != owner:
-                return jsonify(status=400, message="Bro is not him (he not the owner)")
+                return jsonify(status=400, message="Owner provided is not the owner of the teamID provided")
         except Exception as e:
                 return jsonify(status=400, message=str(e))
         
+        # Check if owner and member exist AND if owner and member are on the same team
+        try:
+            conn = get_db_connection()
+            found_hackers = conn.execute('SELECT UUID, teamID, firstName, lastName, email, school, discord, confirmationNumber, isConfirmed FROM hackers WHERE UUID=? OR UUID=?', (owner, member,)).fetchall()
+            convert_found = [dict(row) for row in found_hackers]
+            conn.close()
+            
+            # since we already validated that owner is the owner of the team, if the teamMember and owner are different team, then member is not on team
+            if convert_found[0]["teamID"] != convert_found[1]["teamID"]:
+                return jsonify(status=400, message="Team Member is not a member of given teamID")
+        except Exception as e:
+            return jsonify(status=404, message=str(e))
         
         # actually switch the ownership
         try:
