@@ -476,6 +476,7 @@ if __name__ == "__main__":
 def memberLeave():
     
     try:
+        # check if missing data
         data = request.get_json()
         
         if not data:
@@ -489,6 +490,7 @@ def memberLeave():
         teamID = data["teamID"]
         member = data["teamMember"]
         
+        # flags to see which member of the team in the db they are
         isMem1 = False
         isMem2 = False
         isMem3 = False
@@ -515,6 +517,7 @@ def memberLeave():
         else:
             return jsonify(status=404, message="Not a member of team")
         
+        # change team db and shift members over
         if (isMem1):
             shift = conn.execute('UPDATE teams SET teamMember1=?, teamMember2=?, teamMember3=NULL', (teamData["teamMember2"],teamData["teamMember3"],))
         elif (isMem2):
@@ -522,6 +525,7 @@ def memberLeave():
         else:
             shift = conn.execute('UPDATE teams SET teamMember3=NULL')
             
+        # remove teamID from hacker
         remove = conn.execute('UPDATE hackers SET teamID=NULL WHERE UUID=?', (member,))
         
         conn.commit()
