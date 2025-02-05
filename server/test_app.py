@@ -2,6 +2,7 @@ import pytest
 import os
 from app import app
 import sqlite3
+import json
 
 DB_PATH = os.path.abspath("database.db")
 
@@ -36,3 +37,8 @@ def test_create_tuah(client):
         "teamName": "Hawk Tuaher"
     }
 }
+    
+def test_get_all_data(client):
+    response = client.get("/admin")
+    assert response.status_code == 200
+    assert json.loads(response.data)["message"] == "successfully got all data"
