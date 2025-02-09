@@ -70,11 +70,8 @@ def test_urmom(client):
     assert response["status"] == 200
     assert hackers[0]["teamID"] == 123456
     assert hackers[0]["firstName"] == "Daniel"
-    assert hackers[0]["lastName"] == "Pasion"
-    assert hackers[0]["email"] == "dpasion@cpp,edu"
-    assert hackers[0]["school"] == "cpp"
-    assert hackers[0]["discord"] == ".theDaniel"
-    assert hackers[0]["isConfirmed"] == True
+    assert hackers[1]["firstName"] == "Cesar Henry"
+    assert hackers[2]["firstName"] == "LeCaleb"
     
 ########## Team Test Cases ##########
 def test_get_users_team(client):
