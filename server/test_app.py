@@ -21,6 +21,62 @@ def client():
     with app.test_client() as client:
         yield client
 
+def test_get_all_data(client):
+    response = client.get("/admin")
+    assert response.status_code == 200
+    assert json.loads(response.data)["message"] == "successfully got all data"
+
+########## Hackers Test Cases ##########
+def test_create_hacker(client):
+    data = {
+        "firstName": "Hawk",
+        "lastName": "Tuah",
+        "password": "Eyeofrah69",
+        "email": "hwelch@cpp.edu",
+        "school": "cpp"
+    }
+    response = client.post("/hacker", json=data)
+    response = response.json
+    hacker = response["hacker"]
+    assert response["message"] == "Hacker created successfully"
+    assert response["status"] == 201
+    assert hacker["teamID"] == None
+    assert hacker["firstName"] == "Hawk"
+    assert hacker["lastName"] == "Tuah"
+    assert hacker["email"] == "hwelch@cpp.edu"
+    assert hacker["school"] == "cpp"
+    assert hacker["discord"] == None
+    assert hacker["isConfirmed"] == False
+
+def test_get_one_hacker(client):
+    response = client.get("/hacker?UUID=1")
+    response = response.json
+    hacker = response["hacker"]
+    assert response["message"] == "Hacker Found"
+    assert response["status"] == 200
+    assert hacker["teamID"] == 123456
+    assert hacker["firstName"] == "Daniel"
+    assert hacker["lastName"] == "Pasion"
+    assert hacker["email"] == "dpasion@cpp,edu"
+    assert hacker["school"] == "cpp"
+    assert hacker["discord"] == ".theDaniel"
+    assert hacker["isConfirmed"] == True
+
+def test_urmom(client):
+    response = client.get("/hackers")
+    response = response.json
+    hackers = response["hackers"]
+    assert response["message"] == "succes"
+    assert response["status"] == 200
+    assert hackers[0]["teamID"] == 123456
+    assert hackers[0]["firstName"] == "Daniel"
+    assert hackers[0]["lastName"] == "Pasion"
+    assert hackers[0]["email"] == "dpasion@cpp,edu"
+    assert hackers[0]["school"] == "cpp"
+    assert hackers[0]["discord"] == ".theDaniel"
+    assert hackers[0]["isConfirmed"] == True
+    
+########## Team Test Cases ##########
 def test_get_users_team(client):
     response = client.get("/team?UUID=1")
     assert response.json == {
@@ -116,11 +172,3 @@ def test_get_team(client):
     assert team2["teamMember2"] == None
     assert team2["teamMember3"] == None
     assert team2["teamName"] == "Hawk Tuaher"
-
-
-
-
-def test_get_all_data(client):
-    response = client.get("/admin")
-    assert response.status_code == 200
-    assert json.loads(response.data)["message"] == "successfully got all data"
