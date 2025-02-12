@@ -12,7 +12,8 @@ CREATE TABLE hackers (
     school TEXT NOT NULL,
     discord TEXT UNIQUE,
     confirmationNumber NUMBER,
-    isConfirmed BOOLEAN
+    isConfirmed BOOLEAN,
+    isAdmin BOOLEAN
 );
 
 CREATE TABLE teams (
