@@ -466,12 +466,86 @@ def get_team():
         return jsonify(status=200, message="success", teams=posts_list)
     except Exception as e:
         return jsonify(status=400, message=str(e))
-    
-
-if __name__ == "__main__":
-    app.run(debug=True)
-    
         
+@app.route("/team/leave", methods=["PUT"])
+def memberLeave():
+    
+    try:
+        # check if missing data
+        data = request.get_json()
+        
+        if not data:
+            return jsonify(message="No data provided",status=400)
+        
+        required_fields = ['teamID', "teamMember"]
+        for field in required_fields:
+            if field not in data:
+                return jsonify(status=400, message=f"Missing {field}")
+            
+        teamID = data["teamID"]
+        member = data["teamMember"]
+
+        try:
+            int(teamID)
+        except:
+            return jsonify(status=422, message="Unprocessable Entity (teamID is of wrong type)")
+
+        try:
+            int(member)
+        except:
+            return jsonify(status=422, message="Unprocessable Entity (Member is of wrong type)")
+        
+        # flags to see which member of the team in the db they are
+        isMem1 = False
+        isMem2 = False
+        isMem3 = False
+        
+        conn = get_db_connection()
+        
+        # check if team exists
+        find_team = conn.execute('SELECT * FROM teams WHERE teamID=?', (teamID,)).fetchall()
+        convert_team = [dict(row) for row in find_team]
+        if len(find_team) == 0:
+            return jsonify(status=404, message="Team does not exist")
+        
+        # check if member is owner or is not in team
+        teamData = convert_team[0]
+            
+        try:
+            if int(teamData["owner"]) == member:
+                return jsonify(status=403, message="Owner may not leave team")
+            elif int(teamData["teamMember1"]) == member:
+                isMem1 = True
+            elif int(teamData["teamMember2"]) == member:
+                isMem2 = True
+            elif int(teamData["teamMember3"]) == member:
+                isMem3 = True
+            else:
+                return jsonify(status=404, message="Not a member of team")
+        except:
+            return jsonify(status=404, message="Not a member of team")
+        
+        # change team db and shift members over
+        if (isMem1):
+            shift = conn.execute('UPDATE teams SET teamMember1=?, teamMember2=?, teamMember3=NULL', (teamData["teamMember2"],teamData["teamMember3"],))
+        elif (isMem2):
+            shift = conn.execute('UPDATE teams SET teamMember2=?, teamMember3=NULL', (teamData["teamMember3"],))
+        else:
+            shift = conn.execute('UPDATE teams SET teamMember3=NULL')
+            
+        # remove teamID from hacker
+        remove = conn.execute('UPDATE hackers SET teamID=NULL WHERE UUID=?', (member,))
+        
+        conn.commit()
+        
+        res = conn.execute('SELECT UUID, teamID FROM hackers WHERE UUID=?', (member,))
+        convert_res = [dict(row) for row in res]
+        conn.close()
+        
+        return jsonify(status=200, message="Success", hacker=next(iter(convert_res)))
+    except Exception as e:
+        return jsonify(status=400, message=str(e))
+    
 @app.route("/team/owner", methods=["PUT"])
 def switcheroo():
     
@@ -585,3 +659,6 @@ def switcheroo():
             return jsonify(status=404, message="boohoo")
     except Exception as e:
         return jsonify(status=400, message=str(e))
+    
+if __name__ == "__main__":
+    app.run(debug=True)
