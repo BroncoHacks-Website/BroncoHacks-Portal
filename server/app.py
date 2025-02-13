@@ -450,6 +450,35 @@ def delete_tuah():
         return jsonify(message=str(e),status=500)
     finally:
         conn.close()
+
+@app.route("/team/removeTeamMember", methods=['DELETE'])
+def remove_that_playa():
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify(message="no data provided",status=400)
+        
+        team_id = data.get("teamID")
+        owner = data.get("owner")
+        team_member_to_kick = data.get("teamMember")
+
+        conn = get_db_connection()
+
+        team_exists = conn.execute("SELECT teamID FROM teams WHERE teamID = ?", (int(team_id),)).fetchone()
+        if not team_exists:
+            return jsonify(status=404, message="Team does not exist in the database")
+        
+        is_it_owner_kicking = conn.execute("SELECT owner FROM teams WHERE teamID = ?", (int(team_id),)).fetchone()
+        if is_it_owner_kicking != owner:
+            return jsonify(status=418, message="This user is not the owner of the team")
+        
+        is_member_a_part_of_the_team = conn.execute("SELECT teamMember1, teamMember2, teamMember3 FROM teams WHERE teamID = ?", (int(team_id),)).fetchone()
+        if team_member_to_kick not in is_member_a_part_of_the_team:
+            return jsonify(status=404, message="Team Member the Owner is trying to kick is not in the team")
+
+                
+
+        
         
 @app.route("/teams", methods=['GET'])
 def get_team():
