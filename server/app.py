@@ -464,7 +464,40 @@ def remove_that_playa():
 
         conn = get_db_connection()
 
-        team_exists = conn.execute("SELECT teamID FROM teams WHERE teamID = ?", (int(team_id),)).fetchone()
+        team = conn.execute("SELECT * FROM teams WHERE teamID = ?", (int(team_id),)).fetchone()
+
+        if not team:
+            return jsonify(status=404, message="Team does not exist in the database")
+        
+        if owner != team["owner"]:
+            return jsonify(status=418, message="This user is not the owner of the team")
+        
+        if team_member_to_kick != team["teamMember1"] or team_member_to_kick != team["teamMember2"] or team_member_to_kick != team["teamMember3"]:
+            return jsonify(status=404, message="Team Member the Owner is trying to kick is not in the team")
+
+        conn.execute("UPDATE teams SET teamMember1 OR teamMember2 OR teamMember3 = ? WHERE teamMember1 OR teamMember2 OR teamMember3 = ?", (None, team_member_to_kick))
+
+        kicked_member_info = get_hacker_by_id(team_member_to_kick)
+
+        return jsonify({
+            "message": "Success",
+            "status": 200,
+            "team": {
+                "teamID": id,
+                "teamName": team["teamName"],
+                "owner": owner,
+                "teamMember1": team[],
+                "teamMember2": None,
+                "teamMember3": None
+            },
+            "removedMember": {
+                "UUID": kicked_member_info["UUID"]
+                "name" kicked_member_info[""]
+            }
+            }
+        })
+
+        """ team_exists = conn.execute("SELECT teamID FROM teams WHERE teamID = ?", (int(team_id),)).fetchone()
         if not team_exists:
             return jsonify(status=404, message="Team does not exist in the database")
         
@@ -474,9 +507,13 @@ def remove_that_playa():
         
         is_member_a_part_of_the_team = conn.execute("SELECT teamMember1, teamMember2, teamMember3 FROM teams WHERE teamID = ?", (int(team_id),)).fetchone()
         if team_member_to_kick not in is_member_a_part_of_the_team:
-            return jsonify(status=404, message="Team Member the Owner is trying to kick is not in the team")
+            return jsonify(status=404, message="Team Member the Owner is trying to kick is not in the team") """
+        
 
-                
+    except Exception as e:
+        return jsonify({"message": str(e), "status":500})
+    finally:
+        conn.close()
 
         
         
