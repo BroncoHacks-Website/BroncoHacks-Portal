@@ -454,6 +454,67 @@ def delete_tuah():
         return jsonify(message=str(e),status=500)
     finally:
         conn.close()
+
+@app.route("/team/removeTeamMember", methods=['PUT'])
+def remove_that_playa():
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify(message="no data provided",status=400)
+        
+        team_id = data.get("teamID")
+        owner = data.get("owner")
+        team_member_to_kick = data.get("teamMember")
+
+        conn = get_db_connection()
+
+        team = conn.execute("SELECT * FROM teams WHERE teamID = ?", (int(team_id),)).fetchone()
+
+        if not team:
+            return jsonify(status=404, message="Team does not exist in the database")
+        
+        if owner != team["owner"]:
+            return jsonify(status=418, message="This user is not the owner of the team")
+        
+        if team_member_to_kick not in [team["teamMember1"], team["teamMember2"], team["teamMember3"]]:
+            return jsonify(status=404, message="Team Member the Owner is trying to kick is not in the team")
+
+        #shift the other teamMembers up when the player needing to be kicked is either teamMember1 or teamMember2 and set teamMember3 to null
+        conn.execute("""
+            UPDATE teams 
+            SET 
+            teamMember1 = CASE WHEN teamMember1 = ? THEN teamMember2 ELSE teamMember1 END, 
+            teamMember2 = CASE WHEN teamMember1 = ? THEN teamMember3 WHEN teamMember2 = ? THEN teamMember3 ELSE teamMember2 END, 
+            teamMember3 = CASE WHEN teamMember1 = ? OR teamMember2 = ? THEN NULL WHEN teamMember3 = ? THEN NULL ELSE teamMember3 END 
+            WHERE teamID = ?
+        """, (team_member_to_kick, team_member_to_kick, team_member_to_kick, team_member_to_kick, team_member_to_kick, team_member_to_kick, team_id)
+        )
+        conn.execute("UPDATE hackers SET teamID = NULL WHERE UUID = ?", (team_member_to_kick,))
+        conn.commit()
+        
+        kicked_member_info = get_hacker_by_id(team_member_to_kick)
+        team = conn.execute("SELECT * FROM teams WHERE teamID = ?", (int(team_id),)).fetchone()
+
+        return jsonify({
+            "message": "Success",
+            "status": 200,
+            "team": {
+                "teamID": team_id,
+                "teamName": team["teamName"],
+                "owner": owner,
+                "teamMember1": team["teamMember1"],
+                "teamMember2": team["teamMember2"],
+                "teamMember3": team["teamMember3"]
+            },
+            "removedMember": {
+                "UUID": kicked_member_info["UUID"],
+                "teamID": kicked_member_info["teamID"]
+            }
+        })
+    except Exception as e:
+        return jsonify({"message": str(e), "status":500})
+    finally:
+        conn.close()
         
 @app.route("/teams", methods=['GET'])
 def get_team():
