@@ -1,7 +1,11 @@
+import { Route, Routes } from "react-router";
+import Navbar from "./components/navbar";
+
 function App() {
   return (
     <>
-      <div className="text-red-800">BH PORTAL</div>
+      <Navbar></Navbar>
+      <Routes></Routes>
     </>
   );
 }
