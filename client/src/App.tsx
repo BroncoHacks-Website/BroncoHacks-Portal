@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import CreateAccount from "./pages/CreateAccount";
+import ManageTeam from "./pages/ManageTeam";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/" element={<CreateAccount />} />
         <Route path="/" element={<Login />} />
+        <Route path="/manageTeam" element={<ManageTeam />} />
       </Routes>
     </>
   );
