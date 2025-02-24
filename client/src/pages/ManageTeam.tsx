@@ -12,7 +12,7 @@ const TeamMember = ({
     const [id, setID] = useState(idnum);
     
     const toggleOptions = () => {
-
+        console.log("yourmom");
     }
 
     if (memberName == "") {
