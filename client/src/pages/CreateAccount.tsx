@@ -11,11 +11,11 @@ function CreateAccount() {
 
 	return (
 		<>
-			<body className="bg-indigo-300 h-[85vh] flex flex-col">
+			<body className="bg-indigo-300 h-[85vh] flex flex-col items-center justify-center">
 				<div className="group h-[625px] w-[250px] md:w-[365px] [perspective:1000px]">
 					{/*Actual card that is going to be flipped around*/}
 					<div className={`absolute inset-0 w-full h-full [transform-style:preserve-3d] transition-all duration-500 ${isFlipped ? "rotate-y-180" : ""}`}>
-						<div className={`flex flex-col gap-4 items-center h-[625px] w-[250px] md:w-[365px] m-auto rounded-xl bg-white shadow-lg shadow-black/75 ${isFlipped ? "backface-hidden" : ""}`}>
+						<div className={`flex flex-col gap-4 items-center h-[625px] w-[250px] md:w-[365px] m-auto rounded-xl bg-white shadow-lg shadow-black/75 backface-hidden `}>
 							<h1 className="text-3xl font-bold m-10 md:text-5xl">Welcome🐴</h1>
 							<div className="flex flex-col gap-3 md:flex-row justify-between w-[90%]">
 								<div className="first">
@@ -42,7 +42,7 @@ function CreateAccount() {
 							</div>
 						</div>
 
-						<div className={`absolute flex flex-col gap-4 items-center h-[625px] w-[250px] md:w-[365px] m-auto rounded-xl bg-white shadow-lg shadow-black/75 ${isFlipped ? "" : "backface-hidden"} `} >
+						<div className={`absolute inset-0 flex flex-col gap-4 items-center h-[625px] w-[250px] md:w-[365px] m-auto rounded-xl bg-white shadow-lg shadow-black/75 rotate-y-180 backface-hidden  `} >
 							<h1 className="text-3xl font-bold m-10 md:text-5xl">🐴</h1>
 							<div className="flex flex-col gap-3 w-[90%] items-start">
 								<p>Discord Name</p>
