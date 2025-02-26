@@ -1,13 +1,21 @@
+import { Link } from "react-router";
+
 function Navbar() {
   return (
     <div className="flex flex-row justify-between items-center h-[15vh] border-1 shadow-lg py-4 px-8">
       {/* Left Section */}
       <div className="flex flex-row items-center gap-4">
-        <img
-          src="BroncoHacksSquareLogo.png"
-          className="h-[10vh] w-[10vh]"
-          alt="BroncoHacks Logo"
-        />
+        <Link
+          to={{
+            pathname: "/",
+          }}
+        >
+          <img
+            src="BroncoHacksSquareLogo.png"
+            className="h-[10vh] w-[10vh]"
+            alt="BroncoHacks Logo"
+          />
+        </Link>
         <div className="font-bold text-5xl">BroncoHacks Portal</div>
       </div>
 
