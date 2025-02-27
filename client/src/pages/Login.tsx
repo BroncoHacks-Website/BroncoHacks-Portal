@@ -49,6 +49,8 @@ function Login() {
       setRequestMessage("");
       setLoggedIn(true);
       localStorage.setItem("token", json.token);
+      window.dispatchEvent(new Event("storage"));
+
       if (json.isConfirmed) {
         navigate("/FindTeam");
       } else {

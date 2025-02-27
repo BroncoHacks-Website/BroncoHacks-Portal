@@ -14,7 +14,7 @@ app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = 'sybautspmo'
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=5)
 jwt = JWTManager(app)
-CORS(app, resources={r"/*": {"origins": "http://localhost:5173/"}})
+CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
 
 
 
@@ -155,9 +155,12 @@ def login():
 @jwt_required()
 @cross_origin()
 def logout():
-    response = jsonify({"msg": "logout successful"})
-    unset_jwt_cookies(response)
-    return response
+    try:
+        response = jsonify({"msg": "logout successful","status":200})
+        unset_jwt_cookies(response)
+        return response
+    except Exception as e:
+        return jsonify(status=401,message=str(e)),401
 
 @app.after_request
 def refresh_expiring_jwts(response):
