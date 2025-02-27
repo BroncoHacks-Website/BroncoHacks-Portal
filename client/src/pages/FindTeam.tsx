@@ -4,10 +4,10 @@ function FindTeam() {
   return (
     <>
       <div className="bg-[#c3d3eb] h-[85vh] flex flex-col">
-        <div className="grid lg:grid-cols-2 sm:grid-cols-1 gap-4 mx-auto mt-10 text-2xl">
+        <div className="grid lg:grid-cols-2 md:grid-cols-1 xs:mx-4 gap-4 mx-auto mt-10 text-2xl">
           {/* create your team tab */}
-          <div className="bg-white px-30 py-8 rounded-2xl border-lg shadow-lg mx-10">
-            <img src="user.png" alt="single user default image" className="h-[40vh] w-[40vh] mx-auto p-15"/>
+          <div className="bg-white px-30 py-8 rounded-2xl border-lg shadow-lg mx-10 text-center">
+            <img src="user.png" alt="single user default image" className="h-[40vh] w-[40vh] mx-auto scale-50"/>
             <div className="flex items-center justify-center font-black text-4xl">
               <h1>Create Your Team</h1>
             </div>
@@ -25,7 +25,7 @@ function FindTeam() {
           </div>
           
           {/* join team via code tab */}
-          <div className="bg-white px-30 py-8 rounded-2xl border-lg shadow-lg mx-10">
+          <div className="bg-white px-30 py-8 rounded-2xl border-lg shadow-lg mx-10 text-center">
             <img src="group.png" alt="single user default image" className="h-[40vh] w-[40vh] mx-auto"/>
             <div className="flex items-center justify-center font-black text-4xl">
               <h1>Join Team via Code</h1>
