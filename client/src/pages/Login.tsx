@@ -42,7 +42,6 @@ function Login() {
     const res = await fetch(uri + `login?email=${email}&password=${password}`);
     const json = await res.json();
     setIsLoading(false);
-    console.log(json);
     if (json.status != 200) {
       setRequestMessage(json.message);
     } else {
@@ -51,7 +50,7 @@ function Login() {
       setLoggedIn(true);
       localStorage.setItem("token", json.token);
       if (json.isConfirmed) {
-        navigate("/Urmom");
+        navigate("/FindTeam");
       } else {
         navigate("/EmailConfirmation");
       }
