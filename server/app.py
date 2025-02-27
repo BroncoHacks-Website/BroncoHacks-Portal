@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, session
+from flask import Flask, jsonify, request
 import sqlite3
 import random
 import bcrypt
@@ -6,12 +6,15 @@ import json
 from datetime import datetime, timedelta, timezone
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
                                unset_jwt_cookies, jwt_required, JWTManager
+from flask_cors import CORS, cross_origin
+
 
 #Settings
 app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = 'sybautspmo'
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=5)
 jwt = JWTManager(app)
+CORS(app, resources={r"/*": {"origins": "http://localhost:5173/"}})
 
 
 
@@ -96,6 +99,7 @@ def index():
 
 @app.route("/admin", methods=['GET'])
 @jwt_required()
+@cross_origin()
 def get_all_data():
     try:
         # retrieve data
@@ -119,6 +123,7 @@ def get_all_data():
     
 #Tokens
 @app.route("/login", methods=["GET"])
+@cross_origin()
 def login():
     email = request.args.get('email')
     if email is None:
@@ -134,21 +139,21 @@ def login():
         conn.close()
         
         hacker_list = [dict(row) for row in hacker]
-        user = hacker_list[0]
-        session["user"] = user
         if len(hacker_list) == 0:
-            return jsonify(status=404, message="Email Not Found")
+            return jsonify(status=404, message="Email Not Found"),404
         else:
+            user = hacker_list[0]
             if bcrypt.checkpw(password.encode('utf-8'), user['password']):
                 access_token = create_access_token(identity=email)
-                return jsonify(status=200, message="Correct Password", token=access_token)
+                return jsonify(status=200, message="Correct Password", token=access_token, isConfirmed=user["isConfirmed"]),200
             else:
-                return jsonify(status=403,message="Wrong Password")
+                return jsonify(status=403,message="Incorrect Password"),403
     except Exception as e:
-        return jsonify(status=400, message=str(e))
+        return jsonify(status=400, message=str(e)),400
     
 @app.route("/logout", methods=["POST"])
 @jwt_required()
+@cross_origin()
 def logout():
     response = jsonify({"msg": "logout successful"})
     unset_jwt_cookies(response)
@@ -175,6 +180,7 @@ def refresh_expiring_jwts(response):
 
 @app.route("/hacker", methods=['POST'])
 @jwt_required()
+@cross_origin()
 def create_hacker():
     try:
         data = request.get_json()
@@ -224,6 +230,7 @@ def create_hacker():
     
 @app.route("/hacker", methods=['GET'])
 @jwt_required()
+@cross_origin()
 def getOneHacker():
     # get req param from url
     UUID = request.args.get('UUID')
@@ -249,9 +256,9 @@ def getOneHacker():
     except Exception as e:
         return jsonify(status=400, message=str(e))
     
-
 @app.route("/hackers",  methods=['GET'])
 @jwt_required()
+@cross_origin()
 def urmom():
     try:
         conn = get_db_connection() 
@@ -271,6 +278,7 @@ def urmom():
     
 @app.route("/hacker", methods=['PUT'])
 @jwt_required()
+@cross_origin()
 def update_hacker():
     try:
         data = request.get_json()
@@ -339,6 +347,7 @@ def update_hacker():
 
 @app.route("/team", methods=['GET'])
 @jwt_required()
+@cross_origin()
 def get_users_team():
     #grab UUID from get request
     UUID = request.args.get("UUID")
@@ -410,6 +419,7 @@ def get_users_team():
 
 @app.route("/team", methods=["POST"])
 @jwt_required()
+@cross_origin()
 def create_tuah():
     try:
         data = request.get_json()
@@ -478,6 +488,7 @@ def create_tuah():
 
 @app.route("/team", methods=["DELETE"])
 @jwt_required()
+@cross_origin()
 def delete_tuah():
     try:
         data = request.get_json()
@@ -530,6 +541,7 @@ def delete_tuah():
 
 @app.route("/team/removeTeamMember", methods=['PUT'])
 @jwt_required()
+@cross_origin()
 def remove_that_playa():
     try:
         data = request.get_json()
@@ -592,6 +604,7 @@ def remove_that_playa():
         
 @app.route("/teams", methods=['GET'])
 @jwt_required()
+@cross_origin()
 def get_team():
     try:
         conn = get_db_connection()
@@ -609,6 +622,7 @@ def get_team():
         
 @app.route("/team/leave", methods=["PUT"])
 @jwt_required()
+@cross_origin()
 def memberLeave():
     
     try:
@@ -689,6 +703,7 @@ def memberLeave():
     
 @app.route("/team/owner", methods=["PUT"])
 @jwt_required()
+@cross_origin()
 def switcheroo():
     
     try:
