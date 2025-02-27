@@ -725,5 +725,101 @@ def switcheroo():
     except Exception as e:
         return jsonify(status=400, message=str(e))
     
+@app.route("/team/addTeamMember", methods=["PUT"])
+def addTeamMember():
+    try:
+        data = request.get__json()
+        
+        if not data:
+            return jsonify(message="no data provided", status=400)
+        
+        required_fields = ['teamID', 'teamMember']
+        for field in required_fields:
+            if field not in data:
+                return jsonify(status=400, message=f"Missing {field}")
+        
+        teamID = data['teamID']
+        member = data['teamMember'] 
+        
+        # check if member is an int
+        try:
+            int(member)
+        except:
+            return jsonify(status=422, message="Unprocessable Entity (Member is of wrongtype)")
+        
+        # check if team is an int
+        try:
+            int(teamID)
+        except:
+            return jsonify(status=422, message="Unprocessable Entity (Member is of wrong type)")
+        
+        #check if user is confirmed
+        try: 
+            conn = get_db_connection()
+            found_hacker=conn.execute("SELECT confirmationNumber, isConfirmed FROM hackers WHERE UUID=?", (member,)).fetchall()
+            conn.close()
+            convert_hacker = [dict(row) for row in found_hacker]
+            
+            if len(convert_hacker) < 2:
+                return jsonify(status=400, message="Member does not exist")
+        except:
+            return jsonify(status=422, message=str(e))
+        
+        #check if team exists
+        try:
+            conn = get_db_connection()
+            find_team = conn.execute('SELECT * FROM teams WHERE teamID=?', (teamID,)).fetchall()
+            conn.close()
+            convert_team = [dict(row) for row in find_team]
+            if len(find_team) == 0:
+                return jsonify(status=404, message="Team does not exist")
+        except Exception as e:
+            return jsonify(status=404, message=str(e))
+            
+        #check if member is already apart of the team
+        try:
+            conn = get_db_connection()
+            find_member = conn.execute('SELECT teamMember1, teamMember2, teamMember3 FROM teams WHERE teamMember1=? or teamMember2=? or teamMember3=?', (member, member, member)).fetchall()
+            conn.close()
+            convert_member = [dict(row) for row in find_member]
+            if len(convert_member) > 0:
+                return jsonify(status=404, message="Team member already on team")
+        except Exception as e:
+            return jsonify(status=404, message=str(e))
+        
+        #check if team is full
+        try:
+            conn = get_db_connection()
+            find_team = conn.execute('SELECT teamMember1, teamMember2, teamMember3 FROM teams WHERE teamID=?', (teamID,)).fetchall()
+            conn.close()
+            convert_team = [dict(row) for row in find_team]
+            counter = 0
+            for hacker in convert_team:
+                if hacker != None:
+                    counter += 1
+                if counter == 3:
+                    return jsonify(status=404, message="Team is full")
+        except Exception as e:
+            return jsonify(status=404, message=str(e))
+        
+        # add member to team
+        try:
+            conn = get_db_connection()
+            find_members = conn.execute('SELECT teamMember1, teamMember2, teamMember3 FROM teams WHERE teamID=?', (teamID,)).fetchall()
+            convert_members = [dict(row) for row in find_members]
+            counter = 0
+            for hacker in convert_members:
+                if hacker == None:
+                    if counter == 0:
+                        add_team_member=conn.execute(UPDATE teamMember1)
+        except Exception as e:
+            return jsonify(status=404, message=str(e))
+        
+        # add teamID to member
+        
+    except:
+        return urmom
+        
+    
 if __name__ == "__main__":
     app.run(debug=True)
