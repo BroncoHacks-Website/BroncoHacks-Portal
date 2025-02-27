@@ -7,15 +7,28 @@ from datetime import datetime, timedelta, timezone
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
                                unset_jwt_cookies, jwt_required, JWTManager
 from flask_cors import CORS, cross_origin
-
+from flask_mail import Mail, Message 
+from dotenv import load_dotenv
+import os
 
 #Settings
 app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = 'sybautspmo'
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=5)
 jwt = JWTManager(app)
-CORS(app, resources={r"/*": {"origins": "http://localhost:5173/"}})
+CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
+load_dotenv()
 
+   
+# configuration of mail 
+mail = Mail(app) # instantiate the mail class 
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'cppbroncohacks@gmail.com'
+app.config['MAIL_PASSWORD'] = os.getenv('MAILING_PASSWORD')
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+mail = Mail(app)
 
 
 def get_db_connection():
@@ -155,9 +168,12 @@ def login():
 @jwt_required()
 @cross_origin()
 def logout():
-    response = jsonify({"msg": "logout successful"})
-    unset_jwt_cookies(response)
-    return response
+    try:
+        response = jsonify({"msg": "logout successful","status":200})
+        unset_jwt_cookies(response)
+        return response
+    except Exception as e:
+        return jsonify(status=401,message=str(e)),401
 
 @app.after_request
 def refresh_expiring_jwts(response):
@@ -179,7 +195,6 @@ def refresh_expiring_jwts(response):
 
 
 @app.route("/hacker", methods=['POST'])
-@jwt_required()
 @cross_origin()
 def create_hacker():
     try:
@@ -223,6 +238,13 @@ def create_hacker():
         new_hacker = get_hacker_by_id(hacker_id)
         conn.close()
 
+        msg = Message( 
+                'Confirm your email for BroncoHacks2025' , 
+                sender ='cppbroncohacks@gmail.com', 
+                recipients = [email] 
+               ) 
+        msg.body = 'Your verification code is: <b>' + str(confirmationNumber) + "</b>. " + "You can confrim you account here: [INSERT LINK WHEN READY]"
+        mail.send(msg)
 
         return jsonify(status=201, message="Hacker created successfully", hacker=new_hacker)
     except Exception as e:
