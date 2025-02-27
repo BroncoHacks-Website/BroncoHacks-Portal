@@ -95,6 +95,7 @@ def index():
     return string + "</table>"
 
 @app.route("/admin", methods=['GET'])
+@jwt_required()
 def get_all_data():
     try:
         # retrieve data
@@ -147,6 +148,7 @@ def login():
         return jsonify(status=400, message=str(e))
     
 @app.route("/logout", methods=["POST"])
+@jwt_required()
 def logout():
     response = jsonify({"msg": "logout successful"})
     unset_jwt_cookies(response)
@@ -172,6 +174,7 @@ def refresh_expiring_jwts(response):
 
 
 @app.route("/hacker", methods=['POST'])
+@jwt_required()
 def create_hacker():
     try:
         data = request.get_json()
@@ -220,6 +223,7 @@ def create_hacker():
         return jsonify(status=400,message=str(e))
     
 @app.route("/hacker", methods=['GET'])
+@jwt_required()
 def getOneHacker():
     # get req param from url
     UUID = request.args.get('UUID')
@@ -266,6 +270,7 @@ def urmom():
         return jsonify(status=400,message=str(e))
     
 @app.route("/hacker", methods=['PUT'])
+@jwt_required()
 def update_hacker():
     try:
         data = request.get_json()
@@ -333,6 +338,7 @@ def update_hacker():
 ########## Team ########## 
 
 @app.route("/team", methods=['GET'])
+@jwt_required()
 def get_users_team():
     #grab UUID from get request
     UUID = request.args.get("UUID")
@@ -403,6 +409,7 @@ def get_users_team():
         conn.close()
 
 @app.route("/team", methods=["POST"])
+@jwt_required()
 def create_tuah():
     try:
         data = request.get_json()
@@ -470,6 +477,7 @@ def create_tuah():
         conn.close()
 
 @app.route("/team", methods=["DELETE"])
+@jwt_required()
 def delete_tuah():
     try:
         data = request.get_json()
@@ -521,6 +529,7 @@ def delete_tuah():
         conn.close()
 
 @app.route("/team/removeTeamMember", methods=['PUT'])
+@jwt_required()
 def remove_that_playa():
     try:
         data = request.get_json()
@@ -582,6 +591,7 @@ def remove_that_playa():
         conn.close()
         
 @app.route("/teams", methods=['GET'])
+@jwt_required()
 def get_team():
     try:
         conn = get_db_connection()
@@ -598,6 +608,7 @@ def get_team():
         return jsonify(status=400, message=str(e))
         
 @app.route("/team/leave", methods=["PUT"])
+@jwt_required()
 def memberLeave():
     
     try:
@@ -677,6 +688,7 @@ def memberLeave():
         return jsonify(status=400, message=str(e))
     
 @app.route("/team/owner", methods=["PUT"])
+@jwt_required()
 def switcheroo():
     
     try:
