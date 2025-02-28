@@ -1,6 +1,15 @@
-import { Link } from "react-router";
+import { useEffect } from "react";
+import { Link, useNavigate } from "react-router";
 
 function Home() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      navigate("/FindTeam");
+    }
+  }, [navigate]);
+
   return (
     <>
       <div className="bg-indigo-300 h-[85vh] flex flex-col">

@@ -62,7 +62,7 @@ function Navbar() {
           className="h-[10vh] w-[10vh]"
           alt="BroncoHacks Logo"
         />
-        <div className="font-bold text-5xl">BroncoHacks Portal</div>
+        <div className="font-bold text-2xl sm:text-5xl">BroncoHacks Portal</div>
       </div>
 
       {/* Right Section */}
@@ -76,13 +76,10 @@ function Navbar() {
             </button>
           </div>
         ) : (
-          <Link
-            to={{
-              pathname: "/",
-            }}
-          >
-            <div className="text-white bg-[#035BA5] hover:bg-[#02498A] focus:outline-none focus:ring-4 focus:ring-blue-300 font-bold rounded-lg text-3xl py-2 px-4">
-              Back to Home
+          <Link to={{ pathname: "/" }}>
+            <div className="text-white bg-[#035BA5] hover:bg-[#02498A] focus:outline-none focus:ring-4 focus:ring-blue-300 font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
+              <span className="block sm:hidden text-3xl">⌂</span>
+              <span className="hidden sm:block text-center">Back to Home</span>
             </div>
           </Link>
         )}
