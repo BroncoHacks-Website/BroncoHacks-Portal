@@ -8,7 +8,7 @@ import ManageTeam from "./pages/ManageTeam";
 function App() {
   return (
     <>
-      <Navbar></Navbar>
+      {/* <Navbar></Navbar> */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/" element={<CreateAccount />} />
