@@ -811,14 +811,31 @@ def addTeamMember():
             for hacker in convert_members:
                 if hacker == None:
                     if counter == 0:
-                        add_team_member=conn.execute(UPDATE teamMember1)
+                        add_team_member=conn.execute('UPDATE teams SET teamMember1=? WHERE teamID=?', (member, teamID,))
+                    elif counter == 1:
+                        add_team_member=conn.execute('UPDATE teams SET teamMember2=? WHERE teamID=?', (member, teamID,))
+                    else:
+                        add_team_member=conn.execute('UPDATE teams SET teamMember3=? WHERE teamID=?', (member, teamID,))
+                else:
+                    counter += 1
+            
+            # add teamID to member
+            add_team_id=conn.execute('UPDATE hackers SET teamID=? WHERE UUID=?', (teamID, member,))
+            
+            conn.commit()
+            
+            get_hacker = conn.execute('SELECT UUID, teamID FROM hackers WHERE UUID=?', (member,)).fetchall()
+            hackerRes= [dict(row) for row in get_hacker]
+            get_team = conn.execute('SELECT * FROM teams WHERE teamID=?', (teamID,)).fetchall()
+            teamRes = [dict(row) for row in get_team]
+             
+            conn.close()
+            
+            return jsonify(status=200, message="Success", hacker=next(iter(hackerRes), team=next(iter(teamRes))))
         except Exception as e:
-            return jsonify(status=404, message=str(e))
-        
-        # add teamID to member
-        
-    except:
-        return urmom
+            return jsonify(status=404, message=str(e)) 
+    except Exception as e:
+        return jsonify(status=404, message=str(e))
         
     
 if __name__ == "__main__":
