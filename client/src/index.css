@@ -5,20 +5,69 @@
   font-family: "Roboto", sans-serif;
 }
 
-@keyframes float {
-  0% { 
-    transform: translateY(-10px); 
+/* Just admit Daniel, normal css is so much better. Tailwind has no keyframe animations 🙄🙄🙄🙄*/
+@layer utilities {
+  .anmat-th-bttn-gng {
+    position: relative;
+    overflow: hidden;
   }
-  100% { 
-    transform: translateY(-100px);
+
+  .anmat-th-bttn-gng::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(270deg, #4f46e5, #6366f1, #8b5cf6);
+    background-size: 400% 400%;
+    animation: background-move 3s infinite linear;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    z-index: -1;
+    border-radius: inherit;
+  }
+
+  .anmat-th-bttn-gng:hover::before {
+    opacity: 1;
+  }
+  @keyframes background-move {
+    0% { 
+      background-position: 0% 50%;
+    }
+    50% { 
+      background-position: 100% 50%;
+    }
+    100% { 
+      background-position: 0% 50%;
+    }
+  }
+  
+  .moving-background{
+    background: linear-gradient(270deg, #4f46e5, #6366f1, #8b5cf6);
+    background-size: 400% 400%;
+    animation: background-move 6s infinite linear;
+  }
+  
+  @keyframes float {
+    0% { 
+      transform: translateY(-10px); 
+    }
+    100% { 
+      transform: translateY(-100px);
+    }
+  }
+  
+  @keyframes typing {
+    0% {
+      width: 0;
+    }
+    50% {
+      width: 100%;
+    }
+    90% {
+      width: 100%;
+    }
+    100% {
+      width: 0;
+    }
   }
 }
 
-@keyframes typing {
-  from { 
-    width: 0; 
-  }
-  to { 
-    width: 100%; 
-  }
-}
