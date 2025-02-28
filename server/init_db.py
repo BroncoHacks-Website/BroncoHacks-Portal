@@ -43,5 +43,7 @@ def run_db():
 
     connection.commit()
     connection.close()
+    
+    run_db()
 
 

@@ -756,11 +756,11 @@ def addTeamMember():
         #check if user is confirmed
         try: 
             conn = get_db_connection()
-            found_hacker=conn.execute("SELECT confirmationNumber, isConfirmed FROM hackers WHERE UUID=?", (member,)).fetchall()
+            found_hacker=conn.execute("SELECT isConfirmed FROM hackers WHERE UUID=?", (member,)).fetchall()
             conn.close()
-            convert_hacker = [dict(row) for row in found_hacker]
+            convert_hacker = [found_hacker]
             
-            if len(convert_hacker) < 2:
+            if convert_hacker[0] == 0:
                 return jsonify(status=400, message="Member does not exist")
         except Exception as e:
             return jsonify(status=422, message=str(e))
@@ -807,17 +807,13 @@ def addTeamMember():
             conn = get_db_connection()
             find_members = conn.execute('SELECT teamMember1, teamMember2, teamMember3 FROM teams WHERE teamID=?', (teamID,)).fetchall()
             convert_members = [dict(row) for row in find_members]
-            counter = 0
             for hacker in convert_members:
-                if hacker == None:
-                    if counter == 0:
-                        add_team_member=conn.execute('UPDATE teams SET teamMember1=? WHERE teamID=?', (member, teamID,))
-                    elif counter == 1:
-                        add_team_member=conn.execute('UPDATE teams SET teamMember2=? WHERE teamID=?', (member, teamID,))
-                    else:
-                        add_team_member=conn.execute('UPDATE teams SET teamMember3=? WHERE teamID=?', (member, teamID,))
+                if hacker['teamMember1'] is None:
+                    add_team_member=conn.execute('UPDATE teams SET teamMember1=? WHERE teamID=?', (member, teamID,))
+                elif hacker['teamMember2'] is None:
+                    add_team_member=conn.execute('UPDATE teams SET teamMember2=? WHERE teamID=?', (member, teamID,))
                 else:
-                    counter += 1
+                    add_team_member=conn.execute('UPDATE teams SET teamMember3=? WHERE teamID=?', (member, teamID,))
             
             # add teamID to member
             add_team_id=conn.execute('UPDATE hackers SET teamID=? WHERE UUID=?', (teamID, member,))
@@ -831,7 +827,7 @@ def addTeamMember():
              
             conn.close()
             
-            return jsonify(status=200, message="Success", hacker=next(iter(hackerRes), team=next(iter(teamRes))))
+            return jsonify(status=200, message="Success", hacker=next(iter(hackerRes)), team=next(iter(teamRes)))
         except Exception as e:
             return jsonify(status=404, message=str(e)) 
     except Exception as e:
