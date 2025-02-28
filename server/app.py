@@ -728,7 +728,7 @@ def switcheroo():
 @app.route("/team/addTeamMember", methods=["PUT"])
 def addTeamMember():
     try:
-        data = request.get__json()
+        data = request.get_json()
         
         if not data:
             return jsonify(message="no data provided", status=400)
@@ -762,7 +762,7 @@ def addTeamMember():
             
             if len(convert_hacker) < 2:
                 return jsonify(status=400, message="Member does not exist")
-        except:
+        except Exception as e:
             return jsonify(status=422, message=str(e))
         
         #check if team exists
