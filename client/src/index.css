@@ -4,3 +4,21 @@
 * {
   font-family: "Roboto", sans-serif;
 }
+
+@keyframes float {
+  0% { 
+    transform: translateY(-10px); 
+  }
+  100% { 
+    transform: translateY(-100px);
+  }
+}
+
+@keyframes typing {
+  from { 
+    width: 0; 
+  }
+  to { 
+    width: 100%; 
+  }
+}
