@@ -33,7 +33,6 @@ function Navbar() {
         },
       });
       const json = await res.json();
-      console.log(json);
       if (json.status == 200) {
         alert("Logging out...");
         localStorage.removeItem("token");

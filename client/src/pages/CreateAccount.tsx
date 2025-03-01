@@ -585,7 +585,7 @@ function CreateAccount() {
             className={`flex flex-col gap-4 items-center h-[80vh] sm:h-[60vh] w-[80vw] sm:w-[55vw] md:w-[45vw] lg:w-[28vw] mx-auto rounded-xl bg-white shadow-lg shadow-black/75 backface-hidden `}
           >
             <h1 className="text-3xl font-bold m-5 sm:m-10 md:text-5xl">🐴</h1>
-            <div className="flex flex-col gap-4 w-[90%] items-start">
+            <div className="flex flex-col gap-2 w-[90%] items-start">
               <p className="bolded">Discord Name (if none put N/A)</p>
               <input
                 onChange={changeDiscord}
@@ -684,7 +684,7 @@ function CreateAccount() {
             )}
             <button
               onClick={createAccount}
-              className="h-[8vh] sm:h-[5vh] w-[30vw] sm:w-[10vw] md:mt-5 font-bold text-sm text-white/90 rounded-xl bg-green-300 shadow-lg shadow-black/50 hover:bg-green-400 active:shadow-none active:scale-95 active:translate-y-1 transition-transform duration-150 ease-out cursor-pointer"
+              className="h-[6vh] sm:h-[5vh] w-[30vw] sm:w-[10vw] md:mt-5 font-bold text-sm text-white/90 rounded-xl bg-green-300 shadow-lg shadow-black/50 hover:bg-green-400 active:shadow-none active:scale-95 active:translate-y-1 transition-transform duration-150 ease-out cursor-pointer"
             >
               Create Account
             </button>
