@@ -4,7 +4,7 @@ function Team() {
       <div className="bg-[#c3d3eb] h-[85vh] flex flex-col sm:flex-row justify-center">
         {/* create your team tab */}
         <div className="w-full h-full flex flex-col xl:flex-row items-center justify-center">
-          <div className="bg-white h-[35vh] w-[80vw] md:w-[60vw] lg:w-[50vw] xl:h-[55vh] xl:w-[45vw] 2xl:w-[75vh] rounded-2xl border-lg shadow-lg mx-auto text-center">
+          <div className="bg-white h-[35vh] w-[80vw] sm:w-[65vw] md:w-[55vw] lg:w-[45vw] xl:h-[60vh] xl:w-[45vw] 2xl:w-[75vh] rounded-2xl border-lg shadow-lg mx-auto text-center">
             <img
               src="horse.png"
               alt="single user default image"
@@ -30,7 +30,7 @@ function Team() {
           </div>
           <div className="xl:hidden">---------------or---------------</div>
           {/* join team via code tab */}
-          <div className="bg-white h-[35vh] w-[80vw] md:w-[60vw] lg:w-[50vw] xl:h-[55vh] xl:w-[45vw] 2xl:w-[75vh] rounded-2xl border-lg shadow-lg mx-auto text-center">
+          <div className="bg-white h-[35vh] w-[80vw] sm:w-[65vw] md:w-[55vw] lg:w-[45vw] xl:h-[60vh] xl:w-[45vw] 2xl:w-[75vh] rounded-2xl border-lg shadow-lg mx-auto text-center">
             <img
               src="group.png"
               alt="single user default image"
