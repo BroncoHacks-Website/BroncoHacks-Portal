@@ -7,7 +7,7 @@ function Login() {
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
-      navigate("/FindTeam");
+      navigate("/ManageTeam");
     }
   }, [navigate]);
 
@@ -61,7 +61,7 @@ function Login() {
         window.dispatchEvent(new Event("storage"));
 
         if (json.isConfirmed) {
-          navigate("/Team");
+          navigate("/ManageTeam");
         } else {
           navigate("/EmailConfirmation");
         }

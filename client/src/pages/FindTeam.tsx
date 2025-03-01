@@ -1,4 +1,4 @@
-function Team() {
+function FindTeam() {
   return (
     <>
       <div className="bg-[#c3d3eb] h-[85vh] flex flex-col sm:flex-row justify-center">
@@ -59,4 +59,4 @@ function Team() {
   );
 }
 
-export default Team;
+export default FindTeam;
