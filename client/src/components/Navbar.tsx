@@ -77,7 +77,7 @@ function Navbar() {
         ) : (
           <Link to={{ pathname: "/" }}>
             <div className="text-white bg-[#035BA5] hover:bg-[#02498A] focus:outline-none focus:ring-4 focus:ring-blue-300 font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
-              <span className="block sm:hidden text-3xl">⌂</span>
+              <span className="block sm:hidden text-3xl">Ξ</span>
               <span className="hidden sm:block text-center">Back to Home</span>
             </div>
           </Link>
