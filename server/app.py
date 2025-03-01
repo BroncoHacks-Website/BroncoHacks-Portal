@@ -245,8 +245,8 @@ def create_hacker():
                ) 
         msg.body = 'Your verification code is: <b>' + str(confirmationNumber) + "</b>. " + "You can confrim you account here: [INSERT LINK WHEN READY]"
         mail.send(msg)
-
-        return jsonify(status=201, message="Hacker created successfully", hacker=new_hacker)
+        access_token = create_access_token(identity=email)
+        return jsonify(status=200, message="Hacker created successfully", hacker=new_hacker, token=access_token)
     except Exception as e:
         return jsonify(status=400,message=str(e))
     
