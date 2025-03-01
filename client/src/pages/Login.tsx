@@ -88,7 +88,7 @@ function Login() {
       <div className="bg-indigo-300 h-[85vh] flex flex-col items-center">
         <div className="w-full h-full flex items-center justify-center">
           <div
-            className={`flex flex-col gap-4 items-center h-[70vh] sm:h-[50vh] w-[60vw] sm:w-[55vw] md:w-[45vw] lg:w-[28vw] mx-auto rounded-xl bg-white shadow-lg shadow-black/75 backface-hidden `}
+            className={`flex flex-col gap-4 items-center h-[70vh] sm:h-[50vh] w-[75vw] sm:w-[55vw] md:w-[45vw] lg:w-[28vw] mx-auto rounded-xl bg-white shadow-lg shadow-black/75 backface-hidden `}
           >
             <h1 className="text-3xl font-bold m-10 md:text-5xl">Login🐴</h1>
             <div className="flex flex-col gap-3 w-[90%] items-start">
