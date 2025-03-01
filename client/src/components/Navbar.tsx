@@ -24,6 +24,8 @@ function Navbar() {
     });
   }, []);
 
+  const [dropdownOpenLoggedIn, setDropdownOpenLoggedIn] = useState(false);
+
   const logout = async () => {
     try {
       const res = await fetch(uri + "logout", {
@@ -68,19 +70,38 @@ function Navbar() {
 
       <div className="flex flex-row items-center gap-4">
         {isLoggedIn ? (
-          <div>
-            <button className="my-auto text-m mr-3">Edit Profile</button>
-            <button onClick={logout} className="my-ayto text-m">
-              Logout
+          <div className="relative">
+            <button
+              onClick={() => setDropdownOpenLoggedIn(!dropdownOpenLoggedIn)}
+              className="text-white bg-[#035BA5] hover:bg-[#02498A] focus:outline-none focus:ring-4 focus:ring-blue-300 font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1"
+            >
+              <span className="block sm:hidden text-3xl">Ξ</span>
+              <span className="hidden sm:block text-center">Menu</span>
             </button>
+            {dropdownOpenLoggedIn && (
+              <div className="absolute mt-2 right-0 w-48 bg-white border border-gray-200 rounded-lg shadow-lg">
+                <a
+                  href="https://www.broncohacks.org/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+                >
+                  Back to BroncoHacks.org
+                </a>
+                <button className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100">
+                  Edit Profile
+                </button>
+                <button
+                  onClick={logout}
+                  className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
           </div>
         ) : (
-          <Link to={{ pathname: "/" }}>
-            <div className="text-white bg-[#035BA5] hover:bg-[#02498A] focus:outline-none focus:ring-4 focus:ring-blue-300 font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
-              <span className="block sm:hidden text-3xl">Ξ</span>
-              <span className="hidden sm:block text-center">Back to Home</span>
-            </div>
-          </Link>
+          <div></div>
         )}
       </div>
     </div>
