@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, make_response
 import sqlite3
 import random
 import bcrypt
@@ -16,7 +16,7 @@ app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = 'sybautspmo'
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=5)
 jwt = JWTManager(app)
-CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
+CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
 load_dotenv()
 
    
@@ -141,7 +141,7 @@ def login():
     email = request.args.get('email')
     if email is None:
         return jsonify(status=400, message=f"Missing email in query paramter")
-    
+    email = email.lower()
     password = request.args.get('password')
     if password is None:
         return jsonify(status=400, message=f"Missing passowrd in query paramter")
@@ -157,10 +157,23 @@ def login():
         else:
             user = hacker_list[0]
             if bcrypt.checkpw(password.encode('utf-8'), user['password']):
-                access_token = create_access_token(identity=email)
+                access_token = create_access_token(identity=str(user["UUID"]))
                 return jsonify(status=200, message="Correct Password", token=access_token, isConfirmed=user["isConfirmed"]),200
             else:
                 return jsonify(status=403,message="Incorrect Password"),403
+    except Exception as e:
+        return jsonify(status=400, message=str(e)),400
+    
+@app.route("/whoami", methods=["GET"])
+@jwt_required()
+@cross_origin()
+def whoami():
+    try:
+        UUID = get_jwt_identity()
+        if UUID:
+            return jsonify(status=200, UUID=str(UUID)),200
+        else:
+            return jsonify(status=401,message="UUID not found with corresponding token"),401
     except Exception as e:
         return jsonify(status=400, message=str(e)),400
     
@@ -191,9 +204,8 @@ def refresh_expiring_jwts(response):
     except (RuntimeError, KeyError):
         # Case where there is not a valid JWT. Just return the original respone
         return response
+
 ########## Hackers ##########
-
-
 @app.route("/hacker", methods=['POST'])
 @cross_origin()
 def create_hacker():
@@ -208,7 +220,7 @@ def create_hacker():
         firstName = data['firstName']
         lastName = data['lastName']
         password = hash_password(data['password'])
-        email = data['email']
+        email = data['email'].lower()
         school = data['school']
         discord = data.get('discord', None)
         teamID = None
@@ -222,13 +234,13 @@ def create_hacker():
         cursor.execute("SELECT * FROM hackers WHERE email = ?", (email,))
         if cursor.fetchone():
             conn.close()
-            return jsonify(status=409, message="Email already in use")
+            return jsonify(status=409, message="Email already in use"),409
 
         if discord:
             cursor.execute("SELECT * FROM hackers WHERE discord = ?", (discord,))
             if cursor.fetchone():
                 conn.close()
-                return jsonify(status=409, message="Discord already in use")
+                return jsonify(status=409, message="Discord already in use"),409
         
         cursor.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
                (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed, isAdmin))
@@ -243,12 +255,12 @@ def create_hacker():
                 sender ='cppbroncohacks@gmail.com', 
                 recipients = [email] 
                ) 
-        msg.body = 'Your verification code is: <b>' + str(confirmationNumber) + "</b>. " + "You can confrim you account here: [INSERT LINK WHEN READY]"
+        msg.body = 'Your verification code is: ' + str(confirmationNumber) + ". You can confrim you account here: [INSERT LINK WHEN READY].\nIf you haven't already, join the discord for updates & changes about the hackathon, as well as communication during the event: https://discord.gg/fHp9nB5eYc \nThank you for registering and happy hacking!\n~BroncoHacks2025 Organizers (April 18-April 19)"
         mail.send(msg)
-        access_token = create_access_token(identity=email)
-        return jsonify(status=200, message="Hacker created successfully", hacker=new_hacker, token=access_token)
+        access_token = create_access_token(identity=str(hacker_id))
+        return jsonify(status=200, message="Hacker created successfully", hacker=new_hacker, token=access_token),200
     except Exception as e:
-        return jsonify(status=400,message=str(e))
+        return jsonify(status=400,message=str(e)),400
     
 @app.route("/hacker", methods=['GET'])
 @jwt_required()
@@ -258,25 +270,97 @@ def getOneHacker():
     UUID = request.args.get('UUID')
 
     if UUID is None:
-        return jsonify(status=400, message=f"Missing UUID in query paramter")
+        return jsonify(status=400, message=f"Missing UUID in query paramter"),400
     
     try:
         int(UUID)
     except:
-        return jsonify(status=422, message="Unprocessable Entity (wrong data type for paramters)")
+        return jsonify(status=422, message="Unprocessable Entity (wrong data type for paramters)"),422
     
     try:
         conn = get_db_connection()
-        hacker = conn.execute('SELECT UUID, teamID, firstName, lastName, email, school, discord, confirmationNumber, isConfirmed, isAdmin FROM hackers WHERE UUID=?', (UUID,)).fetchall()
+        hacker = conn.execute('SELECT UUID, teamID, firstName, lastName, email, school, discord, isConfirmed, isAdmin FROM hackers WHERE UUID=?', (UUID,)).fetchall()
         conn.close()
         
         hacker_list = [dict(row) for row in hacker]
         if len(hacker_list) == 0:
-            return jsonify(status=404, message="Hacker Not Found")
+            return jsonify(status=404, message="Hacker Not Found"),404
         else:
-            return jsonify(status=200, message="Hacker Found", hacker=next(iter(hacker_list)))
+            return jsonify(status=200, message="Hacker Found", hacker=next(iter(hacker_list))),200
     except Exception as e:
-        return jsonify(status=400, message=str(e))
+        return jsonify(status=400, message=str(e)),400
+    
+@app.route("/code", methods=['POST'])
+@jwt_required()
+@cross_origin()
+def getCode():
+    # get req param from url
+    try:
+        data = request.get_json()
+
+        required_fields = ['UUID','confirmationNumber']
+        for field in required_fields:
+            if field not in data:
+                return jsonify(status=400, message=f"Missing {field}")
+
+        UUID = data['UUID']
+        confirmationNumber = data["confirmationNumber"]
+
+        if UUID is None:
+            return jsonify(status=400, message=f"Missing UUID in query paramter"),400
+        
+        try:
+            int(UUID)
+        except:
+            return jsonify(status=422, message="Unprocessable Entity (wrong data type for UUID)"),422
+        
+        if confirmationNumber is None:
+            return jsonify(status=400, message=f"Missing confirmationNumber in query paramter"),400
+        
+        try:
+            int(confirmationNumber)
+        except:
+            return jsonify(status=422, message="Unprocessable Entity (wrong data type for confirmationNumber)"),422
+        
+        conn = get_db_connection()
+        hacker = conn.execute('SELECT confirmationNumber FROM hackers WHERE UUID=?', (UUID,)).fetchall()
+        
+        hacker_list = [dict(row) for row in hacker]
+        if len(hacker_list) == 0:
+            return jsonify(status=404, message="Hacker Not Found"),404
+        else:
+            if hacker_list[0]["confirmationNumber"] == int(confirmationNumber):
+                conn.execute("UPDATE hackers SET isConfirmed = ? WHERE UUID = ?", (True, UUID))
+                conn.commit()
+                return jsonify(status=200, message="Account is now confirmed"),200
+            else:
+                return jsonify(status=403, message="Incorrect Code"),403
+
+    except Exception as e:
+        return jsonify(status=400, message=str(e)),400
+    
+@app.route("/code", methods=['PUT'])
+@jwt_required()
+@cross_origin()
+def changeCode():
+    # get req param from url
+    try:
+        UUID = get_jwt_identity()
+        hacker = get_hacker_by_id(UUID)
+        confirmationNumber = generate_confirmation_number()
+        conn = get_db_connection()
+        conn.execute("UPDATE hackers SET confirmationNumber = ? WHERE UUID = ?", (confirmationNumber, UUID))
+        conn.commit()
+        msg = Message( 
+        'Confirm your email for BroncoHacks2025' , 
+        sender ='cppbroncohacks@gmail.com', 
+        recipients = [hacker["email"]] 
+    ) 
+        msg.body = 'Your new verification code is: ' + str(confirmationNumber) + ". You can confrim you account here: [INSERT LINK WHEN READY].\nIf you haven't already, join the discord for updates & changes about the hackathon, as well as communication during the event: https://discord.gg/fHp9nB5eYc \nThank you for registering and happy hacking!\n~BroncoHacks2025 Organizers (April 18-April 19)"
+        mail.send(msg)
+        return jsonify(status=200, message="New Verification Code is Sent!"),200
+    except Exception as e:
+        return jsonify(status=400, message=str(e)),400
     
 @app.route("/hackers",  methods=['GET'])
 @jwt_required()
