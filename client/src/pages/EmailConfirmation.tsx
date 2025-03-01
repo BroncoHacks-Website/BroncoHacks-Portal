@@ -135,11 +135,11 @@ function EmailConfirmation() {
         <div className="bg-indigo-300 h-[85vh] flex flex-col items-center">
           <div className="w-full h-full flex items-center justify-center">
             <div
-              className={`flex flex-col items-center h-[70vh] sm:h-[50vh] w-[75vw] sm:w-[55vw] md:w-[45vw] lg:w-[28vw] mx-auto rounded-xl bg-white shadow-lg shadow-black/75 `}
+              className={`flex flex-col items-center h-[70vh] sm:h-[60vh] w-[75vw] sm:w-[60vw] md:w-[50vw] lg:w-[35vw] mx-auto rounded-xl bg-white shadow-lg shadow-black/75 `}
             >
               <img className="h-[20vh]" src="email.webp"></img>
               <h1 className="text-center text-2xl">Confirmation Email Sent!</h1>
-              <h2 className="text-center mb-5">
+              <h2 className="text-center mb-5 mx-2">
                 A 6 digit code has been sent to{" "}
                 <i className="text-blue-300">{hacker.email}</i>. Please enter
                 the code to confirm your account (could potentially be in spam)

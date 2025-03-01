@@ -582,7 +582,7 @@ function CreateAccount() {
         {/* White Card */}
         {isFlipped ? (
           <div
-            className={`flex flex-col gap-4 items-center h-[80vh] sm:h-[60vh] w-[80vw] sm:w-[55vw] md:w-[45vw] lg:w-[28vw] mx-auto rounded-xl bg-white shadow-lg shadow-black/75 backface-hidden `}
+            className={`flex flex-col gap-4 items-center h-[80vh] sm:h-[80vh] w-[80vw] sm:w-[55vw] md:w-[45vw] lg:w-[28vw] mx-auto rounded-xl bg-white shadow-lg shadow-black/75 backface-hidden `}
           >
             <h1 className="text-3xl font-bold m-5 sm:m-10 md:text-5xl">🐴</h1>
             <div className="flex flex-col gap-2 w-[90%] items-start">
@@ -699,9 +699,9 @@ function CreateAccount() {
           </div>
         ) : (
           <div
-            className={`flex flex-col items-center h-[80vh] sm:h-[60vh] w-[80vw] sm:w-[55vw] md:w-[45vw] lg:w-[28vw] mx-auto rounded-xl bg-white shadow-lg shadow-black/75 backface-hidden `}
+            className={`flex flex-col items-center h-[80vh] sm:h-[80vh] w-[80vw] sm:w-[55vw] md:w-[45vw] lg:w-[28vw] mx-auto rounded-xl bg-white shadow-lg shadow-black/75 backface-hidden `}
           >
-            <h1 className="text-2xl font-bold m-3 sm:m-10 md:text-4xl">
+            <h1 className="text-2xl font-bold m-3 sm:m-10 md:text-2xl xl:text-4xl">
               Create Account🐴
             </h1>
             <div className="flex flex-col gap-[.125rem] sm:gap-1 justify-between w-[90%]">
