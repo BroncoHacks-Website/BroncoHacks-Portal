@@ -119,8 +119,8 @@ function EmailConfirmation() {
       if (json.status == 200) {
         setCodeMessage("Account is now confrimed: redirecting to app");
         setIsFinallyConfirmed(true);
-        await new Promise((r) => setTimeout(r, 3000));
-        navigate("/Team");
+        await new Promise((r) => setTimeout(r, 1000));
+        navigate("/FindTeam");
       } else {
         setCodeMessage("Incorrect Code");
       }

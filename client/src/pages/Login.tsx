@@ -7,7 +7,7 @@ function Login() {
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
-      navigate("/FindTeam");
+      navigate("/ManageTeam");
     }
   }, [navigate]);
 
@@ -61,7 +61,7 @@ function Login() {
         window.dispatchEvent(new Event("storage"));
 
         if (json.isConfirmed) {
-          navigate("/Team");
+          navigate("/ManageTeam");
         } else {
           navigate("/EmailConfirmation");
         }
@@ -180,6 +180,12 @@ function Login() {
                 Sign Up
               </Link>
             </div>
+            <Link
+              className="text-purple-500"
+              to={{ pathname: "/CreateAccount" }}
+            >
+              Forgot Your Password?
+            </Link>
           </div>
         </div>
       </div>

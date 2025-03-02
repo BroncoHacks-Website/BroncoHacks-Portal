@@ -4,8 +4,10 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import CreateAccount from "./pages/CreateAccount";
 import EmailConfirmation from "./pages/EmailConfirmation";
-import Team from "./pages/Team";
 import NotFound from "./pages/NotFound";
+import ManageTeam from "./pages/ManageTeam";
+import FindTeam from "./pages/FindTeam";
+import ForgotPassword from "./pages/ForgotPassword";
 
 export const uri = "http://127.0.0.1:8000/";
 
@@ -17,8 +19,10 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/CreateAccount" element={<CreateAccount />} />
         <Route path="/Login" element={<Login />} />
-        <Route path="/Team" element={<Team />} />
+        <Route path="/FindTeam" element={<FindTeam />} />
         <Route path="/EmailConfirmation" element={<EmailConfirmation />} />
+        <Route path="/ManageTeam" element={<ManageTeam />} />
+        <Route path="/ForgotPassword" element={<ForgotPassword />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>
