@@ -11,6 +11,7 @@ function Navbar() {
   const [token, setToken] = useState(
     localStorage.getItem("token") ? localStorage.getItem("token") : null
   );
+  const [modalVisibility, setModalVisibility] = useState(false);
 
   useEffect(() => {
     window.addEventListener("storage", () => {
@@ -53,8 +54,12 @@ function Navbar() {
     }
   };
 
+  const handleModal = () => {
+    setModalVisibility(!modalVisibility);
+  };
+
   return (
-    <div className="flex flex-row justify-between items-center h-[15vh] border-1 shadow-lg py-4 px-8">
+    <div className="flex flex-row justify-between items-center h-[15vh] border-1 py-4 px-8">
       {/* Left Section */}
       <div className="flex flex-row items-center gap-4">
         <img
@@ -66,11 +71,12 @@ function Navbar() {
       </div>
 
       {/* Right Section */}
-
       <div className="flex flex-row items-center gap-4">
         {isLoggedIn ? (
           <div>
-            <button className="my-auto text-m mr-3">Edit Profile</button>
+            <button onClick={handleModal} className="my-auto text-m mr-3" type="button">
+              Edit Profile
+            </button>
             <button onClick={logout} className="my-ayto text-m">
               Logout
             </button>
@@ -87,6 +93,22 @@ function Navbar() {
           </Link>
         )}
       </div>
+
+      {/* Edit Profile Modal*/}
+      {modalVisibility && 
+      <div className="[all:unset] fixed z-20 top-0 left-0 w-full h-full flex items-center justify-center">
+        {/* dark background */}
+        <div className="fixed top-0 left-0 w-full h-full bg-black/50" onClick={handleModal}>
+          {/* modal content */}
+          <div className="relative bg-white rounded-md overflow-hidden max-w-md w-full mx-4">
+            {/* modal header */}
+            <div>
+
+            </div>
+          </div>
+        </div>
+      </div>}
+      
     </div>
   );
 }
