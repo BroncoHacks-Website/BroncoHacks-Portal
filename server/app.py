@@ -116,6 +116,10 @@ def index():
 def get_all_data():
     try:
         # retrieve data
+        UUID = get_jwt_identity()
+        hacker = get_hacker_by_id(UUID)
+        if not hacker["isAdmin"]:
+            return jsonify(status=401, message="fuck outta here",)
         conn = get_db_connection()
         hackers = conn.execute("SELECT * FROM hackers").fetchall()
         teams = conn.execute("SELECT * FROM teams").fetchall()
@@ -158,7 +162,7 @@ def login():
             user = hacker_list[0]
             if bcrypt.checkpw(password.encode('utf-8'), user['password']):
                 access_token = create_access_token(identity=str(user["UUID"]))
-                return jsonify(status=200, message="Correct Password", token=access_token, isConfirmed=user["isConfirmed"]),200
+                return jsonify(status=200, message="Correct Password", token=access_token, isConfirmed=user["isConfirmed"], isAdmin=user["isAdmin"]),200
             else:
                 return jsonify(status=403,message="Incorrect Password"),403
     except Exception as e:
