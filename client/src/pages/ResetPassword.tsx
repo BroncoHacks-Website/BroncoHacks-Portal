@@ -4,8 +4,7 @@ import { uri } from "../App";
 
 function ResetPassword() {
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
-
+  const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
   useEffect(() => {
     if (!token) {

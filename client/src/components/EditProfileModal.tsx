@@ -49,11 +49,13 @@ function EditProfileModal({ hackerProp, onClose }: ModalProps) {
       });
 
       const data = await res.json();
-      console.log(data);
+
       if (data.status == 200) {
         setAlertMsg("Profile Updated!");
         setAlertButtonMsg("Ok");
         setShowAlert(true);
+      } else {
+        setRequestMessage(data.message);
       }
     } catch (error) {
       console.log("Error updating data:", error);
@@ -120,6 +122,9 @@ function EditProfileModal({ hackerProp, onClose }: ModalProps) {
                     onChange={(e) => setDiscord(e.target.value)}
                   />
                 </div>
+                <span className="text-red-500 text-sm text-center">
+                  {requestMessage}
+                </span>{" "}
                 <div className="flex justify-center">
                   <button
                     data-modal-hide="default-modal"
