@@ -451,14 +451,13 @@ def update_hacker():
         first_name = data.get('firstName', None)
         last_name = data.get('lastName', None)
         discord = data.get('discord', None)
+        school = data.get('school', None)
+
 
         try:
             int(UUID)
         except:
             return jsonify(status=422, message="Unprocessable Entity (wrong data type for: UUID)")
-        password = data.get('password', None)
-        if password:
-            password = hash_password(data['password'])
 
         UUID = int(UUID)
         conn = get_db_connection()
@@ -473,15 +472,13 @@ def update_hacker():
                 return jsonify(message= "UUID not found",status=404)
             
             # update hacker info
-            if first_name:
+            if first_name and (first_name != hacker["firstName"]):
                 cursor.execute("UPDATE hackers SET firstName = ? WHERE UUID = ?", (first_name, UUID))
-            if last_name:
+            if last_name and (last_name != hacker["lastName"]):
                 cursor.execute("UPDATE hackers SET lastName = ? WHERE UUID = ?", (last_name, UUID))
-            if password:
-                cursor.execute("UPDATE hackers SET password = ? WHERE UUID = ?", (password, UUID))
-            if school:
+            if school and (school != hacker["school"]):
                 cursor.execute("UPDATE hackers SET school = ? WHERE UUID = ?", (school, UUID))
-            if discord:
+            if discord and (discord!= hacker["discord"]):
                 cursor.execute("SELECT * FROM hackers WHERE discord = ?", (discord,))
                 if cursor.fetchone():
                     conn.close()
