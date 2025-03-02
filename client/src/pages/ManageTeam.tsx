@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { HackerModel } from "../models/hacker";
 import { useNavigate } from "react-router";
 import { uri } from "../App";
+import { TeamModel } from "../models/team";
 
 function ManageTeam() {
   //Authentication
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const [hacker, setHacker] = useState<HackerModel>();
+  const [team, setTeam] = useState<TeamModel>();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -44,7 +46,7 @@ function ManageTeam() {
           });
           const hackerJSON = await hackerRes.json();
           setHacker(hackerJSON["hacker"]);
-          console.log(hackerJSON.hacker);
+
           if (hackerJSON["status"] != 200) {
             alert("Session Expired, Logging Out");
             localStorage.removeItem("token");

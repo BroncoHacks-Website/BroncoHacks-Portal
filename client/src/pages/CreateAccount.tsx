@@ -764,7 +764,7 @@ function CreateAccount() {
             >
               Next
             </button>
-            <div className="flex flex-col items-center text-sm">
+            <div className="flex flex-col items-center text-sm mt-4">
               <p className="">Already have an Account?</p>
               <Link className="text-purple-500" to={{ pathname: "/Login" }}>
                 Login

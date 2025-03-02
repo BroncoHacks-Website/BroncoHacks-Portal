@@ -180,6 +180,12 @@ function Login() {
                 Sign Up
               </Link>
             </div>
+            <Link
+              className="text-purple-500"
+              to={{ pathname: "/CreateAccount" }}
+            >
+              Forgot Your Password?
+            </Link>
           </div>
         </div>
       </div>
