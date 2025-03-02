@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { uri } from "../App";
 import Alert from "./Alert";
+import Modal from "./Modal";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ function Navbar() {
   const [showAlert, setShowAlert] = useState(false)
   const [alertMsg, setAlertMsg] = useState("")
   const [alertButtonMsg, setAlertButtonMsg] = useState("")
+  const [modalVisibility, setModalVisibility] = useState(false);
 
   useEffect(() => {
     window.addEventListener("storage", () => {
@@ -57,7 +59,7 @@ function Navbar() {
   };
 
   return (
-    <div className="flex flex-row justify-between items-center h-[15vh] border-1 shadow-lg py-4 px-8">
+    <div className="flex flex-row justify-between items-center h-[15vh] border-1 py-4 px-8">
       {/* Left Section */}
       <div className="flex flex-row items-center gap-4">
         <img
@@ -69,7 +71,6 @@ function Navbar() {
       </div>
 
       {/* Right Section */}
-
       <div className="flex flex-row items-center gap-4">
         <div className="relative">
           <button
@@ -92,7 +93,13 @@ function Navbar() {
               {isLoggedIn && (
                 <div>
                   {" "}
-                  <button className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100">
+                  <button 
+                    onClick={() => {
+                      setModalVisibility(!modalVisibility)
+                      setDropdownOpen(!dropdownOpen)
+                    }}
+                    
+                    className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100">
                     Edit Profile
                   </button>
                   <button
@@ -112,6 +119,10 @@ function Navbar() {
         navigate("/");
         window.location.reload();
       }} message1={alertButtonMsg}/>)}
+
+      {/* Edit Profile Modal*/}
+      <Modal isOpen={modalVisibility} onClose={() => setModalVisibility(false)}/>
+      
     </div>
   );
 }
