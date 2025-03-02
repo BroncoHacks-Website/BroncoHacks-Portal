@@ -187,6 +187,54 @@ def logout():
         return response
     except Exception as e:
         return jsonify(status=401,message=str(e)),401
+    
+@app.route("/sendPasswordReset", methods=['GET'])
+@cross_origin()
+def sendPasswordReset():
+    try:
+        email = request.args.get('email')
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        hacker = cursor.execute("SELECT * FROM hackers WHERE email = ?", (email,)).fetchone()
+        if not hacker:
+            conn.close()
+            return jsonify(status=401, message="Email not found"),401
+        else:
+            hacker_id = hacker["UUID"]
+            access_token = create_access_token(identity=str(hacker_id))
+            msg = Message( 
+                'Confirm your email for BroncoHacks2025' , 
+                sender ='cppbroncohacks@gmail.com', 
+                recipients = [email] 
+               ) 
+            msg.body = 'Click here to reset your password: http://localhost:5173/ResetPassword?token=' + str(access_token)
+            mail.send(msg)
+            return jsonify(status=200,message="Email Sent!"),200
+
+    except Exception as e:
+        return jsonify(status=400,message=str(e)),400
+    
+@app.route("/resetPassword", methods=['PUT'])
+@jwt_required()
+@cross_origin()
+def resetPassword():
+    data = request.get_json()
+    password = data['password']
+    newPassword = hash_password(password)
+    try:
+        UUID = get_jwt_identity()
+        if UUID:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            cursor.execute("UPDATE hackers SET password = ? WHERE UUID = ?", (newPassword, UUID))
+            conn.commit()
+            return jsonify(status=200, message="Password Updated"),200
+        else:
+            return jsonify(status=401,message="Session Has Expired"),401
+    except Exception as e:
+        return jsonify(status=400, message=str(e)),400
+
 
 @app.after_request
 def refresh_expiring_jwts(response):

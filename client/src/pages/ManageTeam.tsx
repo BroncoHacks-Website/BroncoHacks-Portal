@@ -149,28 +149,113 @@ function ManageTeam() {
             <h2 className="self-center relative font-bold text-md md:text-2xl">
               Access Code: {team.teamID}
             </h2>
-            {owner && (
-              <h3>
-                Owner: {owner.firstName} {owner.lastName}
-              </h3>
-            )}
-            {teamMember1 && (
-              <h3>
-                Teammate: {teamMember1.firstName} {teamMember1.lastName}
-              </h3>
-            )}
-            {teamMember2 && (
-              <h3>
-                Teammate: {teamMember2.firstName} {teamMember2.lastName}
-              </h3>
-            )}
-            {teamMember3 && (
-              <h3>
-                Teammate: {teamMember3.firstName} {teamMember3.lastName}
-              </h3>
-            )}
+            <h3 className="self-center relative font-bold text-md md:text-xs">
+              Application Status:{" "}
+            </h3>
+            <div className="flex flex-col gap-16">
+              {owner && (
+                <div className="flex flex-row">
+                  <h4>
+                    Owner: {owner.firstName} {owner.lastName}
+                  </h4>
+                  <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
+                    <span className="block sm:hidden text-sm">✉</span>
+                    <span className="hidden sm:block text-center">
+                      Contact Info
+                    </span>
+                  </button>
+                  <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
+                    <span className="block sm:hidden text-sm">♕</span>
+                    <span className="hidden sm:block text-center">
+                      Make Owner
+                    </span>
+                  </button>
+                  <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
+                    <span className="block sm:hidden text-sm">✕</span>
+                    <span className="hidden sm:block text-center">
+                      Remove Member
+                    </span>
+                  </button>
+                </div>
+              )}
+              {teamMember1 && (
+                <div className="flex flex-row">
+                  <h4>
+                    Teammate: {teamMember1.firstName} {teamMember1.lastName}
+                  </h4>
+                  <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
+                    <span className="block sm:hidden text-sm">✉</span>
+                    <span className="hidden sm:block text-center">
+                      Contact Info
+                    </span>
+                  </button>
+                  <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
+                    <span className="block sm:hidden text-sm">♕</span>
+                    <span className="hidden sm:block text-center">
+                      Make Owner
+                    </span>
+                  </button>
+                  <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
+                    <span className="block sm:hidden text-sm">✕</span>
+                    <span className="hidden sm:block text-center">
+                      Remove Member
+                    </span>
+                  </button>
+                </div>
+              )}
+              {teamMember2 && (
+                <div className="flex flex-row">
+                  <h4>
+                    Teammate: {teamMember2.firstName} {teamMember2.lastName}
+                  </h4>
+                  <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
+                    <span className="block sm:hidden text-sm">✉</span>
+                    <span className="hidden sm:block text-center">
+                      Contact Info
+                    </span>
+                  </button>
+                  <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
+                    <span className="block sm:hidden text-sm">♕</span>
+                    <span className="hidden sm:block text-center">
+                      Make Owner
+                    </span>
+                  </button>
+                  <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
+                    <span className="block sm:hidden text-sm">✕</span>
+                    <span className="hidden sm:block text-center">
+                      Remove Member
+                    </span>
+                  </button>
+                </div>
+              )}
+              {teamMember3 && (
+                <div className="flex flex-row">
+                  <h4>
+                    Teammate: {teamMember3.firstName} {teamMember3.lastName}
+                  </h4>
+                  <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
+                    <span className="block sm:hidden text-sm">✉</span>
+                    <span className="hidden sm:block text-center">
+                      Contact Info
+                    </span>
+                  </button>
+                  <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
+                    <span className="block sm:hidden text-sm">♕</span>
+                    <span className="hidden sm:block text-center">
+                      Make Owner
+                    </span>
+                  </button>
+                  <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
+                    <span className="block sm:hidden text-sm">✕</span>
+                    <span className="hidden sm:block text-center">
+                      Remove Member
+                    </span>
+                  </button>
+                </div>
+              )}
+            </div>
             {owner ? (
-              <div className="flex flex-row justify-end">
+              <div className="flex flex-row justify-end mt-13 sm:mt-0">
                 <button
                   type="button"
                   className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
