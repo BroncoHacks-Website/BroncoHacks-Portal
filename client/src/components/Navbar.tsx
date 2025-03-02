@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { uri } from "../App";
 import Alert from "./Alert";
-import Modal from "./Modal";
+import EditProfileModal from "./EditProfileModal";
+import { HackerModel } from "../models/hacker";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -13,10 +14,11 @@ function Navbar() {
   const [token, setToken] = useState(
     localStorage.getItem("token") ? localStorage.getItem("token") : null
   );
-  const [showAlert, setShowAlert] = useState(false)
-  const [alertMsg, setAlertMsg] = useState("")
-  const [alertButtonMsg, setAlertButtonMsg] = useState("")
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMsg, setAlertMsg] = useState("");
+  const [alertButtonMsg, setAlertButtonMsg] = useState("");
   const [modalVisibility, setModalVisibility] = useState(false);
+  const [hacker, setHacker] = useState<HackerModel | null>(null);
 
   useEffect(() => {
     window.addEventListener("storage", () => {
@@ -30,6 +32,67 @@ function Navbar() {
     });
   }, []);
 
+  useEffect(() => {
+    console.log(token);
+    const checkAuth = async () => {
+      if (!token) {
+        navigate("/");
+        return;
+      }
+
+      // Initial Token Request
+      try {
+        const res = await fetch(uri + "whoami", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const json = await res.json();
+
+        if (!json.UUID) {
+          alert("Session Expired, Logging Out");
+          localStorage.removeItem("token");
+          navigate("/");
+          return;
+        }
+
+        // Fetch User Info
+        try {
+          const hackerRes = await fetch(uri + `hacker?UUID=${json.UUID}`, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const hackerJSON = await hackerRes.json();
+          if (hackerJSON["status"] != 200) {
+            alert("Session Expired, Logging Out");
+            localStorage.removeItem("token");
+            navigate("/");
+          } else {
+            setHacker(hackerJSON.hacker);
+            if (hackerJSON.hacker["isConfirmed"] == true) {
+              navigate("/FindTeam");
+            }
+          }
+        } catch {
+          alert("Session Expired, Logging Out");
+          localStorage.removeItem("token");
+          navigate("/");
+        }
+      } catch {
+        alert("Session Expired, Logging Out");
+        localStorage.removeItem("token");
+        navigate("/");
+      }
+    };
+    if (token) {
+      checkAuth();
+    }
+  }, [token]);
+
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const logout = async () => {
@@ -42,13 +105,13 @@ function Navbar() {
       });
       const json = await res.json();
       if (json.status == 200) {
-        setAlertMsg("Logging out...")
-        setAlertButtonMsg("Ok")
-        setShowAlert(true)
+        setAlertMsg("Logging out...");
+        setAlertButtonMsg("Ok");
+        setShowAlert(true);
       } else {
-        setAlertMsg("error " + json.message)
-        setAlertButtonMsg("Ok")
-        setShowAlert(true)
+        setAlertMsg("error " + json.message);
+        setAlertButtonMsg("Ok");
+        setShowAlert(true);
       }
     } catch {
       alert("No Session Found: Going Back to Home");
@@ -93,13 +156,13 @@ function Navbar() {
               {isLoggedIn && (
                 <div>
                   {" "}
-                  <button 
+                  <button
                     onClick={() => {
-                      setModalVisibility(!modalVisibility)
-                      setDropdownOpen(!dropdownOpen)
+                      setModalVisibility(!modalVisibility);
+                      setDropdownOpen(!dropdownOpen);
                     }}
-                    
-                    className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100">
+                    className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+                  >
                     Edit Profile
                   </button>
                   <button
@@ -114,15 +177,26 @@ function Navbar() {
           )}
         </div>
       </div>
-      {showAlert && (<Alert msg={alertMsg} function1={()=> {
-        localStorage.removeItem("token");
-        navigate("/");
-        window.location.reload();
-      }} message1={alertButtonMsg}/>)}
+      {showAlert && (
+        <Alert
+          msg={alertMsg}
+          function1={() => {
+            localStorage.removeItem("token");
+            navigate("/");
+            window.location.reload();
+          }}
+          message1={alertButtonMsg}
+        />
+      )}
 
       {/* Edit Profile Modal*/}
-      <Modal isOpen={modalVisibility} onClose={() => setModalVisibility(false)}/>
-      
+
+      {modalVisibility && hacker && (
+        <EditProfileModal
+          hackerProp={hacker}
+          onClose={() => setModalVisibility(false)}
+        />
+      )}
     </div>
   );
 }
