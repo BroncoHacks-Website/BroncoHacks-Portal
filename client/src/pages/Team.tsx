@@ -28,7 +28,7 @@ function Team() {
               <br />
             </div>
           </div>
-          <div className="xl:hidden">---------------or---------------</div>
+          <div className="xl:hidden py-6"></div>
           {/* join team via code tab */}
           <div className="bg-white h-[35vh] w-[80vw] sm:w-[65vw] md:w-[55vw] lg:w-[45vw] xl:h-[60vh] xl:w-[45vw] 2xl:w-[75vh] rounded-2xl border-lg shadow-lg mx-auto text-center">
             <img

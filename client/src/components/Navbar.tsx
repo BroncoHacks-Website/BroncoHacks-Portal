@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { uri } from "../App";
+import Modal from "./Modal";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -55,10 +56,6 @@ function Navbar() {
     }
   };
 
-  const handleModal = () => {
-    setModalVisibility(!modalVisibility);
-  };
-
   return (
     <div className="flex flex-row justify-between items-center h-[15vh] border-1 py-4 px-8">
       {/* Left Section */}
@@ -94,7 +91,13 @@ function Navbar() {
               {isLoggedIn && (
                 <div>
                   {" "}
-                  <button className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100">
+                  <button 
+                    onClick={() => {
+                      setModalVisibility(!modalVisibility)
+                      setDropdownOpen(!dropdownOpen)
+                    }}
+                    
+                    className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100">
                     Edit Profile
                   </button>
                   <button
@@ -111,19 +114,7 @@ function Navbar() {
       </div>
 
       {/* Edit Profile Modal*/}
-      {modalVisibility && 
-      <div className="[all:unset] fixed z-20 top-0 left-0 w-full h-full flex items-center justify-center">
-        {/* dark background */}
-        <div className="fixed top-0 left-0 w-full h-full bg-black/50" onClick={handleModal}>
-          {/* modal content */}
-          <div className="relative bg-white rounded-md overflow-hidden max-w-md w-full mx-4">
-            {/* modal header */}
-            <div>
-
-            </div>
-          </div>
-        </div>
-      </div>}
+      <Modal isOpen={modalVisibility} onClose={() => setModalVisibility(false)}/>
       
     </div>
   );
