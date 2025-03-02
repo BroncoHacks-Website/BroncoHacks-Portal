@@ -48,8 +48,6 @@ function EmailConfirmation() {
             },
           });
           const hackerJSON = await hackerRes.json();
-          setHacker(hackerJSON["hacker"]);
-
           if (hackerJSON["status"] != 200) {
             alert("Session Expired, Logging Out");
             localStorage.removeItem("token");
@@ -57,7 +55,7 @@ function EmailConfirmation() {
           } else {
             setHacker(hackerJSON.hacker);
             if (hackerJSON.hacker["isConfirmed"] == true) {
-              navigate("/Team");
+              navigate("/FindTeam");
             }
           }
         } catch {
