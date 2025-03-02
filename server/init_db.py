@@ -18,7 +18,7 @@ def run_db():
         cur = connection.cursor()
 
         cur.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    (123456, 'Daniel', 'Pasion', hash_password('urmom'), 'dpasion@cpp.edu', 'cpp','.theDaniel', 666420, False, True )
+                    (123456, 'Daniel', 'Pasion', hash_password('urmom'), 'dpasion@cpp.edu', 'cpp','.theDaniel', 666420, True, True )
                     )
 
         cur.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
@@ -28,7 +28,7 @@ def run_db():
                     (123456, 'LeCaleb', 'chung', hash_password('ursis'), 'lbj@cpp.edu', 'cpp','thebigtig', 666420, True, False ))
 
         cur.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    (123456, 'Nick', 'Amancio', hash_password('urcousin'), 'njamancio@cpp.edu', 'cpp','nickthecan', 666420, False, True ))
+                    (123456, 'Nick', 'Amancio', hash_password('urcousin'), 'njamancio@cpp.edu', 'cpp','nickthecan', 666420, True, True ))
 
         cur.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     (123456, 'Jade', 'Nguyen', hash_password('urdasfhp'), 'jgnuyen@cpp.edu', 'cpp','jadethegemstone', 666420, True, True ))

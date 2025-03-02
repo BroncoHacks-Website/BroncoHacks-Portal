@@ -894,7 +894,7 @@ def switcheroo():
             int(member)
         except:
             return jsonify(status=422, message="Unprocessable Entity (Member is of wrong type)")
-        
+
         try:
             if owner == member:
                 return jsonify(status=422, message="Duplicate Entity")
