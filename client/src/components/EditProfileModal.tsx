@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { HackerModel } from "../models/hacker";
 import { uri } from "../App";
+import Alert from "./Alert";
 
 interface ModalProps {
   hackerProp: HackerModel;
@@ -15,13 +16,28 @@ function EditProfileModal({ hackerProp, onClose }: ModalProps) {
   const [school, setSchool] = useState<string>(hackerProp.school);
   const [discord, setDiscord] = useState<string>(hackerProp.discord);
 
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMsg, setAlertMsg] = useState("");
+  const [alertButtonMsg, setAlertButtonMsg] = useState("");
+
+  const [requestMessage, setRequestMessage] = useState("");
+
   const update = async () => {
     const payload = {
       firstName: firstName,
       lastName: lastName,
       school: school,
-      discord: discord,
+      UUID: hackerProp.UUID,
     };
+
+    if (
+      firstName == hackerProp.firstName &&
+      lastName == hackerProp.lastName &&
+      school == hackerProp.school &&
+      discord == hackerProp.discord
+    ) {
+      return;
+    }
     try {
       const res = await fetch(uri + "hacker", {
         method: "PUT",
@@ -33,8 +49,11 @@ function EditProfileModal({ hackerProp, onClose }: ModalProps) {
       });
 
       const data = await res.json();
+      console.log(data);
       if (data.status == 200) {
-        alert("Successfully updated information");
+        setAlertMsg("Profile Updated!");
+        setAlertButtonMsg("Ok");
+        setShowAlert(true);
       }
     } catch (error) {
       console.log("Error updating data:", error);
@@ -120,6 +139,15 @@ function EditProfileModal({ hackerProp, onClose }: ModalProps) {
           </div>
         </div>
       </div>
+      {showAlert && (
+        <Alert
+          msg={alertMsg}
+          function1={() => {
+            window.location.reload();
+          }}
+          message1={alertButtonMsg}
+        />
+      )}
     </>
   );
 }
