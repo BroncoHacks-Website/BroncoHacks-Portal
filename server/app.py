@@ -446,7 +446,6 @@ def update_hacker():
         UUID = data.get('UUID', None)
         first_name = data.get('firstName', None)
         last_name = data.get('lastName', None)
-        school = data.get('school', None)
         discord = data.get('discord', None)
 
         try:
