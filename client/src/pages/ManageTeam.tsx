@@ -3,6 +3,7 @@ import { HackerModel } from "../models/hacker";
 import { useNavigate } from "react-router";
 import { uri } from "../App";
 import { TeamModel } from "../models/team";
+import Alert from "../components/Alert";
 
 interface PartialHackerModel {
   UUID: string;
@@ -21,6 +22,10 @@ function ManageTeam() {
   const [teamMember1, setTeamMember1] = useState<PartialHackerModel | null>();
   const [teamMember2, setTeamMember2] = useState<PartialHackerModel | null>();
   const [teamMember3, setTeamMember3] = useState<PartialHackerModel | null>();
+
+  const [showAlert, setShowAlert] = useState(false)
+  const [alertMsg, setAlertMsg] = useState("")
+  const [alertButtonMsg, setAlertButtonMsg] = useState("")
 
   const [role, setRole] = useState<
     "owner" | "teamMember1" | "teamMember2" | "teamMember3" | undefined
@@ -93,7 +98,7 @@ function ManageTeam() {
                 teamMember2: teamJSON.teamMember2,
                 teamMember3: teamJSON.teamMemer3,
               });
-              console.log(teamJSON);
+              //console.log(teamJSON);
               setOwner(teamJSON.owner);
               if (teamJSON.owner.UUID == hackerJSON.UUID) {
                 setRole("owner");
@@ -133,6 +138,51 @@ function ManageTeam() {
 
     checkAuth();
   }, [navigate, token]);
+  
+  const makeOwner = async (newPerson : PartialHackerModel) => {
+    if (!hacker || !team) {
+      console.error("TS MISSING")
+      return
+    }
+    
+    try {
+
+      console.log(owner?.UUID)
+      console.log(newPerson?.UUID)
+      console.log(team.teamID)
+      const newOwnerRes = await fetch(`${uri}team/owner`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          owner : owner?.UUID,
+          teamMember: newPerson?.UUID,
+          teamID: team.teamID
+        }),
+      })
+
+
+      const data = await newOwnerRes.json()
+      console.log(data)
+      if (data.status === 200) {
+        setAlertMsg("Ownership successfully transferred to " + newPerson.firstName + " " + newPerson.lastName)
+        setAlertButtonMsg("Ok")
+        setShowAlert(true)
+      }
+      else {
+        console.error("FUCK YOU YOU'RE STUPID I HATE YOU YOU ALWAYS WERE A DUMB SACK OF LARD", data.error)
+      }
+    } 
+    catch (e) {
+      setAlertMsg("Error transferring Ownership")
+      setAlertButtonMsg("Ok")
+      setShowAlert(true)
+      console.error("error transffering owenrship", e)
+    }
+  }
+  
 
   return (
     <>
@@ -163,12 +213,12 @@ function ManageTeam() {
                       Contact Info
                     </span>
                   </button>
-                  <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
+                  {/* <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1" >
                     <span className="block sm:hidden text-sm">♕</span>
                     <span className="hidden sm:block text-center">
                       Make Owner
                     </span>
-                  </button>
+                  </button> */}
                   <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
                     <span className="block sm:hidden text-sm">✕</span>
                     <span className="hidden sm:block text-center">
@@ -188,7 +238,8 @@ function ManageTeam() {
                       Contact Info
                     </span>
                   </button>
-                  <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
+                  <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1" onClick={() => teamMember1 && makeOwner(teamMember1)}
+                  >
                     <span className="block sm:hidden text-sm">♕</span>
                     <span className="hidden sm:block text-center">
                       Make Owner
@@ -213,7 +264,8 @@ function ManageTeam() {
                       Contact Info
                     </span>
                   </button>
-                  <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
+                  <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1" onClick={() => teamMember2 && makeOwner(teamMember2)} 
+                    >
                     <span className="block sm:hidden text-sm">♕</span>
                     <span className="hidden sm:block text-center">
                       Make Owner
@@ -238,7 +290,7 @@ function ManageTeam() {
                       Contact Info
                     </span>
                   </button>
-                  <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
+                  <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1" onClick={() => teamMember3 && makeOwner(teamMember3)}>
                     <span className="block sm:hidden text-sm">♕</span>
                     <span className="hidden sm:block text-center">
                       Make Owner
@@ -278,6 +330,9 @@ function ManageTeam() {
               <button>Leave Team</button>
             )}
           </div>
+          {showAlert && (<Alert msg={alertMsg} function1={() => {
+            window.location.reload()
+          }} message1={alertButtonMsg} />)}
         </div>
       )}
     </>
