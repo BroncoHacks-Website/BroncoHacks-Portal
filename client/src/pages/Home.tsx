@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import "../index.css";
+
 function Home() {
   const navigate = useNavigate();
 
@@ -28,13 +29,13 @@ function Home() {
             <div className="flex flex-col sm:flex-row justify-items:start ">
               {/* for some reason chatgpt said that the gradient background cannot be used for the Links which was weird cause it's literally the same exact code. See tailwind really pmo rn gng */}
               <Link
-                className="mx-auto text-white text-[1.5rem] md:text-[1.7rem] shadow-2xl bg-[#035BA5] hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-400 anmat-th-bttn-gng transition-all duration-500 focus:outline-none focus:ring-4 focus:ring-blue-300 font-bold rounded-[20px] py-3 px-4 md:py-4 md:px-8 transform hover:scale-105"
+                className="mx-auto text-white text-[1.5rem] md:text-[1.7rem] shadow-2xl bg-[#035BA5] anmat-th-bttn-gng focus:outline-none focus:ring-2 focus:ring-green-300 font-bold rounded-[20px] py-3 px-4 md:py-4 md:px-8 transform hover:scale-105"
                 to={{ pathname: "/Login" }}
               >
                 Login 🐎
               </Link>
               <Link
-                className="mx-auto text-white text-[1.5rem] md:text-[1.7rem] shadow-2xl bg-[#035BA5] hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-400 anmat-th-bttn-gng transition-all duration-500 focus:outline-none focus:ring-4 focus:ring-blue-300 font-bold rounded-[20px] py-3 px-4 md:py-4 md:px-8 transform hover:scale-105"
+                className="mx-auto text-white text-[1.5rem] md:text-[1.7rem] shadow-2xl bg-[#035BA5] anmat-th-bttn-gng focus:outline-none focus:ring-2 focus:ring-green-300 font-bold rounded-[20px] py-3 px-4 md:py-4 md:px-8 transform hover:scale-105"
                 to={{ pathname: "/CreateAccount" }}
               >
                 Register Here 👋

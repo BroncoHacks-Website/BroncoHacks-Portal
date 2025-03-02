@@ -10,13 +10,14 @@
   .anmat-th-bttn-gng {
     position: relative;
     overflow: hidden;
+    z-index: 0;
   }
 
   .anmat-th-bttn-gng::before {
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(270deg, #4f46e5, #6366f1, #8b5cf6);
+    background: linear-gradient(270deg, #4f46e5, #63f1af, #4dd681);
     background-size: 400% 400%;
     animation: background-move 3s infinite linear;
     opacity: 0;
@@ -28,6 +29,7 @@
   .anmat-th-bttn-gng:hover::before {
     opacity: 1;
   }
+
   @keyframes background-move {
     0% {
       background-position: 0% 50%;

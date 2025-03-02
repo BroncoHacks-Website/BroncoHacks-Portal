@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { uri } from "../App";
+import Alert from "./Alert";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -11,6 +12,9 @@ function Navbar() {
   const [token, setToken] = useState(
     localStorage.getItem("token") ? localStorage.getItem("token") : null
   );
+  const [showAlert, setShowAlert] = useState(false)
+  const [alertMsg, setAlertMsg] = useState("")
+  const [alertButtonMsg, setAlertButtonMsg] = useState("")
 
   useEffect(() => {
     window.addEventListener("storage", () => {
@@ -36,15 +40,13 @@ function Navbar() {
       });
       const json = await res.json();
       if (json.status == 200) {
-        alert("Logging out...");
-        localStorage.removeItem("token");
-        navigate("/");
-        window.location.reload();
+        setAlertMsg("Logging out...")
+        setAlertButtonMsg("Ok")
+        setShowAlert(true)
       } else {
-        alert("Error: " + json.message);
-        localStorage.removeItem("token");
-        navigate("/");
-        window.location.reload();
+        setAlertMsg("error " + json.message)
+        setAlertButtonMsg("Ok")
+        setShowAlert(true)
       }
     } catch {
       alert("No Session Found: Going Back to Home");
@@ -105,6 +107,11 @@ function Navbar() {
           )}
         </div>
       </div>
+      {showAlert && (<Alert msg={alertMsg} function1={()=> {
+        localStorage.removeItem("token");
+        navigate("/");
+        window.location.reload();
+      }} message1={alertButtonMsg}/>)}
     </div>
   );
 }
