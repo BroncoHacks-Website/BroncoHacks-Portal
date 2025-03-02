@@ -182,7 +182,7 @@ function Login() {
             </div>
             <Link
               className="text-purple-500"
-              to={{ pathname: "/CreateAccount" }}
+              to={{ pathname: "/ForgotPassword" }}
             >
               Forgot Your Password?
             </Link>

@@ -49,7 +49,7 @@ function EmailConfirmation() {
           });
           const hackerJSON = await hackerRes.json();
           setHacker(hackerJSON["hacker"]);
-          console.log(hackerJSON.hacker);
+
           if (hackerJSON["status"] != 200) {
             alert("Session Expired, Logging Out");
             localStorage.removeItem("token");
@@ -115,7 +115,7 @@ function EmailConfirmation() {
         },
       });
       const json = await res.json();
-      console.log(json);
+
       if (json.status == 200) {
         setCodeMessage("Account is now confrimed: redirecting to app");
         setIsFinallyConfirmed(true);
