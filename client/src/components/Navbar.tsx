@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { uri } from "../App";
 
 function Navbar() {
@@ -25,6 +25,8 @@ function Navbar() {
     });
   }, []);
 
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
   const logout = async () => {
     try {
       const res = await fetch(uri + "logout", {
@@ -34,7 +36,6 @@ function Navbar() {
         },
       });
       const json = await res.json();
-      console.log(json);
       if (json.status == 200) {
         alert("Logging out...");
         localStorage.removeItem("token");
@@ -67,31 +68,46 @@ function Navbar() {
           className="h-[10vh] w-[10vh]"
           alt="BroncoHacks Logo"
         />
-        <div className="font-bold text-5xl">BroncoHacks Portal</div>
+        <div className="font-bold text-2xl sm:text-5xl">BroncoHacks Portal</div>
       </div>
 
       {/* Right Section */}
       <div className="flex flex-row items-center gap-4">
-        {isLoggedIn ? (
-          <div>
-            <button onClick={handleModal} className="my-auto text-m mr-3" type="button">
-              Edit Profile
-            </button>
-            <button onClick={logout} className="my-ayto text-m">
-              Logout
-            </button>
-          </div>
-        ) : (
-          <Link
-            to={{
-              pathname: "/",
-            }}
+        <div className="relative">
+          <button
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+            className="text-white bg-[#035BA5] hover:bg-[#02498A] focus:outline-none focus:ring-4 focus:ring-blue-300 font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1"
           >
-            <div className="text-white bg-[#035BA5] hover:bg-[#02498A] focus:outline-none focus:ring-4 focus:ring-blue-300 font-bold rounded-lg text-3xl py-2 px-4">
-              Back to Home
+            <span className="block sm:hidden text-3xl">Ξ</span>
+            <span className="hidden sm:block text-center">Menu</span>
+          </button>
+          {dropdownOpen && (
+            <div className="absolute mt-2 right-0 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+              <a
+                href="https://www.broncohacks.org/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+              >
+                Back to BroncoHacks.org
+              </a>
+              {isLoggedIn && (
+                <div>
+                  {" "}
+                  <button className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100">
+                    Edit Profile
+                  </button>
+                  <button
+                    onClick={logout}
+                    className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
             </div>
-          </Link>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Edit Profile Modal*/}

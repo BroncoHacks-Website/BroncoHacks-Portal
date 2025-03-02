@@ -1,9 +1,15 @@
-import { SetStateAction, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { uri } from "../App";
 
 function Login() {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      navigate("/FindTeam");
+    }
+  }, [navigate]);
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -39,23 +45,29 @@ function Login() {
 
     //Request for login credentials
     setIsLoading(true);
-    const res = await fetch(uri + `login?email=${email}&password=${password}`);
-    const json = await res.json();
-    setIsLoading(false);
-    if (json.status != 200) {
-      setRequestMessage(json.message);
-    } else {
-      //Succesful Login, Determining if they are confirmed or not
-      setRequestMessage("");
-      setLoggedIn(true);
-      localStorage.setItem("token", json.token);
-      window.dispatchEvent(new Event("storage"));
-
-      if (json.isConfirmed) {
-        navigate("/FindTeam");
+    try {
+      const res = await fetch(
+        uri + `login?email=${email}&password=${password}`
+      );
+      const json = await res.json();
+      setIsLoading(false);
+      if (json.status != 200) {
+        setRequestMessage(json.message);
       } else {
-        navigate("/EmailConfirmation");
+        //Succesful Login, Determining if they are confirmed or not
+        setRequestMessage("");
+        setLoggedIn(true);
+        localStorage.setItem("token", json.token);
+        window.dispatchEvent(new Event("storage"));
+
+        if (json.isConfirmed) {
+          navigate("/Team");
+        } else {
+          navigate("/EmailConfirmation");
+        }
       }
+    } catch (error) {
+      console.error("Login request failed:", error);
     }
   };
 
@@ -71,12 +83,18 @@ function Login() {
     setPassword(event.target.value);
   };
 
+  const handleKeyDown = (event: { key: string }) => {
+    if (event.key === "Enter") {
+      login();
+    }
+  };
+
   return (
     <>
       <div className="bg-indigo-300 h-[85vh] flex flex-col items-center">
         <div className="w-full h-full flex items-center justify-center">
           <div
-            className={`flex flex-col gap-4 items-center h-[55vh] w-[25vw] md:w-[365px] m-auto rounded-xl bg-white shadow-lg shadow-black/75 backface-hidden `}
+            className={`flex flex-col gap-4 items-center h-[70vh] sm:h-[70vh] w-[75vw] sm:w-[55vw] md:w-[45vw] lg:w-[28vw] mx-auto rounded-xl bg-white shadow-lg shadow-black/75 backface-hidden `}
           >
             <h1 className="text-3xl font-bold m-10 md:text-5xl">Login🐴</h1>
             <div className="flex flex-col gap-3 w-[90%] items-start">
@@ -92,6 +110,7 @@ function Login() {
                 onChange={changePassword}
                 type="password"
                 className="border-b-2 focus:border-indigo-300 focus:outline-none w-[92%]"
+                onKeyDown={handleKeyDown}
               />
               <span className="text-red-500 text-sm ml-3">
                 {passwordMessage}
