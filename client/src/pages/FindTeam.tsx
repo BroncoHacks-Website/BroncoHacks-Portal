@@ -12,8 +12,10 @@ function FindTeam() {
   const [hacker, setHacker] = useState<HackerModel>();
 
   const [newTeamName, setNewTeamName] = useState<string>("");
+  const [newTeamCode, setNewTeamCode] = useState<string>("");
 
   const [createMessage, setCreateMessage] = useState<string>("");
+  const [joinMessage, setJoinMessage] = useState<string>("");
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -85,13 +87,60 @@ function FindTeam() {
     setNewTeamName(event.target.value);
   };
 
+  const changeTeamCode = (event: {
+    target: { value: SetStateAction<string> };
+  }) => {
+    setNewTeamCode(event.target.value);
+  };
+
   const hasNoNoWord = (text: string) => {
     return filter.isProfane(text);
   };
 
+  const joinTeam = async () => {
+    setJoinMessage("");
+    if (newTeamCode == "") {
+      setJoinMessage("Enter a code before joining a team");
+      return;
+    }
+
+    const body = {
+      teamID: newTeamCode,
+      teamMember: hacker?.UUID,
+    };
+    console.log(body);
+    const res = await fetch(
+      uri + "team/addTeamMember",
+
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      }
+    );
+    const json = await res.json();
+    console.log(json);
+    if (
+      json.message === "Team does not exist" ||
+      json.message === "Team is full"
+    ) {
+      setJoinMessage(json.message);
+    } else if (json.status != 200) {
+      setJoinMessage("Team does not exist");
+    } else {
+      alert("Joining team");
+      navigate("/ManageTeam");
+    }
+  };
+
   const createTeam = async () => {
+    setCreateMessage("");
     if (hasNoNoWord(newTeamName)) {
       setCreateMessage("Team Name not Allowed");
+      return;
     }
 
     try {
@@ -169,16 +218,20 @@ function FindTeam() {
             </div>
 
             <label className="xl:text-2xl">Enter Code: </label>
-            <input type="text" className="border-b-1 ml-2 pl-2" />
+            <input
+              type="text"
+              className="border-b-1 ml-2 pl-2"
+              onChange={changeTeamCode}
+            />
 
-            <div className="flex items-center justify-center my-5">
+            <div className="flex flex-col items-center justify-center my-5">
               <input
+                onClick={joinTeam}
                 type="submit"
                 value="Join"
                 className="bg-[#97d9c3] h-[5vh] w-[40vw] md:w-[30vw] lg:w-[20vw] xl:w-[10vw] rounded-xl text-white font-bold shadow-lg hover:cursor-pointer"
               />
-              <br />
-              <br />
+              <span className="text-red-500 text-sm ml-3">{joinMessage}</span>
             </div>
           </div>
         </div>
