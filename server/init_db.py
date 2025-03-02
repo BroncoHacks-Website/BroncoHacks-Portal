@@ -41,8 +41,6 @@ def run_db():
         cur.execute("UPDATE teams SET teamMember2 = 4 WHERE teamID = 123456")
         cur.execute("UPDATE teams SET teamMember3 = 5 WHERE teamID = 123456")
 
-        cur.execute("UPDATE teams SET teamMember1 = 3 WHERE teamID = 123456")
-
         connection.commit()
         connection.close()
         print("Complete")

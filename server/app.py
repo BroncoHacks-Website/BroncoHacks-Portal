@@ -607,13 +607,22 @@ def create_tuah():
         if not owner_confirmation or owner_confirmation[0] == 0:
             return jsonify(message="owner is not confirmed",status=400)
         
-        existing_teams = conn.execute("SELECT teamName, owner FROM teams").fetchall()
+        existing_teams = conn.execute("SELECT teamName, owner, teamMember1, teamMember2, teamMember3 FROM teams").fetchall()
         existing_team_names = [team["teamName"] for team in existing_teams]
         existing_team_owners_names = [int(team["owner"]) for team in existing_teams] 
+        existing_teamMember1 = [team["teamMember1"] for team in existing_teams]
+        existing_teamMember2 = [team["teamMember2"] for team in existing_teams]
+        existing_teamMember3 = [team["teamMember3"] for team in existing_teams]
         if team_name in existing_team_names:
             return jsonify(message="team name already in use",status=400)
         if owner in existing_team_owners_names:
-            return jsonify(message= "player is already in a team",status=400)
+            return jsonify(message="owner is already in a team",status=400)
+        if str(owner) in existing_teamMember1:
+            return jsonify(message="user is already in a team (member 1)",status=400)
+        if str(owner) in existing_teamMember2:
+            return jsonify(message="user is already in a team (member 2)",status=400)
+        if str(owner) in existing_teamMember3:
+            return jsonify(message="user is already in a team (member 3)",status=400)
     
         id = generate_team_id()
         list_of_ids = conn.execute("SELECT teamID FROM teams").fetchall()
@@ -621,10 +630,11 @@ def create_tuah():
             id = generate_team_id()
 
         conn.execute("INSERT INTO teams (teamID, teamName, owner, teamMember1, teamMember2, teamMember3) VALUES (?, ?, ?, ?, ?, ?)", (id, team_name, owner, None, None, None))
+        conn.execute("UPDATE hackers SET teamID = ? where UUID = ?",(id, int(owner)))
         conn.commit()
 
         return jsonify({
-            "message": "success !!!! Yippyyyyy",
+            "message": "success !!!! pYippyyyyy",
             "team" : {
                 "teamID": id,
                 "teamName": team_name,
