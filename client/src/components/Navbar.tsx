@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { uri } from "../App";
-import Modal from "./Modal";
+import EditProfileModal from "./EditProfileModal";
+import { HackerModel } from "../models/hacker";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ function Navbar() {
     localStorage.getItem("token") ? localStorage.getItem("token") : null
   );
   const [modalVisibility, setModalVisibility] = useState(false);
+  const [hacker, setHacker] = useState<HackerModel | null>(null);
 
   useEffect(() => {
     window.addEventListener("storage", () => {
@@ -24,7 +26,92 @@ function Navbar() {
         setToken(null);
       }
     });
+
   }, []);
+
+  useEffect(() => {
+    // console.log("hgawk tuha");
+    // console.log(token);
+    const fetchHacker = async () => {
+      try {
+        console.log(token);
+        debugger;
+        const res = await fetch(uri + "whoami", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const json = await res.json();
+        console.log(json);
+
+        // Fetch User Info
+       
+        // const hackerRes = await fetch(uri + `hacker?UUID=${json.UUID}`, {
+        //   method: "GET",
+        //   headers: {
+        //     Authorization: `Bearer ${token}`,
+        //   },
+        // });
+        // const hackerJSON = await hackerRes.json();
+        // setHacker(hackerJSON["hacker"]);
+        // console.log(hackerJSON.hacker);
+        // if (hackerJSON["status"] != 200) {
+        //   alert("Session Expired, Logging Out");
+        //   localStorage.removeItem("token");
+        //   navigate("/");
+        // } else {
+        //   setHacker(hackerJSON.hacker);
+        //   if (hackerJSON.hacker["isConfirmed"] == true) {
+        //     navigate("/Team");
+        //   }
+        // }
+        
+      } catch {
+        alert("Session Expired, Logging Out");
+        localStorage.removeItem("token");
+        navigate("/");
+      }
+    }
+    if (token) {
+      fetchHacker();
+    }
+
+
+  }, [token])
+  // useEffect(() => {
+  //   const fetchHacker = async () => {
+  //     try {
+  //       const res = await fetch(uri + "whoami", {
+  //         method: "GET",
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       });
+
+  //       const json = await res.json();
+
+  //       try {
+  //         const hackerRes = await fetch(uri + `hacker?UUID=${json.UUID}`, {
+  //           method: "GET",
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           }
+  //         });
+  //         const hackerJSON = await hackerRes.json();
+  //         setHacker(hackerJSON["hacker"]);
+  //         console.log(hacker)
+  //       } catch (e) {
+  //         console.log(e);
+  //       }
+  //     } catch (e) {
+  //       console.log(e);
+  //     }
+  //   };
+
+  //   fetchHacker();
+  // }, [token]);
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -114,8 +201,8 @@ function Navbar() {
       </div>
 
       {/* Edit Profile Modal*/}
-      <Modal isOpen={modalVisibility} onClose={() => setModalVisibility(false)}/>
-      
+
+      {modalVisibility && hacker && <EditProfileModal hackerProp={hacker} onClose={() => setModalVisibility(false)}/>}
     </div>
   );
 }
