@@ -50,6 +50,7 @@ function Login() {
         uri + `login?email=${email}&password=${password}`
       );
       const json = await res.json();
+
       setIsLoading(false);
       if (json.status != 200) {
         setRequestMessage(json.message);
@@ -59,8 +60,9 @@ function Login() {
         setLoggedIn(true);
         localStorage.setItem("token", json.token);
         window.dispatchEvent(new Event("storage"));
-
-        if (json.isConfirmed) {
+        if (json.isAdmin) {
+          navigate("/Admin");
+        } else if (json.isConfirmed) {
           navigate("/ManageTeam");
         } else {
           navigate("/EmailConfirmation");
