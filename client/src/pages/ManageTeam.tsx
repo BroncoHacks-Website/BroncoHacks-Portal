@@ -60,7 +60,6 @@ function ManageTeam() {
             },
           });
           const hackerJSON = await hackerRes.json();
-          setHacker(hackerJSON["hacker"]);
 
           if (hackerJSON["status"] != 200) {
             alert("Session Expired, Logging Out");
