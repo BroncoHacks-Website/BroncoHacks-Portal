@@ -1,11 +1,13 @@
 import { SetStateAction, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { uri } from "../App";
+import { Filter } from 'bad-words';
 import { HackerModel } from "../models/hacker";
 
 function FindTeam() {
 
   const navigate = useNavigate();
+  const filter = new Filter();
 
   const token = localStorage.getItem("token");
   const [hacker, setHacker] = useState<HackerModel>();
@@ -15,14 +17,78 @@ function FindTeam() {
   const [createMessage, setCreateMessage] = useState<string>("");
 
   useEffect(() => {
-    
-  });
+    const checkAuth = async () => {
+      if (!token) {
+        navigate("/");
+        return;
+      }
+
+      // Initial Token Request
+      try {
+        const res = await fetch(uri + "whoami", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const json = await res.json();
+
+        if (!json.UUID) {
+          alert("Session Expired, Logging Out");
+          localStorage.removeItem("token");
+          navigate("/");
+          return;
+        }
+
+        // Fetch User Info
+        try {
+          const hackerRes = await fetch(uri + `hacker?UUID=${json.UUID}`, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const hackerJSON = await hackerRes.json();
+          setHacker(hackerJSON["hacker"]);
+
+          if (hackerJSON["status"] != 200) {
+            alert("Session Expired, Logging Out");
+            localStorage.removeItem("token");
+            navigate("/");
+          } else {
+            setHacker(hackerJSON.hacker);
+            if (hackerJSON.hacker["isConfirmed"] == false) {
+              navigate("/EmailConfirmation");
+            }
+            if (!hackerJSON.hacker["teamID"]) {
+              navigate("/FindTeam");
+            }
+          }
+        } catch {
+          alert("Session Expired, Logging Out");
+          localStorage.removeItem("token");
+          navigate("/");
+        }
+      } catch {
+        alert("Session Expired, Logging Out");
+        localStorage.removeItem("token");
+        navigate("/");
+      }
+    };
+
+    checkAuth();
+  }, [navigate, token]);
 
   const changeTeamName = (event: {
     target: { value: SetStateAction<string> };
   }) => {
     setNewTeamName(event.target.value);
   };
+
+  const hasNoNoWord = (text: string) => {
+    return filter.isProfane(text);
+  }
 
   const createTeam = async() => {
 
@@ -71,21 +137,53 @@ function FindTeam() {
               navigate("/");
             }
             // hacker already has team
-            if (hackerJSON.hacker["teamID"] == null) {
+            if (hackerJSON.hacker["teamID"] != null) {
               alert("Unable to create team becauser user is already in a team.");
               navigate("/ManageTeam");
             }
           }
 
+          setCreateMessage("");
           // Validate Team Name
-          if (newTeamName == "") {
+          if ( newTeamName == "" ) {
             setCreateMessage("No name");
+          } else if ( hasNoNoWord(newTeamName) ) {
+            setCreateMessage("Bad Word Detected!");
+          } else {
+            // Call Backend to Create Team
+            const reqJSON = {
+              teamName: newTeamName,
+              owner: hackerJSON.hacker["UUID"]
+            }
+
+            console.log(JSON.stringify(reqJSON));
+
+            const createTeamRes = await fetch(uri + "team", {
+              method: "POST",
+              headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(reqJSON)
+            })
+
+            const resJSON = await createTeamRes.json();
+
+            if (resJSON["status"] != 200) {
+              alert(resJSON["message"]);
+            } else {
+              alert(resJSON["message"]);
+              navigate("/ManageTeam");
+            }
+
+
           }
 
         } catch {
-          alert("Session Expired, Logging Out");
-          localStorage.removeItem("token");
-          navigate("/");
+          alert("Something went wrong.");
+          // alert("Session Expired, Logging Out");
+          // localStorage.removeItem("token");
+          // navigate("/");
         }
       } catch {
         alert("Session Expired, Logging Out");
@@ -121,12 +219,12 @@ function FindTeam() {
                 type="submit"
                 value="Create New Team"
                 onClick={createTeam}
-                className="bg-[#97d9c3] h-[5vh] w-[40vw] md:w-[30vw] lg:w-[20vw] xl:w-[10vw] rounded-xl text-white font-bold shadow-lg hover:cursor-pointer"
+                className="bg-[#97d9c3] h-[5vh] w-[40vw] md:w-[30vw] lg:w-[20vw] xl:w-[10vw] rounded-xl text-white font-bold shadow-lg hover:cursor-pointer hover:bg-[#72e9d3]"
               />
-              <span className="text-red-500 text-sm ml-3">{createMessage}</span>
-              <br />
+              {/* <br /> */}
               <br />
             </div>
+            <span className="text-red-500 text-sm ml-3">{createMessage}</span>
           </div>
           <div className="xl:hidden">---------------or---------------</div>
           {/* join team via code tab */}
