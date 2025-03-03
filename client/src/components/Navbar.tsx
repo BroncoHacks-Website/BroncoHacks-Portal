@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { uri } from "../App";
 import Alert from "./Alert";
 import EditProfileModal from "./EditProfileModal";
@@ -124,16 +124,16 @@ function Navbar() {
   return (
     <div className="flex flex-row justify-between items-center h-[15vh] py-4 px-8">
       {/* Left Section */}
-      <div className="flex flex-row items-center gap-4">
-        <a href="/">
+      <div
+        className="flex flex-row items-center gap-4 hover:cursor-pointer"
+        onClick={() => navigate("/")}
+      >
         <img
           src="BroncoHacksSquareLogo.png"
           className="h-[10vh] w-[10vh]"
           alt="BroncoHacks Logo"
-        /> </a>
-        <a href="/">
-          <div className="font-bold text-2xl sm:text-5xl">BroncoHacks Portal</div>
-        </a>
+        />
+        <div className="font-bold text-2xl sm:text-5xl">BroncoHacks Portal</div>
       </div>
 
       {/* Right Section */}
@@ -144,7 +144,7 @@ function Navbar() {
             className="text-white bg-[#035BA5] hover:bg-[#02498A] focus:outline-none focus:ring-4 focus:ring-blue-300 font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1"
           >
             <span className="block sm:hidden text-3xl">Ξ</span>
-            <span className="hidden sm:block text-center">Menu</span>
+            <span className="hidden sm:block text-center px-2">Menu</span>
           </button>
           {dropdownOpen && (
             <div className="absolute mt-2 right-0 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
@@ -156,9 +156,13 @@ function Navbar() {
               >
                 Back to BroncoHacks.org
               </a>
-              <a href="/FAQ" className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100">
+              <Link
+                className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+                to={{ pathname: "/FAQ" }}
+              >
                 FAQ
-              </a>
+              </Link>
+
               {isLoggedIn && (
                 <div>
                   {" "}

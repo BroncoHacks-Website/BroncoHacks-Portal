@@ -193,7 +193,7 @@ function FindTeam() {
                 className="border-b-1 ml-2 pl-2"
               />
             </div>
-            <div className="flex items-center justify-center my-2">
+            <div className="flex items-center justify-center my-5">
               <input
                 type="submit"
                 value="Create New Team"
@@ -205,7 +205,7 @@ function FindTeam() {
             </div>
             <span className="text-red-500 text-sm ml-3">{createMessage}</span>
           </div>
-          <div className="xl:hidden">---------------or---------------</div>
+          <div className="xl:hidden py-4"></div>
           {/* join team via code tab */}
           <div className="bg-white h-[35vh] w-[80vw] sm:w-[65vw] md:w-[55vw] lg:w-[45vw] xl:h-[60vh] xl:w-[45vw] 2xl:w-[75vh] rounded-2xl border-lg shadow-lg mx-auto text-center">
             <img
@@ -217,19 +217,23 @@ function FindTeam() {
               <h1>Join Team via Code</h1>
             </div>
 
-            <label className="xl:text-2xl">Enter Code: </label>
-            <input
-              type="text"
-              className="border-b-1 ml-2 pl-2"
-              onChange={changeTeamCode}
-            />
+
+            <div className="flex items-center justify-center font-black pt-2">
+              <label className="xl:text-2xl">Enter Code: </label>
+              <input
+                type="text"
+                className="border-b-1 ml-2 pl-2"
+                onChange={changeTeamCode}
+              />
+            </div>
+            
 
             <div className="flex flex-col items-center justify-center my-5">
               <input
                 onClick={joinTeam}
                 type="submit"
                 value="Join"
-                className="bg-[#97d9c3] h-[5vh] w-[40vw] md:w-[30vw] lg:w-[20vw] xl:w-[10vw] rounded-xl text-white font-bold shadow-lg hover:cursor-pointer"
+                className="bg-[#97d9c3] h-[5vh] w-[40vw] md:w-[30vw] lg:w-[20vw] xl:w-[10vw] rounded-xl text-white font-bold shadow-lg hover:cursor-pointer hover:bg-[#72e9d3]"
               />
               <span className="text-red-500 text-sm ml-3">{joinMessage}</span>
             </div>
