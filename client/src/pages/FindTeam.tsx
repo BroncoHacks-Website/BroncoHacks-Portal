@@ -18,6 +18,11 @@ function FindTeam() {
   const [createMessage, setCreateMessage] = useState<string>("");
   const [joinMessage, setJoinMessage] = useState<string>("");
 
+  const [showAlert, setShowAlert] = useState(false);
+	const [alertMsg, setAlertMsg] = useState("");
+	const [function1, setFunction1] = useState<(() => void) | null>(null)
+	const [alertButtonMsg, setAlertButtonMsg] = useState("");
+
   useEffect(() => {
     const checkAuth = async () => {
       if (!token) {
@@ -132,8 +137,10 @@ function FindTeam() {
     } else if (json.status != 200) {
       setJoinMessage("Team does not exist");
     } else {
-      alert("Joining team");
-      navigate("/ManageTeam");
+      setAlertMsg("Joining Team ...")
+      setAlertButtonMsg("Ok")
+      setFunction1(() => () => {navigate("/ManageTeam")})
+      setShowAlert(true)
     }
   };
 
@@ -242,6 +249,7 @@ function FindTeam() {
           </div>
         </div>
       </div>
+      {showAlert && (<Alert msg={alertMsg} function1={function1 ?? (() => {})} message1={alertButtonMsg}/>)}
     </>
   );
 }
