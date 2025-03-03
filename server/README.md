@@ -16,4 +16,4 @@ Running the Image
 
 Calling the enpoint
 
-- http://127.0.0.1:8000/{whatever uri u created}
+- http://127.0.0.1:800py0/{whatever uri u created}
