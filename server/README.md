@@ -8,11 +8,11 @@ First Download Docker Desktop
 
 Building the Docker Container (Do this to push any changes made)
 
-- docker build --tag bh-portal .
+- docker build --platform linux/amd64 --tag danielpasion/bhportal .
 
 Running the Image
 
-- docker run --env-file .env -d -p 8000:8000 bh-portal
+- docker run --env-file .env -d -p 8000:8000 danielpasion/bhportal
 
 Calling the enpoint
 
