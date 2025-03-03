@@ -36,7 +36,7 @@ function Navbar() {
     console.log(token);
     const checkAuth = async () => {
       if (!token) {
-        navigate("/");
+        // navigate("/");
         return;
       }
 
@@ -54,7 +54,7 @@ function Navbar() {
         if (!json.UUID) {
           alert("Session Expired, Logging Out");
           localStorage.removeItem("token");
-          navigate("/");
+          // navigate("/");
           return;
         }
 
@@ -69,11 +69,14 @@ function Navbar() {
           const hackerJSON = await hackerRes.json();
           if (hackerJSON["status"] != 200) {
             alert("Session Expired, Logging Out");
-            localStorage.removeItem("token");
+            localStorage.removeItem("token")
             navigate("/");
           } else {
             setHacker(hackerJSON.hacker);
-            if (hackerJSON.hacker["isConfirmed"] == true) {
+            if (hackerJSON.hacker["isAdmin"] == true) {
+              navigate("/Admin");
+            }
+            else if (hackerJSON.hacker["isConfirmed"] == true) {
               navigate("/FindTeam");
             }
           }
@@ -116,6 +119,7 @@ function Navbar() {
     } catch {
       alert("No Session Found: Going Back to Home");
       localStorage.removeItem("token");
+      console.log("9")
       navigate("/");
       window.location.reload();
     }
