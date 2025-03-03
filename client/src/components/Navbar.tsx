@@ -124,7 +124,7 @@ function Navbar() {
   return (
     <div className="flex flex-row justify-between items-center h-[15vh] border-1 py-4 px-8">
       {/* Left Section */}
-      <div className="flex flex-row items-center gap-4">
+      <div className="flex flex-row items-center gap-4 hover:cursor-pointer" onClick={() => navigate("/")}>
         <img
           src="BroncoHacksSquareLogo.png"
           className="h-[10vh] w-[10vh]"
@@ -141,7 +141,7 @@ function Navbar() {
             className="text-white bg-[#035BA5] hover:bg-[#02498A] focus:outline-none focus:ring-4 focus:ring-blue-300 font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1"
           >
             <span className="block sm:hidden text-3xl">Ξ</span>
-            <span className="hidden sm:block text-center">Menu</span>
+            <span className="hidden sm:block text-center px-2">Menu</span>
           </button>
           {dropdownOpen && (
             <div className="absolute mt-2 right-0 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
