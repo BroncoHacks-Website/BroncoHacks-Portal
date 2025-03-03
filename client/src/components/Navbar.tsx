@@ -76,8 +76,8 @@ function Navbar() {
             if (hackerJSON.hacker["isAdmin"] == true) {
               navigate("/Admin");
             }
-            if (hackerJSON.hacker["isConfirmed"] == true) {
-              // navigate("/FindTeam");
+            else if (hackerJSON.hacker["isConfirmed"] == true) {
+              navigate("/FindTeam");
             }
           }
         } catch {
