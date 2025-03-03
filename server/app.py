@@ -1006,6 +1006,85 @@ def addTeamMember():
         return jsonify(status=200, message="Success", hacker=dict(get_hacker), team=dict(get_team))
     except Exception as e:
         return jsonify(status=500, message=str(e))
+    
+@app.route("/team/sendApplication", methods=['PUT'])
+@jwt_required()
+@cross_origin()
+def remove_that_playa():
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify(message="no data provided",status=400)
+        
+        team_id = data.get("teamID")
+        owner = data.get("owner")
+
+        conn = get_db_connection()
+
+        team = conn.execute("SELECT * FROM teams WHERE teamID = ?", (int(team_id),)).fetchone()
+
+        if not team:
+            return jsonify(status=404, message="Team does not exist in the database")
+        
+        if owner != team["owner"]:
+            return jsonify(status=418, message="This user is not the owner of the team")
+    
+        if not team["teamMember1"]:
+            return jsonify(status=403, message="Teams must have at least 2 members")
+
+        conn.execute("UPDATE teams SET status=pending WHERE teamID=?", (team_id))
+
+        conn.commit()
+        
+        return jsonify({
+            "message": "Success",
+            "status": 200,
+        })
+    except Exception as e:
+        return jsonify({"message": str(e), "status":500})
+    finally:
+        conn.close()
+
+@app.route("/team/approveApplication", methods=['PUT'])
+@jwt_required()
+@cross_origin()
+def remove_that_playa():
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify(message="no data provided",status=400)
+        
+        team_id = data.get("teamID")
+        status = data.get("approved")
+
+        UUID = get_jwt_identity()
+        hacker = get_hacker_by_id(UUID)
+        if not hacker["isAdmin"]:
+            return jsonify(status=401, message="fuck outta here",)
+
+        conn = get_db_connection()
+
+        team = conn.execute("SELECT * FROM teams WHERE teamID = ?", (int(team_id),)).fetchone()
+
+        if not team:
+            return jsonify(status=404, message="Team does not exist in the database")
+        
+        if status == "approved":
+            conn.execute("UPDATE teams SET status=approved WHERE teamID=?", (team_id))
+        else:
+            conn.execute("UPDATE teams SET status=unregistered WHERE teamID=?", (team_id))
+
+        conn.commit()
+
+        return jsonify({
+            "message": "Success",
+            "applicationStatus": status,
+            "status": 200,
+        })
+    except Exception as e:
+        return jsonify({"message": str(e), "status":500})
+    finally:
+        conn.close()
         
     
 if __name__ == "__main__":
