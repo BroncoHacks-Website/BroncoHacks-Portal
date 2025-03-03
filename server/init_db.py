@@ -19,7 +19,7 @@ def run_db():
         cur = connection.cursor()
 
         cur.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    (123456, 'Daniel', 'Pasion', hash_password('1'), 'dpasion@cpp.edu', 'cpp','.theDaniel', 666420, True, False ))
+                    (123456, 'Daniel', 'Pasion', hash_password('1'), 'dpasion@cpp.edu', 'cpp','.theDaniel', 666420, True, True ))
         cur.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     (None, 'Cesar Henry', 'de Paula', hash_password('1'), 'chdp@cpp.edu', 'cpp','putanginamo', 666420, True, False ))
         cur.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",

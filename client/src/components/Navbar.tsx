@@ -33,10 +33,8 @@ function Navbar() {
   }, []);
 
   useEffect(() => {
-    console.log(token);
     const checkAuth = async () => {
       if (!token) {
-        // navigate("/");
         return;
       }
 
@@ -51,44 +49,29 @@ function Navbar() {
 
         const json = await res.json();
 
-        if (!json.UUID) {
-          alert("Session Expired, Logging Out");
-          localStorage.removeItem("token");
-          // navigate("/");
-          return;
-        }
-
         // Fetch User Info
-        try {
-          const hackerRes = await fetch(uri + `hacker?UUID=${json.UUID}`, {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          const hackerJSON = await hackerRes.json();
-          if (hackerJSON["status"] != 200) {
-            alert("Session Expired, Logging Out");
-            localStorage.removeItem("token")
-            navigate("/");
-          } else {
-            setHacker(hackerJSON.hacker);
-            if (hackerJSON.hacker["isAdmin"] == true) {
-              navigate("/Admin");
-            }
-            else if (hackerJSON.hacker["isConfirmed"] == true) {
-              navigate("/FindTeam");
-            }
-          }
-        } catch {
+
+        const hackerRes = await fetch(uri + `hacker?UUID=${json.UUID}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const hackerJSON = await hackerRes.json();
+        if (hackerJSON["status"] != 200) {
           alert("Session Expired, Logging Out");
           localStorage.removeItem("token");
           navigate("/");
+        } else {
+          setHacker(hackerJSON.hacker);
+          if (hackerJSON.hacker["isAdmin"] == true) {
+            navigate("/Admin");
+          } else if (hackerJSON.hacker["isConfirmed"] == true) {
+            navigate("/FindTeam");
+          }
         }
       } catch {
-        alert("Session Expired, Logging Out");
-        localStorage.removeItem("token");
-        navigate("/");
+        console.log("Error");
       }
     };
     if (token) {
@@ -119,7 +102,7 @@ function Navbar() {
     } catch {
       alert("No Session Found: Going Back to Home");
       localStorage.removeItem("token");
-      console.log("9")
+      console.log("9");
       navigate("/");
       window.location.reload();
     }
