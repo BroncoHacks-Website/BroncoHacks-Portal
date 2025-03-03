@@ -578,7 +578,7 @@ function CreateAccount() {
 
   return (
     <>
-      <div className="bg-indigo-300 h-[85vh] flex flex-col items-center justify-center">
+      <div className="bg-indigo-300 min-h-[85vh] flex flex-col items-center justify-center">
         {/* White Card */}
         {isFlipped ? (
           <div
@@ -699,72 +699,86 @@ function CreateAccount() {
           </div>
         ) : (
           <div
-            className={`flex flex-col items-center h-[80vh] sm:h-[80vh] w-[80vw] sm:w-[55vw] md:w-[45vw] lg:w-[28vw] mx-auto rounded-xl bg-white shadow-lg shadow-black/75 backface-hidden `}
-          >
+            className={`flex flex-col items-center min-h-[75vh] w-[80vw] sm:w-[55vw] md:w-[45vw] lg:w-[28vw] mx-auto rounded-xl bg-white shadow-lg shadow-black/75 backface-hidden `}>
             <h1 className="text-2xl font-bold m-3 sm:m-10 md:text-2xl xl:text-4xl">
-              Create Account🐴
+              Create Account
             </h1>
-            <div className="flex flex-col gap-[.125rem] sm:gap-1 justify-between w-[90%]">
-              <p>First Name</p>
-              <input
-                onChange={changeFirstName}
-                value={firstName}
-                type="text"
-                className="border-b-2 focus:border-indigo-300 focus:outline-none w-[95%]"
-              />
-              <span className="text-red-500 text-xs ml-3">
-                {firstNameMessage}
-              </span>
-              <p>Last Name</p>
-              <input
-                onChange={changeLastName}
-                value={lastName}
-                type="text"
-                className="border-b-2 focus:border-indigo-300 focus:outline-none w-[95%]"
-              />
-              <span className="text-red-500 text-xs ml-3">
-                {lastNameMessage}
-              </span>
-              <p>Email</p>
-              <input
-                onChange={changeEmail}
-                value={email}
-                type="text"
-                className="border-b-2 focus:border-indigo-300 focus:outline-none w-[95%]"
-              />
-              <span className="text-red-500 text-xs ml-3">{emailMessage}</span>
-              <p>
-                Password{" "}
-                <span className="text-xs">*must be at least 6 characters</span>
-              </p>
-              <input
-                onChange={changePassword}
-                value={password}
-                type="password"
-                className="border-b-2 focus:border-indigo-300 focus:outline-none w-[95%]"
-              />
-              <span className="text-red-500 text-xs ml-3">
-                {passwordMessage}
-              </span>
-              <p>Confirm Password</p>
-              <input
-                onChange={changeConfirmPassword}
-                value={confirmPassword}
-                type="password"
-                className="border-b-2 focus:border-indigo-300 focus:outline-none w-[95%]"
-              />
-              <span className="text-red-500 text-xs ml-3">
-                {confirmPasswordMessage}
-              </span>
+
+            {/* div holding Create Account fields */}
+            <div className="flex flex-col gap-[.125rem] sm:gap-6 w-[70%]">
+              <div className="flex flex-col gap-1">
+                <p className="font-sm">First Name</p>
+                <input
+                  onChange={changeFirstName}
+                  value={firstName}
+                  type="text"
+                  className="border-b-2 focus:border-indigo-300 focus:outline-none w-full"
+                />
+                <span className="text-red-500 text-xs ml-3">
+                  {firstNameMessage}
+                </span>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <p>Last Name</p>
+                <input
+                  onChange={changeLastName}
+                  value={lastName}
+                  type="text"
+                  className="border-b-2 focus:border-indigo-300 focus:outline-none w-full"
+                />
+                <span className="text-red-500 text-xs ml-3">
+                  {lastNameMessage}
+                </span>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <p>Email</p>
+                <input
+                  onChange={changeEmail}
+                  value={email}
+                  type="text"
+                  className="border-b-2 focus:border-indigo-300 focus:outline-none w-full"
+                />
+                <span className="text-red-500 text-xs ml-3">{emailMessage}</span>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <p>
+                  Password{" "}
+                  <span className="text-xs text-green-300">*must be at least 6 characters</span>
+                </p>
+                <input
+                  onChange={changePassword}
+                  value={password}
+                  type="password"
+                  className="border-b-2 focus:border-indigo-300 focus:outline-none w-full"
+                />
+                <span className="text-red-500 text-xs ml-3">
+                  {passwordMessage}
+                </span>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <p>Confirm Password</p>
+                <input
+                  onChange={changeConfirmPassword}
+                  value={confirmPassword}
+                  type="password"
+                  className="border-b-2 focus:border-indigo-300 focus:outline-none w-full"
+                />
+                <span className="text-red-500 text-xs ml-3">
+                  {confirmPasswordMessage}
+                </span>
+              </div>
             </div>
 
             <button
-              className="h-[5vh] w-[20vw] mt-2 font-bold text-md text-white/90 rounded-xl bg-green-300 shadow-lg shadow-black/50 hover:bg-green-400 active:shadow-none active:scale-95 active:translate-y-1 transition-transform duration-150 ease-out"
-              onClick={handleFlip}
-            >
+              className="h-[5vh] w-1/5 mt-6 font-bold text-md text-white/90 rounded-xl bg-green-300 cursor-pointer shadow-lg shadow-black/50 hover:bg-green-400 active:shadow-none active:scale-95 active:translate-y-1 transition-transform duration-150 ease-out"
+              onClick={handleFlip}>
               Next
             </button>
-            <div className="flex flex-col items-center text-sm mt-4">
+            <div className="flex flex-col items-center text mt-6">
               <p className="">Already have an Account?</p>
               <Link className="text-purple-500" to={{ pathname: "/Login" }}>
                 Login

@@ -138,7 +138,7 @@ function Navbar() {
         <div className="relative">
           <button
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="text-white bg-[#035BA5] hover:bg-[#02498A] focus:outline-none focus:ring-4 focus:ring-blue-300 font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1"
+            className="text-white bg-[#035BA5] hover:bg-[#02498A] focus:outline-none focus:ring-4 focus:ring-blue-300  rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1"
           >
             <span className="block sm:hidden text-3xl">Ξ</span>
             <span className="hidden sm:block text-center">Menu</span>

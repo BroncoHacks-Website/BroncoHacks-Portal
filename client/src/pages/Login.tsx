@@ -93,31 +93,41 @@ function Login() {
 
   return (
     <>
-      <div className="bg-indigo-300 h-[85vh] flex flex-col items-center">
-        <div className="w-full h-full flex items-center justify-center">
+      <div className="bg-indigo-300 min-h-[85vh] flex flex-col items-center">
+        <div className="w-full min-h-[80vh] flex items-center justify-center">
           <div
-            className={`flex flex-col gap-4 items-center h-[70vh] sm:h-[70vh] w-[75vw] sm:w-[55vw] md:w-[45vw] lg:w-[28vw] mx-auto rounded-xl bg-white shadow-lg shadow-black/75 backface-hidden `}
+            className={`flex flex-col gap-4 items-center min-h-[70vh] sm:min-h-[70vh] w-[75vw] sm:w-[55vw] md:w-[45vw] lg:w-[28vw] mx-auto rounded-xl bg-white shadow-lg shadow-black/75 backface-hidden `}
           >
-            <h1 className="text-3xl font-bold m-10 md:text-5xl">Login🐴</h1>
-            <div className="flex flex-col gap-3 w-[90%] items-start">
-              <p>Email</p>
-              <input
-                onChange={changeEmail}
-                type="text"
-                className="border-b-2 focus:border-indigo-300 focus:outline-none w-[92%]"
-              />
-              <span className="text-red-500 text-sm ml-3">{emailMessage}</span>
-              <p>Password</p>
-              <input
-                onChange={changePassword}
-                type="password"
-                className="border-b-2 focus:border-indigo-300 focus:outline-none w-[92%]"
-                onKeyDown={handleKeyDown}
-              />
-              <span className="text-red-500 text-sm ml-3">
-                {passwordMessage}
-              </span>
+            <h1 className="text-3xl font-bold ml-10 mt-10 mr-10 mb-5 md:text-4xl md:">Login</h1>
+
+            {/* div holding email and password fields */}
+            <div className="flex flex-col w-[80%] gap-8 justify-center items-center">
+              {/* email */}
+              <div className="flex flex-col gap-2 w-full">
+                <p className="w-full">Email</p>
+                <input
+                  onChange={changeEmail}
+                  type="text"
+                  className="border-b-2 focus:border-indigo-300 focus:outline-none w-full text-lg p-2 rounded-t-md"
+                />
+                <span className="text-red-500 text-sm ml-3">{emailMessage}</span>
+              </div>
+
+              {/* password */}
+              <div className="flex flex-col gap-2 w-full">
+                <p className="w-full">Password</p>
+                <input
+                  onChange={changePassword}
+                  type="password"
+                  className="border-b-2 focus:border-indigo-300 focus:outline-none w-full text-lg p-2 rounded-t-md"
+                  onKeyDown={handleKeyDown}
+                />
+                <span className="text-red-500 text-sm ml-3">
+                  {passwordMessage}
+                </span>
+              </div>
             </div>
+            
             <span className="text-red-500 text-sm">{requestMessage}</span>
             {isLoading && (
               <div role="status">
@@ -143,7 +153,7 @@ function Login() {
             {loggedIn ? (
               <div className="flex flex-row">
                 <div role="status">
-                  <svg
+                  <svg  
                     aria-hidden="true"
                     className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
                     viewBox="0 0 100 101"
@@ -167,13 +177,13 @@ function Login() {
             ) : (
               <button
                 onClick={login}
-                className="h-[60px] w-[140px] font-bold text-3xl text-white/90 rounded-xl bg-green-300 shadow-lg shadow-black/50 hover:bg-green-400 active:shadow-none active:scale-95 active:translate-y-1 transition-transform duration-150 ease-out"
+                className="h-[60px] w-[140px] font-bold text-2xl cursor-pointer text-white/90 rounded-xl bg-green-300 shadow-md shadow-black/50 hover:bg-green-400 active:shadow-none active:scale-95 active:translate-y-1 transition-transform duration-150 ease-out"
               >
                 Login
               </button>
             )}
 
-            <div className="flex flex-col items-center text-sm">
+            <div className="flex flex-col items-center mt-4">
               <p className="">Not a user?</p>
               <Link
                 className="text-purple-500"
