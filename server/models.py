@@ -21,3 +21,4 @@ class Teams(db.Model):
     teamMember1 = db.Column(db.String(100))
     teamMember2 = db.Column(db.String(100))
     teamMember3 = db.Column(db.String(100))
+    status = db.Column(db.String(100))

@@ -5,4 +5,5 @@ export interface TeamModel {
   teamMember1?: number;
   teamMember2?: number;
   teamMember3?: number;
+  status?: "approved" | "unregistered" | "pending";
 }
