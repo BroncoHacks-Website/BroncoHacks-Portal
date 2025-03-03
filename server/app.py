@@ -595,10 +595,10 @@ def get_users_team():
         if not team:
             return jsonify(message= "hacker is not in a team", status=406)
         
-        owner = conn.execute("SELECT UUID, firstName, lastName, email, school FROM hackers WHERE UUID = ?", (team["owner"],)).fetchone()
-        team_member_1 = conn.execute("SELECT UUID, firstName, lastName, email, school FROM hackers WHERE UUID = ?", (team["teamMember1"],)).fetchone()
-        team_member_2 = conn.execute("SELECT UUID, firstName, lastName, email, school FROM hackers WHERE UUID = ?", (team["teamMember2"],)).fetchone()
-        team_member_3 = conn.execute("SELECT UUID, firstName, lastName, email, school FROM hackers WHERE UUID = ?", (team["teamMember3"],)).fetchone()
+        owner = conn.execute("SELECT UUID, firstName, lastName, email, school, discord FROM hackers WHERE UUID = ?", (team["owner"],)).fetchone()
+        team_member_1 = conn.execute("SELECT UUID, firstName, lastName, email, school, discord FROM hackers WHERE UUID = ?", (team["teamMember1"],)).fetchone()
+        team_member_2 = conn.execute("SELECT UUID, firstName, lastName, email, school, discord FROM hackers WHERE UUID = ?", (team["teamMember2"],)).fetchone()
+        team_member_3 = conn.execute("SELECT UUID, firstName, lastName, email, school, discord FROM hackers WHERE UUID = ?", (team["teamMember3"],)).fetchone()
         
         #otherwise, return the team id and the team name
         return jsonify({
@@ -614,6 +614,7 @@ def get_users_team():
                 "lastName" : owner["lastName"] if owner else None,
                 "email": owner["email"] if owner else None,
                 "school": owner["school"] if owner else None,
+                "discord": owner["discord"] if owner else None,
             },
             "teamMember1" : {
                 "UUID" : team_member_1["UUID"] if team_member_1 else None,
@@ -621,6 +622,7 @@ def get_users_team():
                 "lastName" : team_member_1["lastName"] if team_member_1 else None,
                 "email": team_member_1["email"] if team_member_1 else None,
                 "school": team_member_1["school"] if team_member_1 else None,
+                "discord": team_member_1["discord"] if team_member_1 else None,
             },
             "teamMember2" : {
                 "UUID" : team_member_2["UUID"] if team_member_2 else None,
@@ -628,13 +630,15 @@ def get_users_team():
                 "lastName" : team_member_2["lastName"] if team_member_2 else None,
                 "email": team_member_2["email"] if team_member_2 else None,
                 "school": team_member_2["school"] if team_member_2 else None,
+                "discord": team_member_2["discord"] if team_member_2 else None,
             },
             "teamMember3" : {
                 "UUID" : team_member_3["UUID"] if team_member_3 else None,
                 "firstName" : team_member_3["firstName"] if team_member_3 else None,
                 "lastName" : team_member_3["lastName"] if team_member_3 else None,
                 "email": team_member_3["email"] if team_member_3 else None,
-                "school": team_member_3["school"] if team_member_3 else None
+                "school": team_member_3["school"] if team_member_3 else None,
+                "discord": team_member_3["discord"] if team_member_3 else None,
             },
             "status":200
         })
@@ -1101,7 +1105,7 @@ def addTeamMember():
 
         # Check if team is full
         find_team = conn.execute("SELECT status, teamMember1, teamMember2, teamMember3 FROM teams WHERE teamID=?", (teamID,)).fetchone()
-        if sum(1 for m in find_team if m is not None) >= 3:
+        if find_team["teamMember3"]:
             return jsonify(status=400, message="Team is full")
 
         # Add member to the first available spot

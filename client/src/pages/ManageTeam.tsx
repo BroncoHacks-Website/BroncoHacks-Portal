@@ -59,13 +59,6 @@ function ManageTeam() {
 
         const json = await res.json();
 
-        if (!json.UUID) {
-          alert("Session Expired, Logging Out");
-          localStorage.removeItem("token");
-          navigate("/");
-          return;
-        }
-
         // Fetch User Info
         try {
           const hackerRes = await fetch(uri + `hacker?UUID=${json.UUID}`, {
@@ -108,6 +101,7 @@ function ManageTeam() {
                 teamMember1: teamJSON.teamMember1,
                 teamMember2: teamJSON.teamMember2,
                 teamMember3: teamJSON.teamMemer3,
+                status: teamJSON.team.status,
               });
               //console.log(teamJSON);
               setOwner(teamJSON.owner);
@@ -250,7 +244,6 @@ function ManageTeam() {
         }),
       });
       const data = await removeRes.json();
-      console.log(data);
       if (data.status === 200) {
         setAlertMsg(
           memberToRemove.firstName +
@@ -359,10 +352,10 @@ function ManageTeam() {
   return (
     <>
       {team && (
-        <div className="h-[85vh] bg-[#C7D1EB] flex items-center justify-center">
+        <div className="min-h-[85vh] bg-[#C7D1EB] flex items-center justify-center">
           <div
             id=""
-            className="min-h-[60vh] w-[77vw] pl-8 pt-4 pb-4 pr-4 bg-white rounded-4xl flex flex-col items-shadow-xl align-middle"
+            className="min-h-[60vh] w-[77vw] pl-8 pt-4 pb-4 pr-4 bg-white rounded-4xl flex flex-col items-shadow-xl align-middle my-4"
           >
             <h1 className="mt-2 md:mt-5 relative font-bold text-[2rem] md:text-[3.5rem]">
               {team.teamName}
@@ -370,9 +363,23 @@ function ManageTeam() {
             <h2 className="relative font-bold text-md md:text-2xl">
               Access Code: {team.teamID}
             </h2>
-            <h3 className="relative font-bold text-md md:text-xl">
-              Application Status:{" "}
-            </h3>
+            {team.status == "approved" && (
+              <h3 className="relative font-bold text-md md:text-xl">
+                Application Status: <u className="text-green-400">Approved</u>
+              </h3>
+            )}
+            {team.status == "pending" && (
+              <h3 className="relative font-bold text-md md:text-xl underlined">
+                Application Status:
+                <u className="text-yellow-400">In Review</u>
+              </h3>
+            )}
+            {team.status == "unregistered" && (
+              <h3 className="relative font-bold text-md md:text-xl underlined">
+                Application Status:{" "}
+                <u className="text-red-400">Requires Submission</u>
+              </h3>
+            )}
             <div className="flex flex-col gap-12 mt-5">
               {owner && (
                 <div className="flex flex-row justify-between">
@@ -388,7 +395,7 @@ function ManageTeam() {
                       onClick={() => displayContact(owner)}
                     >
                       <span className="block sm:hidden text-sm">✉</span>
-                      <span className="hidden sm:block text-center">
+                      <span className="hidden sm:block text-center mx-auto my-auto text-xs lg:text-lg">
                         Contact Info
                       </span>
                     </button>
@@ -412,7 +419,7 @@ function ManageTeam() {
                         }
                       >
                         <span className="block sm:hidden text-sm">✉</span>
-                        <span className="hidden sm:block text-center">
+                        <span className="hidden sm:block text-center mx-auto my-auto text-xs lg:text-md">
                           Contact Info
                         </span>
                       </button>
@@ -427,7 +434,7 @@ function ManageTeam() {
                           }
                         >
                           <span className="block sm:hidden text-sm">♕</span>
-                          <span className="hidden sm:block text-center">
+                          <span className="hidden sm:block text-center mx-auto my-auto text-xs lg:text-md">
                             Make Owner
                           </span>
                         </button>
@@ -442,7 +449,7 @@ function ManageTeam() {
                           }
                         >
                           <span className="block sm:hidden text-sm">✕</span>
-                          <span className="hidden sm:block text-center">
+                          <span className="hidden sm:block text-center mx-auto my-auto text-xs lg:text-md">
                             Remove Member
                           </span>
                         </button>
@@ -472,7 +479,7 @@ function ManageTeam() {
                         }
                       >
                         <span className="block sm:hidden text-sm">✉</span>
-                        <span className="hidden sm:block text-center">
+                        <span className="hidden sm:block text-center mx-auto my-auto text-xs lg:text-md">
                           Contact Info
                         </span>
                       </button>
@@ -487,7 +494,7 @@ function ManageTeam() {
                           }
                         >
                           <span className="block sm:hidden text-sm">♕</span>
-                          <span className="hidden sm:block text-center">
+                          <span className="hidden sm:block text-center mx-auto my-auto text-xs lg:text-md">
                             Make Owner
                           </span>
                         </button>
@@ -502,7 +509,7 @@ function ManageTeam() {
                           }
                         >
                           <span className="block sm:hidden text-sm">✕</span>
-                          <span className="hidden sm:block text-center">
+                          <span className="hidden sm:block text-center mx-auto my-auto text-xs lg:text-md">
                             Remove Member
                           </span>
                         </button>
@@ -533,7 +540,7 @@ function ManageTeam() {
                         }
                       >
                         <span className="block sm:hidden text-sm">✉</span>
-                        <span className="hidden sm:block text-center">
+                        <span className="hidden sm:block text-center mx-auto my-auto text-xs lg:text-md">
                           Contact Info
                         </span>
                       </button>
@@ -548,7 +555,7 @@ function ManageTeam() {
                           }
                         >
                           <span className="block sm:hidden text-sm">♕</span>
-                          <span className="hidden sm:block text-center">
+                          <span className="hidden sm:block text-center mx-auto my-auto text-xs lg:text-md">
                             Make Owner
                           </span>
                         </button>
@@ -563,7 +570,7 @@ function ManageTeam() {
                           }
                         >
                           <span className="block sm:hidden text-sm">✕</span>
-                          <span className="hidden sm:block text-center">
+                          <span className="hidden sm:block text-center mx-auto my-auto text-xs lg:text-md">
                             Remove Member
                           </span>
                         </button>
@@ -577,7 +584,7 @@ function ManageTeam() {
                 </div>
               )}
             </div>
-            <div className="flex justify-end align-end mt-auto">
+            <div className="flex justify-end align-end mt-5">
               <div className="relative inset-0 flex flex-col-reverse items-center md:flex-row md:justify-between md:mb-5 md:mr-2 w-[100vw]">
                 {hacker?.UUID === parseInt(owner?.UUID ?? "") ? (
                   <div>
