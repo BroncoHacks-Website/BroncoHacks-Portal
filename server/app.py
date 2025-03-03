@@ -1010,7 +1010,7 @@ def addTeamMember():
 @app.route("/team/sendApplication", methods=['PUT'])
 @jwt_required()
 @cross_origin()
-def remove_that_playa():
+def send_application():
     try:
         data = request.get_json()
         if not data:
@@ -1048,7 +1048,7 @@ def remove_that_playa():
 @app.route("/team/approveApplication", methods=['PUT'])
 @jwt_required()
 @cross_origin()
-def remove_that_playa():
+def approveApplication():
     try:
         data = request.get_json()
         if not data:

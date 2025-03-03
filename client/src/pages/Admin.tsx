@@ -103,6 +103,7 @@ function Admin() {
             <thead>
               <tr className="bg-indigo-500 text-white">
                 <th className="p-2 border">Owner</th>
+                <th className="p-2 border">status</th>
                 <th className="p-2 border">Team ID</th>
                 <th className="p-2 border">teamMember1</th>
                 <th className="p-2 border">teamMember2</th>

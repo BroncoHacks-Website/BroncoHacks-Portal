@@ -39,14 +39,14 @@ def run_db():
                     (222222, 'Habibi', 'Mark', hash_password('1'), 'hmark@cpp.edu', 'cpp','habibimark', 666420, True, True ))
         
         cur.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    (333333, 'Chris J', 'Lo', hash_password('1'), 'hmark@cpp.edu', 'cpp','habibimark', 666420, True, True ))
+                    (333333, 'Chris J', 'Lo', hash_password('1'), 'cjlo@cpp.edu', 'cpp','randompotato', 666420, True, True ))
 
 
         cur.execute("INSERT INTO teams (teamID, teamName, owner, status) VALUES (?, ?, ?, ?)",
-                    (123456, "Hawk Tuahers", 1, "unregistered",))
-        cur.execute("INSERT INTO teams (teamID, teamName, owner) VALUES (?, ?, ?, ?)",
+                    (123456, "Hawk Tuahers", 1, "unregistered"))
+        cur.execute("INSERT INTO teams (teamID, teamName, owner, status) VALUES (?, ?, ?, ?)",
                     (222222, "Skibidist", 7, "pending"))
-        cur.execute("INSERT INTO teams (teamID, teamName, owner) VALUES (?, ?, ?, ?)",
+        cur.execute("INSERT INTO teams (teamID, teamName, owner, status) VALUES (?, ?, ?, ?)",
                     (333333, "Bruhh", 8, "approved"))
 
         cur.execute("UPDATE teams SET teamMember1 = 3 WHERE teamID = 123456")
