@@ -223,12 +223,12 @@ function ManageTeam() {
                       Make Owner
                     </span>
                   </button> */}
-                  <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
+                  {/* {hacker?.UUID === parseInt(owner.UUID) ? (<button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
                     <span className="block sm:hidden text-sm">✕</span>
                     <span className="hidden sm:block text-center">
                       Remove Member
                     </span>
-                  </button>
+                  </button>): ""} */}
                 </div>
               )}
               {teamMember1 && (
@@ -242,7 +242,7 @@ function ManageTeam() {
                       Contact Info
                     </span>
                   </button>
-                  <button
+                  {hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button
                     className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1"
                     onClick={() => teamMember1 && makeOwner(teamMember1)}
                   >
@@ -250,13 +250,13 @@ function ManageTeam() {
                     <span className="hidden sm:block text-center">
                       Make Owner
                     </span>
-                  </button>
-                  <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
+                  </button>):""}
+                  {hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
                     <span className="block sm:hidden text-sm">✕</span>
                     <span className="hidden sm:block text-center">
                       Remove Member
                     </span>
-                  </button>
+                  </button>): ""}
                 </div>
               )}
               {teamMember2 && (
@@ -270,7 +270,7 @@ function ManageTeam() {
                       Contact Info
                     </span>
                   </button>
-                  <button
+                  {hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button
                     className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1"
                     onClick={() => teamMember2 && makeOwner(teamMember2)}
                   >
@@ -278,13 +278,13 @@ function ManageTeam() {
                     <span className="hidden sm:block text-center">
                       Make Owner
                     </span>
-                  </button>
-                  <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
+                  </button>):""}
+                  {hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
                     <span className="block sm:hidden text-sm">✕</span>
                     <span className="hidden sm:block text-center">
                       Remove Member
                     </span>
-                  </button>
+                  </button>): ""}
                 </div>
               )}
               {teamMember3 && (
@@ -298,7 +298,7 @@ function ManageTeam() {
                       Contact Info
                     </span>
                   </button>
-                  <button
+                  {hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button
                     className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1"
                     onClick={() => teamMember3 && makeOwner(teamMember3)}
                   >
@@ -306,13 +306,13 @@ function ManageTeam() {
                     <span className="hidden sm:block text-center">
                       Make Owner
                     </span>
-                  </button>
-                  <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
+                  </button>): ""}
+                  {hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
                     <span className="block sm:hidden text-sm">✕</span>
                     <span className="hidden sm:block text-center">
                       Remove Member
                     </span>
-                  </button>
+                  </button>): ""}
                 </div>
               )}
             </div>
