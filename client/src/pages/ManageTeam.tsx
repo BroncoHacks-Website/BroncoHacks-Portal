@@ -196,27 +196,34 @@ function ManageTeam() {
             id=""
             className="h-[60vh] w-[77vw] pl-8 pt-4 pb-4 pr-4 bg-white rounded-4xl flex flex-col shadow-xl align-middle"
           >
-            <h1 className="self-center relative font-bold text-lg md:text-4xl">
+            <h1 className="mt-2 md:mt-5 relative font-bold text-[2rem] md:text-[3.5rem]">
               {team.teamName}
             </h1>
-            <h2 className="self-center relative font-bold text-md md:text-2xl">
+            <h2 className="relative font-bold text-md md:text-2xl">
               Access Code: {team.teamID}
             </h2>
-            <h3 className="self-center relative font-bold text-md md:text-xs">
+            <h3 className="relative font-bold text-md md:text-xl">
               Application Status:{" "}
             </h3>
-            <div className="flex flex-col gap-16">
+            <div className="flex flex-col gap-12 mt-5">
               {owner && (
-                <div className="flex flex-row">
-                  <h4>
-                    Owner: {owner.firstName} {owner.lastName}
-                  </h4>
-                  <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
-                    <span className="block sm:hidden text-sm">✉</span>
-                    <span className="hidden sm:block text-center">
-                      Contact Info
-                    </span>
-                  </button>
+                <div className="flex flex-row justify-between">
+                  <div className="flex flex-col md:flex-row items-start justify-center md:items-center gap-1">
+                    <h4 className="text-[1.2rem]">
+                      Teammate:
+                    </h4>
+                    <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold">
+                      {owner.firstName} {owner.lastName}
+                    </h4>
+                  </div>
+                  <div className="inline-flex w-auto justify-end items-center">
+                    <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
+                      <span className="block sm:hidden text-sm">✉</span>
+                      <span className="hidden sm:block text-center">
+                        Contact Info
+                      </span>
+                    </button>
+                  </div>
                   {/* <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1" >
                     <span className="block sm:hidden text-sm">♕</span>
                     <span className="hidden sm:block text-center">
@@ -232,87 +239,108 @@ function ManageTeam() {
                 </div>
               )}
               {teamMember1 && (
-                <div className="flex flex-row">
-                  <h4>
-                    Teammate: {teamMember1.firstName} {teamMember1.lastName}
-                  </h4>
-                  <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
-                    <span className="block sm:hidden text-sm">✉</span>
-                    <span className="hidden sm:block text-center">
-                      Contact Info
-                    </span>
-                  </button>
-                  {hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button
-                    className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1"
-                    onClick={() => teamMember1 && makeOwner(teamMember1)}
-                  >
-                    <span className="block sm:hidden text-sm">♕</span>
-                    <span className="hidden sm:block text-center">
-                      Make Owner
-                    </span>
-                  </button>):""}
-                  {hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
-                    <span className="block sm:hidden text-sm">✕</span>
-                    <span className="hidden sm:block text-center">
-                      Remove Member
-                    </span>
-                  </button>): ""}
+                <div className="flex flex-row justify-between">
+                  <div className="flex flex-col md:flex-row items-start justify-center md:items-center gap-1">
+                    <h4 className="text-[1.2rem]">
+                      Teammate:
+                    </h4>
+                    <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold">
+                      {teamMember1.firstName} {teamMember1.lastName}
+                    </h4>
+                  </div>
+                  <div className="inline-flex w-auto justify-end items-center">
+                    <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
+                      <span className="block sm:hidden text-sm">✉</span>
+                      <span className="hidden sm:block text-center">
+                        Contact Info
+                      </span>
+                    </button>
+                    {hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button
+                      className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1"
+                      onClick={() => teamMember1 && makeOwner(teamMember1)}
+                    >
+                      <span className="block sm:hidden text-sm">♕</span>
+                      <span className="hidden sm:block text-center">
+                        Make Owner
+                      </span>
+                    </button>):""}
+                    {hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
+                      <span className="block sm:hidden text-sm">✕</span>
+                      <span className="hidden sm:block text-center">
+                        Remove Member
+                      </span>
+                    </button>): ""}
+                  </div>
                 </div>
               )}
               {teamMember2 && (
-                <div className="flex flex-row">
-                  <h4>
-                    Teammate: {teamMember2.firstName} {teamMember2.lastName}
-                  </h4>
-                  <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
-                    <span className="block sm:hidden text-sm">✉</span>
-                    <span className="hidden sm:block text-center">
-                      Contact Info
-                    </span>
-                  </button>
-                  {hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button
-                    className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1"
-                    onClick={() => teamMember2 && makeOwner(teamMember2)}
-                  >
-                    <span className="block sm:hidden text-sm">♕</span>
-                    <span className="hidden sm:block text-center">
-                      Make Owner
-                    </span>
-                  </button>):""}
-                  {hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
-                    <span className="block sm:hidden text-sm">✕</span>
-                    <span className="hidden sm:block text-center">
-                      Remove Member
-                    </span>
-                  </button>): ""}
+                <div className="flex flex-row justify-between">
+                  <div className="flex flex-col md:flex-row items-start justify-center md:items-center gap-1">
+                    <h4 className="text-[1.2rem]">
+                      Teammate:
+                    </h4>
+                    <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold">
+                      {teamMember2.firstName} {teamMember2.lastName}
+                    </h4>
+                  </div>
+                  <div className="inline-flex w-auto justify-end items-center">
+                    <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
+                      <span className="block sm:hidden text-sm">✉</span>
+                      <span className="hidden sm:block text-center">
+                        Contact Info
+                      </span>
+                    </button>
+                    {hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button
+                      className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1"
+                      onClick={() => teamMember2 && makeOwner(teamMember2)}
+                    >
+                      <span className="block sm:hidden text-sm">♕</span>
+                      <span className="hidden sm:block text-center">
+                        Make Owner
+                      </span>
+                    </button>):""}
+                    {hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
+                      <span className="block sm:hidden text-sm">✕</span>
+                      <span className="hidden sm:block text-center">
+                        Remove Member
+                      </span>
+                    </button>): ""}
+                  </div>
                 </div>
               )}
               {teamMember3 && (
-                <div className="flex flex-row">
-                  <h4>
-                    Teammate: {teamMember3.firstName} {teamMember3.lastName}
-                  </h4>
-                  <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
-                    <span className="block sm:hidden text-sm">✉</span>
-                    <span className="hidden sm:block text-center">
-                      Contact Info
-                    </span>
-                  </button>
-                  {hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button
-                    className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1"
-                    onClick={() => teamMember3 && makeOwner(teamMember3)}
-                  >
-                    <span className="block sm:hidden text-sm">♕</span>
-                    <span className="hidden sm:block text-center">
-                      Make Owner
-                    </span>
-                  </button>): ""}
-                  {hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
-                    <span className="block sm:hidden text-sm">✕</span>
-                    <span className="hidden sm:block text-center">
-                      Remove Member
-                    </span>
-                  </button>): ""}
+                <div className="flex flex-row justify-between">
+                  <div className="flex flex-col md:flex-row items-start justify-center md:items-center gap-1">
+                    <h4 className="text-[1.2rem]">
+                      Teammate:
+                    </h4>
+                    <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold">
+                      {teamMember3.firstName} {teamMember3.lastName}
+                    </h4>
+                  </div>
+                  <div className="inline-flex w-auto justify-end items-center">
+                    <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
+                      <span className="block sm:hidden text-sm">✉</span>
+                      <span className="hidden sm:block text-center">
+                        Contact Info
+                      </span>
+                    </button>
+                    {hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button
+                      className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1"
+                      onClick={() => teamMember3 && makeOwner(teamMember3)}
+                    >
+                      <span className="block sm:hidden text-sm">♕</span>
+                      <span className="hidden sm:block text-center">
+                        Make Owner
+                      </span>
+                    </button>): ""}
+                    {hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
+                      <span className="block sm:hidden text-sm">✕</span>
+                      <span className="hidden sm:block text-center">
+                        Remove Member
+                      </span>
+                    </button>): ""}
+                  </div>
                 </div>
               )}
             </div>
