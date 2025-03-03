@@ -28,13 +28,16 @@ function ManageTeam() {
 
 	const [showAlert, setShowAlert] = useState(false);
 	const [alertMsg, setAlertMsg] = useState("");
+	const [function1, setFunction1] = useState<(() => void) | null>(null)
 	const [alertButtonMsg, setAlertButtonMsg] = useState("");
+	const [function2, setFunction2] = useState<(() => void) | null>(null)
+	const [alertButtonMsg2, setAlertButtonMsg2] = useState("");
 
 	const [showContact, setShowContact] = useState(false)
 	const [contactContent, setContactContent] = useState<PartialHackerModel | null>();
 
 	const [role, setRole] = useState<
-		"owner" | "teamMember1" | "teamMember2" | "teamMember3" | undefined
+  "owner" | "teamMember1" | "teamMember2" | "teamMember3" | undefined
 	>(undefined);
 
 	useEffect(() => {
@@ -145,8 +148,25 @@ function ManageTeam() {
 
 		checkAuth();
 	}, [navigate, token]);
+  
+  const resetAlertState = () => {
+    setAlertMsg("");
+    setAlertButtonMsg("");
+    setFunction1(() => {});
+    setAlertButtonMsg2("");
+    setFunction2(() => {});
+  };
+  const makeOwnerAlertFirstBecauseFuckingMobileHasToLikeNeedAnAlert = (newPerson: PartialHackerModel) => {
+    setAlertMsg("Are you sure you want to make " + newPerson.firstName + newPerson.lastName + " owner of the team?")
+    setAlertButtonMsg("No")
+    setFunction1(() => () => {resetAlertState(); setShowAlert(false);})
+    setAlertButtonMsg2("Yes")
+    setFunction2(() => () => {makeOwner(newPerson);setShowAlert(false);})
+    setShowAlert(true)
+  }
 
 	const makeOwner = async (newPerson: PartialHackerModel) => {
+    resetAlertState()
 		if (!hacker || !team) {
 			console.error("TS MISSING");
 			return;
@@ -179,7 +199,8 @@ function ManageTeam() {
 					newPerson.lastName
 				);
 				setAlertButtonMsg("Ok");
-				setShowAlert(true);
+				setFunction1(() => () => window.location.reload())
+        setShowAlert(true);
 			} else {
 				console.error(
 					"FUCK YOU YOU'RE STUPID I HATE YOU YOU ALWAYS WERE A DUMB SACK OF LARD",
@@ -189,10 +210,12 @@ function ManageTeam() {
 		} catch (e) {
 			setAlertMsg("Error transferring Ownership");
 			setAlertButtonMsg("Ok");
-			setShowAlert(true);
+			setFunction1(() => () => window.location.reload())
+      setShowAlert(true);
 			console.error("error transffering owenrship", e);
 		}
 	}
+
 
 	const removeMember = async (memberToRemove: PartialHackerModel) => {
 		if (!hacker || !team) {
@@ -218,7 +241,8 @@ function ManageTeam() {
 			if (data.status === 200) {
 				setAlertMsg(memberToRemove.firstName + " " + memberToRemove.lastName + " successfully removed from your team.")
 				setAlertButtonMsg("Ok");
-				setShowAlert(true);
+				setFunction1(() => () => window.location.reload())
+        setShowAlert(true);
 			}
 			else {
 				console.error("error removing member", data.error)
@@ -227,6 +251,7 @@ function ManageTeam() {
 		catch (e) {
 			setAlertMsg("Error removing member");
 			setAlertButtonMsg("Ok");
+      setFunction1(() => () => window.location.reload())
 			setShowAlert(true);
 			console.error("error removing member", e);
 		}
@@ -255,6 +280,7 @@ function ManageTeam() {
 			if (data.status === 200) {
 				setAlertMsg("Successfully left your team.")
 				setAlertButtonMsg("Ok");
+        setFunction1(() => () => window.location.reload())
 				setShowAlert(true);
 			}
 			else {
@@ -265,6 +291,7 @@ function ManageTeam() {
 			setAlertMsg("Error leaving");
 			setAlertButtonMsg("Ok");
 			setShowAlert(true);
+      setFunction1(() => () => window.location.reload())
 			console.error("you can't leave gang 😂😂😂", e);
 		}
 	}
@@ -292,6 +319,7 @@ function ManageTeam() {
 			if (data.status === 200) {
 				setAlertMsg("Successfully deleted your team.")
 				setAlertButtonMsg("Ok");
+        setFunction1(() => () => window.location.reload())
 				setShowAlert(true);
 			}
 			else {
@@ -301,8 +329,9 @@ function ManageTeam() {
 		catch (e) {
 			setAlertMsg("Error deleting team");
 			setAlertButtonMsg("Ok");
+      setFunction1(() => () => window.location.reload())
 			setShowAlert(true);
-			console.error("u cnt dlt ts gng 😂😂😂", e)
+			console.error("u cnt dlt ts gng 😂😂😂",  e)
 		}
 
 	}
@@ -377,7 +406,7 @@ function ManageTeam() {
 										</button>
 										{hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button
 											className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-xl w-[10vw] h-[5vh] sm:px-1 relative overflow-hidden anmat-th-bttn-gng"
-											onClick={() => teamMember1 && makeOwner(teamMember1)}
+											onClick={() => teamMember1 && makeOwnerAlertFirstBecauseFuckingMobileHasToLikeNeedAnAlert(teamMember1)}
 										>
 											<span className="block sm:hidden text-sm">♕</span>
 											<span className="hidden sm:block text-center">
@@ -414,7 +443,7 @@ function ManageTeam() {
 										</button>
 										{hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button
 											className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-xl w-[10vw] h-[5vh] sm:px-1 relative overflow-hidden anmat-th-bttn-gng"
-											onClick={() => teamMember2 && makeOwner(teamMember2)}
+											onClick={() => teamMember2 && makeOwnerAlertFirstBecauseFuckingMobileHasToLikeNeedAnAlert(teamMember2)}
 										>
 											<span className="block sm:hidden text-sm">♕</span>
 											<span className="hidden sm:block text-center">
@@ -453,7 +482,7 @@ function ManageTeam() {
 										</button>
 										{hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button
 											className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-xl w-[10vw] h-[5vh] sm:px-1 relative overflow-hidden anmat-th-bttn-gng"
-											onClick={() => teamMember3 && makeOwner(teamMember3)}
+											onClick={() => teamMember3 && makeOwnerAlertFirstBecauseFuckingMobileHasToLikeNeedAnAlert(teamMember3)}
 										>
 											<span className="block sm:hidden text-sm">♕</span>
 											<span className="hidden sm:block text-center">
@@ -484,7 +513,7 @@ function ManageTeam() {
                       Submit Team
                     </button>
                   </div>) : ""}
-                  <div className={`flex gap-1 my-1 ${hacker?.UUID === parseInt(owner?.UUID ?? "") ? "items-center" : "ml-auto"}`}>
+                  <div className={`flex gap-1 my-1 ${hacker?.UUID === parseInt(owner?.UUID ?? "") ? "items-center" : "md:ml-auto"}`}>
                     {teamMember1?.UUID !== null ? (<button
                       type="button"
                       className="focus:outline-none text-white bg-yellow-500 font-medium rounded-lg text-sm px-5 py-2.5"
@@ -501,14 +530,14 @@ function ManageTeam() {
                     </button>) : ""}
                   </div>
 								</div>
-						</div>
+						</div> 
 					{showAlert && (
             <Alert
             msg={alertMsg}
-            function1={() => {
-              window.location.reload();
-            }}
+            function1={function1 ?? (()=>{})}
             message1={alertButtonMsg}
+            function2={function2 ?? (()=>{})}
+            message2={alertButtonMsg2}
 						/>
 					)}
 					{showContact && contactContent && <Contact hacker={contactContent} onClose={closeContact} />}
