@@ -19,7 +19,7 @@ def run_db():
         cur = connection.cursor()
 
         cur.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    (123456, 'Daniel', 'Pasion', hash_password('1'), 'dpasion@cpp.edu', 'cpp','.theDaniel', 666420, True, False ))
+                    (123456, 'Daniel', 'Pasion', hash_password('1'), 'dpasion@cpp.edu', 'cpp','.theDaniel', 666420, True, True ))
         cur.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     (None, 'Cesar Henry', 'de Paula', hash_password('1'), 'chdp@cpp.edu', 'cpp','putanginamo', 666420, True, False ))
         cur.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
@@ -38,8 +38,8 @@ def run_db():
                     (123456, "Hawk Tuahers", 1, "unregistered"))
         cur.execute("INSERT INTO teams (teamID, teamName, owner, status) VALUES (?, ?, ?, ?)",
                     (222222, "Skibidist", 7, "pending"))
-        # cur.execute("INSERT INTO teams (teamID, teamName, owner, status) VALUES (?, ?, ?, ?)",
-                    # (333333, "Bruhh", 8, "approved")) 
+        cur.execute("INSERT INTO teams (teamID, teamName, owner, status) VALUES (?, ?, ?, ?)",
+                    (333333, "Bruhh", 8, "approved")) 
 
         cur.execute("UPDATE teams SET teamMember1 = 3 WHERE teamID = 123456")
         cur.execute("UPDATE teams SET teamMember2 = 4 WHERE teamID = 123456")

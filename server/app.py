@@ -160,13 +160,14 @@ def approve():
             
             team_thang = conn.execute('SELECT status FROM teams WHERE teamID=?', (teamID,)).fetchall()
             convert_thang = [dict(row) for row in team_thang]
-            if (convert_thang[0]["status"].lower() == "pending"):
-                conn.execute('UPDATE teams SET status=? WHERE teamID=?', ("Approved", teamID,))
+            status = convert_thang[0]["status"].lower()
+            if (status == "pending" or status == "unregistered"):
+                conn.execute('UPDATE teams SET status=? WHERE teamID=?', ("approved", teamID,))
                 conn.commit()
             elif (convert_thang[0]["status"].lower() == "approved"):
                 return jsonify(status=400, message="Already Approved")
             else:
-                return jsonify(status=400, message="Team is Not Pending")   
+                return jsonify(status=400, message="Team is Not Pending Or Unregistered")   
             conn.close()         
         except:
             return jsonify(status=404, message="yeah it didnt change dumass")
@@ -193,6 +194,8 @@ def approve():
                         mail.send(msg)
                 
             conn.close()
+            
+            return jsonify(status=200, message="poggers")
                     
         except Exception as e:
             return jsonify(status=404, message=str(e))
