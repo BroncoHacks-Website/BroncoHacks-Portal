@@ -208,6 +208,7 @@ function FindTeam() {
               <span className="text-red-500 text-sm ml-3">{createMessage}</span>
             </div>
             <div className="xl:hidden py-4"></div>
+            <div className="sm:max-md:hidden px-4"></div>
             {/* join team via code tab */}
             <div className="bg-white h-[35vh] w-[80vw] sm:w-[65vw] md:w-[55vw] lg:w-[45vw] xl:h-[60vh] xl:w-[45vw] 2xl:w-[75vh] rounded-2xl border-lg shadow-lg mx-auto text-center">
               <img

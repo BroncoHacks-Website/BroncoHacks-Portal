@@ -6,7 +6,7 @@ function InfoAlert() {
   return (
     <>
       {visibility && (
-        <div className="z-10 flex items-center mx-auto left-1/4 transform -translate-x-1/6 top-6 p-4 mb-4 text-md text-blue-800 border border-blue-300 rounded-lg bg-blue-50">
+        <div className="z-10 flex items-center mx-auto top-6 p-4 text-md text-blue-800 border border-blue-300 rounded-lg bg-blue-50">
           <svg
             className="shrink-0 inline w-4 h-4 me-3"
             aria-hidden="true"
