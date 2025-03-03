@@ -162,7 +162,7 @@ def approve():
             convert_thang = [dict(row) for row in team_thang]
             status = convert_thang[0]["status"].lower()
             if (status == "pending" or status == "unregistered"):
-                conn.execute('UPDATE teams SET status=? WHERE teamID=?', ("Approved", teamID,))
+                conn.execute('UPDATE teams SET status=? WHERE teamID=?', ("approved", teamID,))
                 conn.commit()
             elif (convert_thang[0]["status"].lower() == "approved"):
                 return jsonify(status=400, message="Already Approved")

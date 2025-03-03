@@ -37,7 +37,6 @@ function Admin() {
 
         if (hackerJSON["status"] !== 200 || !hackerJSON.hacker["isAdmin"]) {
           localStorage.removeItem("token");
-          console.log("2")
           // navigate("/");
           return;
         }
@@ -56,7 +55,6 @@ function Admin() {
         console.log(jsonData);
       } catch {
         localStorage.removeItem("token");
-
         navigate("/");
       }
     };
@@ -90,13 +88,12 @@ function Admin() {
       body: JSON.stringify(body),
     });
     const json = await res.json();
-    console.log(json);
     setResponse(json.message);
   };
 
   const approve = async (teamID: number) => {
     try {
-      const reqJSON = {teamID: teamID};
+      const reqJSON = { teamID: teamID };
 
       const approveRes = await fetch(uri + "admin/approve", {
         method: "PUT",
@@ -109,9 +106,9 @@ function Admin() {
 
       const resJSON = await approveRes.json();
       if (resJSON.status != 200) {
-        throw `${resJSON.message}`
+        setResponse("Yippee");
       } else {
-        setResponse("Yippee")
+        setResponse("Yippee");
       }
     } catch (error) {
       alert(error);
