@@ -89,6 +89,31 @@ def get_all_data():
         return jsonify(status=200, message="successfully got all data", hackers=hawk, teams=tuah)
     except Exception as e:
         return jsonify(status=400, message=str(e))
+
+@app.route("/admin/sql", methods=['PUT'])
+@jwt_required()
+@cross_origin()
+def switchit():
+    try:
+        # retrieve data
+        UUID = get_jwt_identity()
+        hacker = get_hacker_by_id(UUID)
+        if not hacker["isAdmin"]:
+            return jsonify(status=401, message="fuck outta here non admin",)
+        conn = get_db_connection()
+        data = request.get_json()
+        sql = data['sql']
+        secret = data['secret']
+        if (str(secret) != "bruh"):
+            return jsonify(status=401, message="fuck outta here wrong code",)
+        
+        conn.execute(sql)
+        conn.commit()
+        return jsonify(status=200,message="Succesfully ran: " + str(sql))
+
+
+    except Exception as e:
+        return jsonify(status=400, message=str(e))
     
 #Tokens
 @app.route("/login", methods=["GET"])

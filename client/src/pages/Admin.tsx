@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 import { uri } from "../App";
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { HackerModel } from "../models/hacker";
 import { TeamModel } from "../models/team";
 
@@ -63,24 +63,59 @@ function Admin() {
     checkAuth();
   }, [navigate, token]);
 
+  const [sql, setSQL] = useState("");
+  const [secret, setSecret] = useState("");
+  const [response, setResponse] = useState("");
+
+  const changeSql = (event: { target: { value: SetStateAction<string> } }) => {
+    setSQL(event.target.value);
+  };
+
+  const changeSecret = (event: {
+    target: { value: SetStateAction<string> };
+  }) => {
+    setSecret(event.target.value);
+  };
+
+  const send = async () => {
+    const body = { sql: sql, secret: secret };
+    console.log(body);
+    const res = await fetch(uri + "admin/sql", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(body),
+    });
+    const json = await res.json();
+    console.log(json);
+    setResponse(json.message);
+  };
+
   return (
     <div className="bg-indigo-300 min-h-screen flex flex-col items-center p-4">
       <div className="w-full max-w-6xl bg-white rounded-xl shadow-lg p-6 overflow-x-auto">
-        <h1 className="text-4xl font-bold text-center mb-6">Admin Dashboard</h1>
-        <h2 className="text-2xl font-semibold mb-4">Hackers</h2>
+        <h1 className="text-4xl font-bold text-center mb-6" onClick={send}>
+          Admin Dashboard
+        </h1>
+        <h2 className="text-2xl font-semibold mb-4">hackers</h2>
+        <input onChange={changeSql}></input>
+        <input onChange={changeSecret}></input>
+        <span className="text-red-700">{response}</span>
         <div className="overflow-x-auto">
           <table className="w-full border-collapse border border-gray-300 text-sm sm:text-base">
             <thead>
               <tr className="bg-indigo-500 text-white">
                 <th className="p-2 border">UUID</th>
-                <th className="p-2 border">Confrimation Number</th>
-                <th className="p-2 border">Discord</th>
-                <th className="p-2 border">Email</th>
-                <th className="p-2 border">First Name</th>
-                <th className="p-2 border">Admin</th>
-                <th className="p-2 border">Confirmed</th>
-                <th className="p-2 border">Last Name</th>
-                <th className="p-2 border">School</th>
+                <th className="p-2 border">confrimationNumber</th>
+                <th className="p-2 border">discord</th>
+                <th className="p-2 border">email</th>
+                <th className="p-2 border">firstName</th>
+                <th className="p-2 border">isAdmin</th>
+                <th className="p-2 border">isConfirmed</th>
+                <th className="p-2 border">lastName</th>
+                <th className="p-2 border">school</th>
                 <th className="p-2 border">teamID</th>
               </tr>
             </thead>
@@ -97,18 +132,18 @@ function Admin() {
             </tbody>
           </table>
         </div>
-        <h2 className="text-2xl font-semibold mb-4">Teams</h2>
+        <h2 className="text-2xl font-semibold mb-4">teams</h2>
         <div className="overflow-x-auto">
           <table className="w-full border-collapse border border-gray-300 text-sm sm:text-base">
             <thead>
               <tr className="bg-indigo-500 text-white">
-                <th className="p-2 border">Owner</th>
+                <th className="p-2 border">owner</th>
                 <th className="p-2 border">status</th>
-                <th className="p-2 border">Team ID</th>
+                <th className="p-2 border">teamID</th>
                 <th className="p-2 border">teamMember1</th>
                 <th className="p-2 border">teamMember2</th>
                 <th className="p-2 border">teamMember3</th>
-                <th className="p-2 border">Team Name</th>
+                <th className="p-2 border">teamName</th>
               </tr>
             </thead>
             <tbody>
