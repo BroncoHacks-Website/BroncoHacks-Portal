@@ -4,227 +4,233 @@ import { useNavigate } from "react-router";
 import { uri } from "../App";
 import { TeamModel } from "../models/team";
 import Alert from "../components/Alert";
+import Contact from "../components/Contact";
+import "../index.css"
 
 interface PartialHackerModel {
-  UUID: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  school: string;
+	UUID: string;
+	email: string;
+	firstName: string;
+	lastName: string;
+	school: string;
+	discord: string;
 }
 function ManageTeam() {
-  //Authentication
-  const navigate = useNavigate();
-  const token = localStorage.getItem("token");
-  const [hacker, setHacker] = useState<HackerModel>();
-  const [team, setTeam] = useState<TeamModel>();
-  const [owner, setOwner] = useState<PartialHackerModel | null>();
-  const [teamMember1, setTeamMember1] = useState<PartialHackerModel | null>();
-  const [teamMember2, setTeamMember2] = useState<PartialHackerModel | null>();
-  const [teamMember3, setTeamMember3] = useState<PartialHackerModel | null>();
+	//Authentication
+	const navigate = useNavigate();
+	const token = localStorage.getItem("token");
+	const [hacker, setHacker] = useState<HackerModel>();
+	const [team, setTeam] = useState<TeamModel>();
+	const [owner, setOwner] = useState<PartialHackerModel | null>();
+	const [teamMember1, setTeamMember1] = useState<PartialHackerModel | null>();
+	const [teamMember2, setTeamMember2] = useState<PartialHackerModel | null>();
+	const [teamMember3, setTeamMember3] = useState<PartialHackerModel | null>();
 
-  const [showAlert, setShowAlert] = useState(false);
-  const [alertMsg, setAlertMsg] = useState("");
-  const [alertButtonMsg, setAlertButtonMsg] = useState("");
+	const [showAlert, setShowAlert] = useState(false);
+	const [alertMsg, setAlertMsg] = useState("");
+	const [alertButtonMsg, setAlertButtonMsg] = useState("");
 
-  const [role, setRole] = useState<
-    "owner" | "teamMember1" | "teamMember2" | "teamMember3" | undefined
-  >(undefined);
+	const [showContact, setShowContact] = useState(false)
+	const [contactContent, setContactContent] = useState<PartialHackerModel | null>();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      if (!token) {
-        navigate("/");
-        return;
-      }
+	const [role, setRole] = useState<
+		"owner" | "teamMember1" | "teamMember2" | "teamMember3" | undefined
+	>(undefined);
 
-      // Initial Token Request
-      try {
-        const res = await fetch(uri + "whoami", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+	useEffect(() => {
+		const checkAuth = async () => {
+			if (!token) {
+				navigate("/");
+				return;
+			}
 
-        const json = await res.json();
+			// Initial Token Request
+			try {
+				const res = await fetch(uri + "whoami", {
+					method: "GET",
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				});
 
-        if (!json.UUID) {
-          alert("Session Expired, Logging Out");
-          localStorage.removeItem("token");
-          navigate("/");
-          return;
-        }
+				const json = await res.json();
 
-        // Fetch User Info
-        try {
-          const hackerRes = await fetch(uri + `hacker?UUID=${json.UUID}`, {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          const hackerJSON = await hackerRes.json();
+				if (!json.UUID) {
+					alert("Session Expired, Logging Out");
+					localStorage.removeItem("token");
+					navigate("/");
+					return;
+				}
 
-          if (hackerJSON["status"] != 200) {
-            alert("Session Expired, Logging Out");
-            localStorage.removeItem("token");
-            navigate("/");
-          } else {
-            setHacker(hackerJSON.hacker);
-            if (hackerJSON.hacker["isConfirmed"] == false) {
-              navigate("/EmailConfirmation");
-            }
-            if (!hackerJSON.hacker["teamID"]) {
-              navigate("/FindTeam");
-            }
-            // Request Team
-            const teamRes = await fetch(
-              uri + `team?UUID=${hackerJSON.hacker["UUID"]}`,
-              {
-                method: "GET",
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              }
-            );
-            const teamJSON = await teamRes.json();
-            console.log(teamJSON);
-            if (teamJSON.status == 200) {
-              setTeam({
-                teamID: teamJSON.team.teamID,
-                teamName: teamJSON.team.teamName,
-                owner: teamJSON.owner,
-                teamMember1: teamJSON.teamMember1,
-                teamMember2: teamJSON.teamMember2,
-                teamMember3: teamJSON.teamMemer3,
-              });
-              //console.log(teamJSON);
-              setOwner(teamJSON.owner);
-              if (teamJSON.owner.UUID == hackerJSON.UUID) {
-                setRole("owner");
-              }
-              if (teamJSON.teamMember1) {
-                setTeamMember1(teamJSON.teamMember1);
-                if (teamJSON.teamMember1.UUID == hackerJSON.UUID) {
-                  setRole("teamMember1");
-                }
-              }
-              if (teamJSON.teamMember2) {
-                setTeamMember2(teamJSON.teamMember2);
-                if (teamJSON.teamMember2.UUID == hackerJSON.UUID) {
-                  setRole("teamMember2");
-                }
-              }
+				// Fetch User Info
+				try {
+					const hackerRes = await fetch(uri + `hacker?UUID=${json.UUID}`, {
+						method: "GET",
+						headers: {
+							Authorization: `Bearer ${token}`,
+						},
+					});
+					const hackerJSON = await hackerRes.json();
 
-              if (teamJSON.teamMember3) {
-                setTeamMember3(teamJSON.teamMember3);
-                if (teamJSON.teamMember3.UUID == hackerJSON.UUID) {
-                  setRole("teamMember3");
-                }
-              }
-            }
-          }
-        } catch {
-          alert("Session Expired, Logging Out");
-          localStorage.removeItem("token");
-          navigate("/");
-        }
-      } catch {
-        alert("Session Expired, Logging Out");
-        localStorage.removeItem("token");
-        navigate("/");
-      }
-    };
+					if (hackerJSON["status"] != 200) {
+						alert("Session Expired, Logging Out");
+						localStorage.removeItem("token");
+						navigate("/");
+					} else {
+						setHacker(hackerJSON.hacker);
+						if (hackerJSON.hacker["isConfirmed"] == false) {
+							navigate("/EmailConfirmation");
+						}
+						if (!hackerJSON.hacker["teamID"]) {
+							navigate("/FindTeam");
+						}
+						// Request Team
+						const teamRes = await fetch(
+							uri + `team?UUID=${hackerJSON.hacker["UUID"]}`,
+							{
+								method: "GET",
+								headers: {
+									Authorization: `Bearer ${token}`,
+								},
+							}
+						);
+						const teamJSON = await teamRes.json();
+						console.log(teamJSON);
+						if (teamJSON.status == 200) {
+							setTeam({
+								teamID: teamJSON.team.teamID,
+								teamName: teamJSON.team.teamName,
+								owner: teamJSON.owner,
+								teamMember1: teamJSON.teamMember1,
+								teamMember2: teamJSON.teamMember2,
+								teamMember3: teamJSON.teamMemer3,
+							});
+							//console.log(teamJSON);
+							setOwner(teamJSON.owner);
+							if (teamJSON.owner.UUID == hackerJSON.UUID) {
+								setRole("owner");
+							}
+							if (teamJSON.teamMember1) {
+								setTeamMember1(teamJSON.teamMember1);
+								if (teamJSON.teamMember1.UUID == hackerJSON.UUID) {
+									setRole("teamMember1");
+								}
+							}
+							if (teamJSON.teamMember2) {
+								setTeamMember2(teamJSON.teamMember2);
+								if (teamJSON.teamMember2.UUID == hackerJSON.UUID) {
+									setRole("teamMember2");
+								}
+							}
 
-    checkAuth();
-  }, [navigate, token]);
+							if (teamJSON.teamMember3) {
+								setTeamMember3(teamJSON.teamMember3);
+								if (teamJSON.teamMember3.UUID == hackerJSON.UUID) {
+									setRole("teamMember3");
+								}
+							}
+						}
+					}
+				} catch {
+					alert("Session Expired, Logging Out");
+					localStorage.removeItem("token");
+					navigate("/");
+				}
+			} catch {
+				alert("Session Expired, Logging Out");
+				localStorage.removeItem("token");
+				navigate("/");
+			}
+		};
 
-  const makeOwner = async (newPerson: PartialHackerModel) => {
-    if (!hacker || !team) {
-      console.error("TS MISSING");
-      return;
-    }
+		checkAuth();
+	}, [navigate, token]);
 
-    try {
-      console.log(owner?.UUID);
-      console.log(newPerson?.UUID);
-      console.log(team.teamID);
-      const newOwnerRes = await fetch(`${uri}team/owner`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          owner: owner?.UUID,
-          teamMember: newPerson?.UUID,
-          teamID: team.teamID,
-        }),
-      });
+	const makeOwner = async (newPerson: PartialHackerModel) => {
+		if (!hacker || !team) {
+			console.error("TS MISSING");
+			return;
+		}
 
-      const data = await newOwnerRes.json();
-      console.log(data);
-      if (data.status === 200) {
-        setAlertMsg(
-          "Ownership successfully transferred to " +
-            newPerson.firstName +
-            " " +
-            newPerson.lastName
-        );
-        setAlertButtonMsg("Ok");
-        setShowAlert(true);
-      } else {
-        console.error(
-          "FUCK YOU YOU'RE STUPID I HATE YOU YOU ALWAYS WERE A DUMB SACK OF LARD",
-          data.error
-        );
-      }
-    } catch (e) {
-      setAlertMsg("Error transferring Ownership");
-      setAlertButtonMsg("Ok");
-      setShowAlert(true);
-      console.error("error transffering owenrship", e);
-    }
-  }
+		try {
+			console.log(owner?.UUID);
+			console.log(newPerson?.UUID);
+			console.log(team.teamID);
+			const newOwnerRes = await fetch(`${uri}team/owner`, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				},
+				body: JSON.stringify({
+					owner: owner?.UUID,
+					teamMember: newPerson?.UUID,
+					teamID: team.teamID,
+				}),
+			});
 
-  const removeMember = async (memberToRemove: PartialHackerModel) => {
-    if (!hacker || !team) {
-      console.error("TS MISSING");
-      return;
-    }
+			const data = await newOwnerRes.json();
+			console.log(data);
+			if (data.status === 200) {
+				setAlertMsg(
+					"Ownership successfully transferred to " +
+					newPerson.firstName +
+					" " +
+					newPerson.lastName
+				);
+				setAlertButtonMsg("Ok");
+				setShowAlert(true);
+			} else {
+				console.error(
+					"FUCK YOU YOU'RE STUPID I HATE YOU YOU ALWAYS WERE A DUMB SACK OF LARD",
+					data.error
+				);
+			}
+		} catch (e) {
+			setAlertMsg("Error transferring Ownership");
+			setAlertButtonMsg("Ok");
+			setShowAlert(true);
+			console.error("error transffering owenrship", e);
+		}
+	}
 
-    try {
-      const removeRes = await fetch(`${uri}team/removeTeamMember`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          owner: owner?.UUID,
-          teamMember: memberToRemove?.UUID,
-          teamID: team.teamID,
-        }),
-      })
-      const data = await removeRes.json();
-      console.log(data)
-        if (data.status === 200) {
-          setAlertMsg(memberToRemove.firstName + " " + memberToRemove.lastName + " successfully removed from your team.")
-          setAlertButtonMsg("Ok");
-          setShowAlert(true);
-        } 
-        else {
-          console.error("error removing member", data.error)
-        }
-    }
-    catch (e) {
-      setAlertMsg("Error removing member");
-      setAlertButtonMsg("Ok");
-      setShowAlert(true);
-      console.error("error removing member", e);
-    }
-  }
+	const removeMember = async (memberToRemove: PartialHackerModel) => {
+		if (!hacker || !team) {
+			console.error("TS MISSING");
+			return;
+		}
+
+		try {
+			const removeRes = await fetch(`${uri}team/removeTeamMember`, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				},
+				body: JSON.stringify({
+					owner: owner?.UUID,
+					teamMember: memberToRemove?.UUID,
+					teamID: team.teamID,
+				}),
+			})
+			const data = await removeRes.json();
+			console.log(data)
+			if (data.status === 200) {
+				setAlertMsg(memberToRemove.firstName + " " + memberToRemove.lastName + " successfully removed from your team.")
+				setAlertButtonMsg("Ok");
+				setShowAlert(true);
+			}
+			else {
+				console.error("error removing member", data.error)
+			}
+		}
+		catch (e) {
+			setAlertMsg("Error removing member");
+			setAlertButtonMsg("Ok");
+			setShowAlert(true);
+			console.error("error removing member", e);
+		}
+	}
 
 	const leaveTeam = async () => {
 		if (!hacker || !team) {
@@ -240,7 +246,7 @@ function ManageTeam() {
 					Authorization: `Bearer ${token}`,
 				},
 				body: JSON.stringify({
-          teamID: team.teamID,
+					teamID: team.teamID,
 					teamMember: hacker.UUID,
 				}),
 			})
@@ -263,13 +269,13 @@ function ManageTeam() {
 		}
 	}
 
-  const deleteTeam = async () => {
-    if (!hacker || !team) {
-      console.error("TS MISSING")
-      return
-    }
+	const deleteTeam = async () => {
+		if (!hacker || !team) {
+			console.error("TS MISSING")
+			return
+		}
 
-    try {
+		try {
 			const deleteRes = await fetch(`${uri}team`, {
 				method: "DELETE",
 				headers: {
@@ -277,7 +283,7 @@ function ManageTeam() {
 					Authorization: `Bearer ${token}`,
 				},
 				body: JSON.stringify({
-          teamID: team.teamID,
+					teamID: team.teamID,
 					owner: hacker.UUID,
 				}),
 			})
@@ -299,213 +305,215 @@ function ManageTeam() {
 			console.error("u cnt dlt ts gng 😂😂😂", e)
 		}
 
-  }
+	}
+	const displayContact = (hacker: PartialHackerModel) => {
+		setShowContact(true)
+		setContactContent(hacker)
+		return
+	}
+	const closeContact = () => {
+		setShowContact(false);
+		setContactContent(null);
+	};
 
-  return (
+
+
+
+
+	return (
     <>
-      {team && (
-        <div className="h-[85vh] bg-[#C7D1EB] flex items-center justify-center">
-          <div
-            id=""
-            className="h-[60vh] w-[77vw] pl-8 pt-4 pb-4 pr-4 bg-white rounded-4xl flex flex-col items-shadow-xl align-middle"
-          >
-              <h1 className="mt-2 md:mt-5 relative font-bold text-[2rem] md:text-[3.5rem]">
-                {team.teamName}
-              </h1>
-              <h2 className="relative font-bold text-md md:text-2xl">
-                Access Code: {team.teamID}
-              </h2>
-              <h3 className="relative font-bold text-md md:text-xl">
-                Application Status:{" "}
-              </h3>
-              <div className="flex flex-col gap-12 mt-5">
-                {owner && (
-                  <div className="flex flex-row justify-between">
-                    <div className="flex flex-col md:flex-row items-start justify-center md:items-center gap-1">
-                      <h4 className="text-[1.2rem]">
-                        Owner:
-                      </h4>
-                      <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold">
-                        {owner.firstName} {owner.lastName}
-                      </h4>
-                    </div>
-                    <div className="inline-flex w-auto justify-end items-center">
-                      <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
-                        <span className="block sm:hidden text-sm">✉</span>
-                        <span className="hidden sm:block text-center">
-                          Contact Info
-                        </span>
-                      </button>
-                    </div>
-                    {/* <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1" >
-                      <span className="block sm:hidden text-sm">♕</span>
-                      <span className="hidden sm:block text-center">
-                        Make Owner
-                      </span>
-                    </button> */}
-                    {/* {hacker?.UUID === parseInt(owner.UUID) ? (<button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
-                      <span className="block sm:hidden text-sm">✕</span>
-                      <span className="hidden sm:block text-center">
-                        Remove Member
-                      </span>
-                    </button>): ""} */}
-                  </div>
-                )}
-                {teamMember1 && (
-                  <div className="flex flex-row justify-between">
-                    <div className="flex flex-col md:flex-row items-start justify-center md:items-center gap-1">
-                      <h4 className="text-[1.2rem]">
-                        Teammate:
-                      </h4>
-                      <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold">
-                        {teamMember1.firstName} {teamMember1.lastName}
-                      </h4>
-                    </div>
-                    {teamMember1?.UUID !== null ? (<div className="inline-flex w-auto justify-end items-center">
-                      <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
-                        <span className="block sm:hidden text-sm">✉</span>
-                        <span className="hidden sm:block text-center">
-                          Contact Info
-                        </span>
-                      </button>
-                      {hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button
-                        className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1"
-                        onClick={() => teamMember1 && makeOwner(teamMember1)}
-                      >
-                        <span className="block sm:hidden text-sm">♕</span>
-                        <span className="hidden sm:block text-center">
-                          Make Owner
-                        </span>
-                      </button>):""}
-                      {hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button 
-                        className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1"
-                        onClick={() => teamMember1 && removeMember(teamMember1)}>
-                        <span className="hidden sm:block text-center">
-                          Remove Member
-                        </span>
-                      </button>): ""}
-                    </div>): ""}
-                  </div>
-                )}
-                {teamMember2 && (
-                  <div className="flex flex-row justify-between">
-                    <div className="flex flex-col md:flex-row items-start justify-center md:items-center gap-1">
-                      <h4 className="text-[1.2rem]">
-                        Teammate:
-                      </h4>
-                      <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold">
-                        {teamMember2.firstName} {teamMember2.lastName}
-                      </h4>
-                    </div>
-                    {teamMember2?.UUID !== null ? (<div className="inline-flex w-auto justify-end items-center">
-                      <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
-                        <span className="block sm:hidden text-sm">✉</span>
-                        <span className="hidden sm:block text-center">
-                          Contact Info
-                        </span>
-                      </button>
-                      {hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button
-                        className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1"
-                        onClick={() => teamMember2 && makeOwner(teamMember2)}
-                      >
-                        <span className="block sm:hidden text-sm">♕</span>
-                        <span className="hidden sm:block text-center">
-                          Make Owner
-                        </span>
-                      </button>):""}
-                      {hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button 
-                        className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1"
-                        onClick={() => teamMember2 && removeMember(teamMember2)}
-                        >
-                        <span className="block sm:hidden text-sm">✕</span>
-                        <span className="hidden sm:block text-center">
-                          Remove Member
-                        </span>
-                      </button>): ""}
-                    </div>): ""}
-                  </div>
-                )}
-                {teamMember3 && (
-                  <div className="flex flex-row justify-between">
-                    <div className="flex flex-col md:flex-row items-start justify-center md:items-center gap-1">
-                      <h4 className="text-[1.2rem]">
-                        Teammate:
-                      </h4>
-                      <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold">
-                        {teamMember3.firstName} {teamMember3.lastName}
-                      </h4>
-                    </div>
-                    {teamMember3?.UUID !== null ? (<div className="inline-flex w-auto justify-end items-center">
-                      <button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1">
-                        <span className="block sm:hidden text-sm">✉</span>
-                        <span className="hidden sm:block text-center">
-                          Contact Info
-                        </span>
-                      </button>
-                      {hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button
-                        className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1"
-                        onClick={() => teamMember3 && makeOwner(teamMember3)}
-                      >
-                        <span className="block sm:hidden text-sm">♕</span>
-                        <span className="hidden sm:block text-center">
-                          Make Owner
-                        </span>
-                      </button>): ""}
-                      {hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button 
-                        className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-3xl py-2 px-4 sm:px-1"
-                        onClick={() => teamMember3 && removeMember(teamMember3)}>
-                        <span className="block sm:hidden text-sm">✕</span>
-                        <span className="hidden sm:block text-center">
-                          Remove Member
-                        </span>
-                      </button>): ""}
-                    </div>): ""}
-                  </div>
-                )}
-              </div>
-            <div className="flex justify-end align-end mt-auto">
+			{team && (
+				<div className="h-[85vh] bg-[#C7D1EB] flex items-center justify-center">
+					<div
+						id=""
+						className="h-[60vh] w-[77vw] pl-8 pt-4 pb-4 pr-4 bg-white rounded-4xl flex flex-col items-shadow-xl align-middle"
+					>
+						<h1 className="mt-2 md:mt-5 relative font-bold text-[2rem] md:text-[3.5rem]">
+							{team.teamName}
+						</h1>
+						<h2 className="relative font-bold text-md md:text-2xl">
+							Access Code: {team.teamID}
+						</h2>
+						<h3 className="relative font-bold text-md md:text-xl">
+							Application Status:{" "}
+						</h3>
+						<div className="flex flex-col gap-12 mt-5">
+							{owner && (
+								<div className="flex flex-row justify-between">
+									<div className="flex flex-col md:flex-row items-start justify-center md:items-center gap-1">
+										<h4 className="text-[1.2rem]">
+											Owner:
+										</h4>
+										<h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold">
+											{owner.firstName} {owner.lastName}
+										</h4>
+									</div>
+									<div className="inline-flex w-auto justify-end items-center">
+										<button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-xl w-[10vw] h-[5vh] sm:px-1 relative overflow-hidden anmat-th-bttn-gng" onClick={() => displayContact(owner)}>
+											<span className="block sm:hidden text-sm">✉</span>
+											<span className="hidden sm:block text-center">
+												Contact Info
+											</span>
+										</button>
+									</div>
+								</div>
+							)}
+							{teamMember1 && (
+								<div className="flex flex-row justify-between">
+									<div className="flex flex-col md:flex-row items-start justify-center md:items-center gap-1">
+										<h4 className="text-[1.2rem]">
+											Teammate:
+										</h4>
+										<h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold">
+											{teamMember1.firstName} {teamMember1.lastName}
+										</h4>
+									</div>
+									{teamMember1?.UUID !== null ? (<div className="inline-flex w-auto justify-end items-center gap-2">
+										<button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-xl w-[10vw] h-[5vh] sm:px-1 relative overflow-hidden anmat-th-bttn-gng" onClick={() => teamMember1 && displayContact(teamMember1)}>
+											<span className="block sm:hidden text-sm">✉</span>
+											<span className="hidden sm:block text-center">
+												Contact Info
+											</span>
+										</button>
+										{hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button
+											className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-xl w-[10vw] h-[5vh] sm:px-1 relative overflow-hidden anmat-th-bttn-gng"
+											onClick={() => teamMember1 && makeOwner(teamMember1)}
+										>
+											<span className="block sm:hidden text-sm">♕</span>
+											<span className="hidden sm:block text-center">
+												Make Owner
+											</span>
+										</button>) : ""}
+										{hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button
+											className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none foc[1.1rem]:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-[1.1rem] w-[10vw] h-[5vh] sm:px-1 relative overflow-hidden anmat-th-bttn-gng"
+											onClick={() => teamMember1 && removeMember(teamMember1)}>
+											<span className="block sm:hidden text-sm">✕</span>
+											<span className="hidden sm:block text-center">
+												Remove Member
+											</span>
+										</button>) : ""}
+									</div>) : ""}
+								</div>
+							)}
+							{teamMember2 && (
+								<div className="flex flex-row justify-between">
+									<div className="flex flex-col md:flex-row items-start justify-center md:items-center gap-1">
+										<h4 className="text-[1.2rem]">
+											Teammate:
+										</h4>
+										<h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold">
+											{teamMember2.firstName} {teamMember2.lastName}
+										</h4>
+									</div>
+									{teamMember2?.UUID !== null ? (<div className="inline-flex w-auto justify-end items-center gap-2">
+										<button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-xl w-[10vw] h-[5vh] sm:px-1 relative overflow-hidden anmat-th-bttn-gng" onClick={() => teamMember2 && displayContact(teamMember2)}>
+											<span className="block sm:hidden text-sm">✉</span>
+											<span className="hidden sm:block text-center">
+												Contact Info
+											</span>
+										</button>
+										{hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button
+											className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-xl w-[10vw] h-[5vh] sm:px-1 relative overflow-hidden anmat-th-bttn-gng"
+											onClick={() => teamMember2 && makeOwner(teamMember2)}
+										>
+											<span className="block sm:hidden text-sm">♕</span>
+											<span className="hidden sm:block text-center">
+												Make Owner
+											</span>
+										</button>) : ""}
+										{hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button
+											className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-[1.1rem] w-[10vw] h-[5vh] sm:px-1 relative overflow-hidden anmat-th-bttn-gng"
+											onClick={() => teamMember2 && removeMember(teamMember2)}
+										>
+											<span className="block sm:hidden text-sm">✕</span>
+											<span className="hidden sm:block text-center">
+												Remove Member
+											</span>
+										</button>) : ""}
+									</div>) : ""}
+								</div>
+							)}
 
-                                                                                                                {owner ? (
-                                                                                                                  <div className="relative inset-0 flex flex-row justify-end mb-5 mr-2">
-                                                                                                                    <button
-                                                                                                                      type="button"
-                                                                                                                      className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-                                                                                                                    >
-                                                                                                                      Submit Team
-                                                                                                                    </button>
-                                                                                                                    <button
-                                                                                                                      type="button"
-                                                                                                                      className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-                                                                                                                      onClick={leaveTeam}
-                                                                                                                    >
-                                                                                                                      Leave Team
-                                                                                                                    </button>
-                                                                                                                    {hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button
-                                                                                                                      type="button"
-                                                                                                                      className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-                                                                                                                      onClick={deleteTeam}
-                                                                                                                    >
-                                                                                                                      Delete Team
-                                                                                                                    </button>) : ""}
-                                                                                                                  </div>
-                                                                                                                ) : (
-                                                                                                                  <button>Leave Team</button>
-                                                                                                                )}
-                                                                                                              </div>
-            </div>
-          {showAlert && (
+							{teamMember3 && (
+								<div className="flex flex-row justify-between">
+									<div className="flex flex-col md:flex-row items-start justify-center md:items-center gap-1">
+										<h4 className="text-[1.2rem]">
+											Teammate:
+										</h4>
+										<h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold">
+											{teamMember3.firstName} {teamMember3.lastName}
+										</h4>
+									</div>
+									{teamMember3?.UUID !== null ? (<div className="inline-flex w-auto justify-end items-center gap-2">
+										<button className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-xl w-[10vw] h-[5vh] sm:px-1 relative overflow-hidden anmat-th-bttn-gng" onClick={() => teamMember3 && displayContact(teamMember3)}>
+											<span className="block sm:hidden text-sm">✉</span>
+											<span className="hidden sm:block text-center">
+												Contact Info
+											</span>
+										</button>
+										{hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button
+											className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-xl w-[10vw] h-[5vh] sm:px-1 relative overflow-hidden anmat-th-bttn-gng"
+											onClick={() => teamMember3 && makeOwner(teamMember3)}
+										>
+											<span className="block sm:hidden text-sm">♕</span>
+											<span className="hidden sm:block text-center">
+												Make Owner
+											</span>
+										</button>) : ""}
+										{hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button
+											className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring[1.1rem] focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-[1.1rem] w-[10vw] h-[5vh] sm:px-1 relative overflow-hidden anmat-th-bttn-gng"
+											onClick={() => teamMember3 && removeMember(teamMember3)}>
+											<span className="block sm:hidden text-sm">✕</span>
+											<span className="hidden sm:block text-center">
+												Remove Member
+											</span>
+										</button>) : ""}
+									</div>) : ""}
+								</div>
+							)}
+						</div>
+						<div className="flex justify-end align-end mt-auto">
+
+                <div className="relative inset-0 flex flex-col-reverse items-center md:flex-row md:justify-between md:mb-5 md:mr-2 w-[100vw]">
+							{hacker?.UUID === parseInt(owner?.UUID ?? "") ? (
+                  <div>
+                    <button
+                      type="button"
+                      className="text-[#F8FAFC] bg-blue-400 hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-xl w-[45vw] h-[5vh] md:w-[12vw] md:h-[7vh] relative overflow-hidden anmat-th-bttn-gng"
+                    >
+                      Submit Team
+                    </button>
+                  </div>) : ""}
+                  <div className={`flex gap-1 my-1 ${hacker?.UUID === parseInt(owner?.UUID ?? "") ? "items-center" : "ml-auto"}`}>
+                    {teamMember1?.UUID !== null ? (<button
+                      type="button"
+                      className="focus:outline-none text-white bg-yellow-500 font-medium rounded-lg text-sm px-5 py-2.5"
+                      onClick={leaveTeam}
+                    >
+                      Leave Team
+                    </button>): ""}
+                    {hacker?.UUID === parseInt(owner?.UUID ?? "") ? (<button
+                      type="button"
+                      className="focus:outline-none text-white bg-red-500 font-medium rounded-lg text-sm px-5 py-2.5"
+                      onClick={deleteTeam}  
+                    >
+                      Delete Team
+                    </button>) : ""}
+                  </div>
+								</div>
+						</div>
+					{showAlert && (
             <Alert
-              msg={alertMsg}
-              function1={() => {
-                window.location.reload();
-              }}
-              message1={alertButtonMsg}
-            />
-          )}
-        </div>
-      )}
-    </>
-  );
-}
-
+            msg={alertMsg}
+            function1={() => {
+              window.location.reload();
+            }}
+            message1={alertButtonMsg}
+						/>
+					)}
+					{showContact && contactContent && <Contact hacker={contactContent} onClose={closeContact} />}
+          </div>
+          </div>)}
+				</>)}
+		
 export default ManageTeam;

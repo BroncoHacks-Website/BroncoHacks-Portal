@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
 @import "tailwindcss";
 
 * {
@@ -19,7 +19,7 @@
     inset: 0;
     background: linear-gradient(270deg, #4f46e5, #63f1af, #4dd681);
     background-size: 400% 400%;
-    animation: background-move 3s infinite linear;
+    animation: background-move 2s infinite linear;
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
     z-index: -1;
