@@ -115,6 +115,98 @@ def switchit():
     except Exception as e:
         return jsonify(status=400, message=str(e))
     
+    
+@app.route("/admin/approve", methods=['PUT'])
+@jwt_required()
+@cross_origin()
+def approve():
+    try:
+        UUID = get_jwt_identity()
+        hacker = get_hacker_by_id(UUID)
+        if not hacker["isAdmin"]:
+            return jsonify(status=401, message="fuck outta here bitch",)
+        
+        data = request.get_json()
+        
+        if not data:
+            return jsonify(message="No data provided", status=400)
+        
+        required_fields = ['teamID']
+        for field in required_fields:
+            if field not in data:
+                return jsonify(status=400, messsage=f"Missing {field}")
+            
+        teamID = data["teamID"]
+        
+        try:
+            int(teamID)
+        except:
+            return jsonify(status=422, message="Unprocessable Entity")
+        
+        try:
+            conn = get_db_connection()
+            # check if team exists
+            find_team = conn.execute('SELECT * FROM teams WHERE teamID=?', (teamID,)).fetchall()
+            if len(find_team) == 0:
+                return jsonify(status=404, message="Team does not exist")
+            conn.close()
+        except:
+            return jsonify(status=404, message="Team does not exist")
+        
+        # change status
+        
+        try:
+            conn = get_db_connection()
+            
+            team_thang = conn.execute('SELECT status FROM teams WHERE teamID=?', (teamID,)).fetchall()
+            convert_thang = [dict(row) for row in team_thang]
+            if (convert_thang[0]["status"].lower() == "pending"):
+                conn.execute('UPDATE teams SET status=? WHERE teamID=?', ("Approved", teamID,))
+                conn.commit()
+            elif (convert_thang[0]["status"].lower() == "approved"):
+                return jsonify(status=400, message="Already Approved")
+            else:
+                return jsonify(status=400, message="Team is Not Pending")   
+            conn.close()         
+        except:
+            return jsonify(status=404, message="yeah it didnt change dumass")
+        
+        # email shit
+        try:
+            conn = get_db_connection()
+            
+            all_members = conn.execute('SELECT owner, teamMember1, teamMember2, teamMember3 FROM teams WHERE teamID=?', (teamID,)).fetchall()
+            mem_arr = [dict(row) for row in all_members]
+
+            json_str = json.dumps(mem_arr[0])
+            pyobj = json.loads(json_str)
+            for key, value in pyobj.items():
+                if value is not None:
+                    hacker = get_hacker_by_id(value)
+                    if hacker["email"]:     
+                        msg = Message(
+                        'BroncoHacks2025 Team Approval',
+                        sender = 'cppbroncohacks@gmail.com',
+                        recipients = [hacker["email"]]
+                        )
+                        msg.body = 'Your team has been approved for BroncoHacks 2025! If you wish to make changes regarding your team, please unsubmit your application and resubmit. Otherwise, lock in and Start Hacking!'
+                        mail.send(msg)
+                
+            conn.close()
+                    
+        except Exception as e:
+            return jsonify(status=404, message=str(e))
+        
+        
+        # final res
+        conn = get_db_connection()
+        res = conn.execute("SELECT * FROM teams WHERE teamID=?", (teamID,)).fetchall()
+        convert_res = [dict(row) for row in res]
+        conn.close()
+        return jsonify(status=200, message="Approved Successfully", res=convert_res[0])
+    except Exception as e:
+        return jsonify(status=400, message=str(e))
+    
 #Tokens
 @app.route("/login", methods=["GET"])
 @cross_origin()
