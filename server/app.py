@@ -60,55 +60,7 @@ def generate_confirmation_number():
 #Admin
 @app.route("/")
 def index():
-    string = """
-                <h1>Hackers</h1>
-                <table>
-                    <tr>
-                        <th>UUID</th>
-                        <th>teamID</th>
-                        <th>firstName</th>
-                        <th>lastName</th>
-                        <th>password</th>
-                        <th>email</th>
-                        <th>school</th>
-                        <th>disord</th>
-                        <th>confirmationNumber</th>
-                        <th>isConfirmed</th>
-                        <th>isAdmin</th>
-                    </tr>
-             """
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT * FROM hackers")
-    hackers = cursor.fetchall()
-
-    for hacker in hackers:
-        string += "<tr>"
-        for attr in hacker:
-            string += "<th>" + str(attr) + "</th>"
-        string += "</tr>"
-    string += """</table>
-                <h1>Teams</h1>
-                <table>
-                    <tr>
-                        <th>teamID</th>
-                        <th>teamName</th>
-                        <th>owner</th>
-                        <th>teamMember1</th>
-                        <th>teamMember2</th>
-                        <th>teamMember3</th>
-                    </tr>
-                """
-    cursor.execute("SELECT * FROM teams")
-    teams = cursor.fetchall()
-
-    for team in teams:
-        string += "<tr>"
-        for attr in team:
-            string += "<th>" + str(attr) + "</th>"
-        string += "</tr>"
-    return string + "</table>"
+    return "Server is Running :)"
 
 @app.route("/admin", methods=['GET'])
 @jwt_required()
@@ -135,6 +87,123 @@ def get_all_data():
             tuah.append(temu)
         
         return jsonify(status=200, message="successfully got all data", hackers=hawk, teams=tuah)
+    except Exception as e:
+        return jsonify(status=400, message=str(e))
+
+@app.route("/admin/sql", methods=['PUT'])
+@jwt_required()
+@cross_origin()
+def switchit():
+    try:
+        # retrieve data
+        UUID = get_jwt_identity()
+        hacker = get_hacker_by_id(UUID)
+        if not hacker["isAdmin"]:
+            return jsonify(status=401, message="fuck outta here non admin",)
+        conn = get_db_connection()
+        data = request.get_json()
+        sql = data['sql']
+        secret = data['secret']
+        if (str(secret) != "bruh"):
+            return jsonify(status=401, message="fuck outta here wrong code",)
+        
+        conn.execute(sql)
+        conn.commit()
+        return jsonify(status=200,message="Succesfully ran: " + str(sql))
+
+
+    except Exception as e:
+        return jsonify(status=400, message=str(e))
+    
+    
+@app.route("/admin/approve", methods=['PUT'])
+@jwt_required()
+@cross_origin()
+def approve():
+    try:
+        UUID = get_jwt_identity()
+        hacker = get_hacker_by_id(UUID)
+        if not hacker["isAdmin"]:
+            return jsonify(status=401, message="fuck outta here bitch",)
+        
+        data = request.get_json()
+        
+        if not data:
+            return jsonify(message="No data provided", status=400)
+        
+        required_fields = ['teamID']
+        for field in required_fields:
+            if field not in data:
+                return jsonify(status=400, messsage=f"Missing {field}")
+            
+        teamID = data["teamID"]
+        
+        try:
+            int(teamID)
+        except:
+            return jsonify(status=422, message="Unprocessable Entity")
+        
+        try:
+            conn = get_db_connection()
+            # check if team exists
+            find_team = conn.execute('SELECT * FROM teams WHERE teamID=?', (teamID,)).fetchall()
+            if len(find_team) == 0:
+                return jsonify(status=404, message="Team does not exist")
+            conn.close()
+        except:
+            return jsonify(status=404, message="Team does not exist")
+        
+        # change status
+        
+        try:
+            conn = get_db_connection()
+            
+            team_thang = conn.execute('SELECT status FROM teams WHERE teamID=?', (teamID,)).fetchall()
+            convert_thang = [dict(row) for row in team_thang]
+            if (convert_thang[0]["status"].lower() == "pending"):
+                conn.execute('UPDATE teams SET status=? WHERE teamID=?', ("Approved", teamID,))
+                conn.commit()
+            elif (convert_thang[0]["status"].lower() == "approved"):
+                return jsonify(status=400, message="Already Approved")
+            else:
+                return jsonify(status=400, message="Team is Not Pending")   
+            conn.close()         
+        except:
+            return jsonify(status=404, message="yeah it didnt change dumass")
+        
+        # email shit
+        try:
+            conn = get_db_connection()
+            
+            all_members = conn.execute('SELECT owner, teamMember1, teamMember2, teamMember3 FROM teams WHERE teamID=?', (teamID,)).fetchall()
+            mem_arr = [dict(row) for row in all_members]
+
+            json_str = json.dumps(mem_arr[0])
+            pyobj = json.loads(json_str)
+            for key, value in pyobj.items():
+                if value is not None:
+                    hacker = get_hacker_by_id(value)
+                    if hacker["email"]:     
+                        msg = Message(
+                        'BroncoHacks2025 Team Approval',
+                        sender = 'cppbroncohacks@gmail.com',
+                        recipients = [hacker["email"]]
+                        )
+                        msg.body = 'Your team has been approved for BroncoHacks 2025! If you wish to make changes regarding your team, please unsubmit your application and resubmit. Otherwise, lock in and Start Hacking!'
+                        mail.send(msg)
+                
+            conn.close()
+                    
+        except Exception as e:
+            return jsonify(status=404, message=str(e))
+        
+        
+        # final res
+        conn = get_db_connection()
+        res = conn.execute("SELECT * FROM teams WHERE teamID=?", (teamID,)).fetchall()
+        convert_res = [dict(row) for row in res]
+        conn.close()
+        return jsonify(status=200, message="Approved Successfully", res=convert_res[0])
     except Exception as e:
         return jsonify(status=400, message=str(e))
     
@@ -533,7 +602,8 @@ def get_users_team():
             "message": "success, we got them",
             "team": {
                 "teamID" : team["teamID"],
-                "teamName" : team["teamName"] 
+                "teamName" : team["teamName"],
+                "status": team["status"]
             },
             "owner" : {
                 "UUID" : owner["UUID"] if owner else None,
@@ -630,7 +700,7 @@ def create_tuah():
         while id in list_of_ids:
             id = generate_team_id()
 
-        conn.execute("INSERT INTO teams (teamID, teamName, owner, teamMember1, teamMember2, teamMember3) VALUES (?, ?, ?, ?, ?, ?)", (id, team_name, owner, None, None, None))
+        conn.execute("INSERT INTO teams (teamID, teamName, owner, teamMember1, teamMember2, teamMember3, status) VALUES (?, ?, ?, ?, ?, ?)", (id, team_name, owner, None, None, None, "unregistered"))
         conn.execute("UPDATE hackers SET teamID = ? where UUID = ?",(id, int(owner)))
         conn.commit()
 
@@ -740,6 +810,10 @@ def remove_that_playa():
         """, (team_member_to_kick, team_member_to_kick, team_member_to_kick, team_member_to_kick, team_member_to_kick, team_member_to_kick, team_id)
         )
         conn.execute("UPDATE hackers SET teamID = NULL WHERE UUID = ?", (team_member_to_kick,))
+
+        if team["status"] == "approved":
+            conn.execute("UPDATE teams SET status = unregistered WHERE teamID = ?", (team_id,))
+
         conn.commit()
         
         kicked_member_info = get_hacker_by_id(team_member_to_kick)
@@ -855,6 +929,8 @@ def memberLeave():
         # remove teamID from hacker
         remove = conn.execute('UPDATE hackers SET teamID=NULL WHERE UUID=?', (member,))
         
+        if teamData["status"] == "approved":
+            conn.execute("UPDATE teams SET status = 'unregistered' WHERE teamID = ?", (teamID,))
         conn.commit()
         
         res = conn.execute('SELECT UUID, teamID FROM hackers WHERE UUID=?', (member,))
@@ -1021,7 +1097,7 @@ def addTeamMember():
             return jsonify(status=400, message="Team member already on a team")
 
         # Check if team is full
-        find_team = conn.execute("SELECT teamMember1, teamMember2, teamMember3 FROM teams WHERE teamID=?", (teamID,)).fetchone()
+        find_team = conn.execute("SELECT status, teamMember1, teamMember2, teamMember3 FROM teams WHERE teamID=?", (teamID,)).fetchone()
         if sum(1 for m in find_team if m is not None) >= 3:
             return jsonify(status=400, message="Team is full")
 
@@ -1035,6 +1111,10 @@ def addTeamMember():
 
         # Update hacker's teamID
         conn.execute("UPDATE hackers SET teamID=? WHERE UUID=?", (teamID, member))
+
+
+        if find_team["status"] == "approved":
+            conn.execute("UPDATE teams SET status = 'unregistered' WHERE teamID = ?", (teamID,))
         conn.commit()
 
         # Fetch updated data
@@ -1045,6 +1125,85 @@ def addTeamMember():
         return jsonify(status=200, message="Success", hacker=dict(get_hacker), team=dict(get_team))
     except Exception as e:
         return jsonify(status=500, message=str(e))
+    
+@app.route("/team/sendApplication", methods=['PUT'])
+@jwt_required()
+@cross_origin()
+def send_application():
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify(message="no data provided",status=400)
+        
+        team_id = data.get("teamID")
+        owner = data.get("owner")
+
+        conn = get_db_connection()
+
+        team = conn.execute("SELECT * FROM teams WHERE teamID = ?", (int(team_id),)).fetchone()
+
+        if not team:
+            return jsonify(status=404, message="Team does not exist in the database")
+        
+        if owner != team["owner"]:
+            return jsonify(status=418, message="This user is not the owner of the team")
+    
+        if not team["teamMember1"]:
+            return jsonify(status=403, message="Teams must have at least 2 members")
+
+        conn.execute("UPDATE teams SET status=pending WHERE teamID=?", (team_id))
+
+        conn.commit()
+        
+        return jsonify({
+            "message": "Success",
+            "status": 200,
+        })
+    except Exception as e:
+        return jsonify({"message": str(e), "status":500})
+    finally:
+        conn.close()
+
+@app.route("/team/approveApplication", methods=['PUT'])
+@jwt_required()
+@cross_origin()
+def approveApplication():
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify(message="no data provided",status=400)
+        
+        team_id = data.get("teamID")
+        status = data.get("approved")
+
+        UUID = get_jwt_identity()
+        hacker = get_hacker_by_id(UUID)
+        if not hacker["isAdmin"]:
+            return jsonify(status=401, message="fuck outta here",)
+
+        conn = get_db_connection()
+
+        team = conn.execute("SELECT * FROM teams WHERE teamID = ?", (int(team_id),)).fetchone()
+
+        if not team:
+            return jsonify(status=404, message="Team does not exist in the database")
+        
+        if status == "approved":
+            conn.execute("UPDATE teams SET status=approved WHERE teamID=?", (team_id))
+        else:
+            conn.execute("UPDATE teams SET status=unregistered WHERE teamID=?", (team_id))
+
+        conn.commit()
+
+        return jsonify({
+            "message": "Success",
+            "applicationStatus": status,
+            "status": 200,
+        })
+    except Exception as e:
+        return jsonify({"message": str(e), "status":500})
+    finally:
+        conn.close()
         
     
 if __name__ == "__main__":

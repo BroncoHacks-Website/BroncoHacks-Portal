@@ -86,7 +86,7 @@ function EditProfileModal({ hackerProp, onClose }: ModalProps) {
                   <label>First Name</label>
                   <input
                     type="text"
-                    className="sm:text-xl border-b-2 focus:border-indigo-300 focus:outline-none w-[95%] mb-3"
+                    className="text-[5vw] sm:text-md md:text-lg lg:text-xl xl:text-2xl border-b-2 focus:border-indigo-300 focus:outline-none w-[95%] mb-3"
                     placeholder="Enter First Name"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
@@ -96,17 +96,17 @@ function EditProfileModal({ hackerProp, onClose }: ModalProps) {
                   <label>Last Name</label>
                   <input
                     type="text"
-                    className="border-b-2 focus:border-indigo-300 focus:outline-none w-[95%] mb-3"
+                    className="text-[5vw] sm:text-md md:text-lg lg:text-xl xl:text-2xl border-b-2 focus:border-indigo-300 focus:outline-none w-[95%] mb-3"
                     placeholder="Enter Last Name"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                   />
                 </div>
                 <div>
-                  <label>School</label>
+                  <label className="">School</label>
                   <input
                     type="text"
-                    className="border-b-2 focus:border-indigo-300 focus:outline-none w-[95%] mb-3"
+                    className="text-[5vw] sm:text-md md:text-lg lg:text-xl xl:text-2xl border-b-2 focus:border-indigo-300 focus:outline-none w-[95%] mb-3"
                     placeholder="Enter School"
                     value={school}
                     onChange={(e) => setSchool(e.target.value)}
@@ -116,7 +116,7 @@ function EditProfileModal({ hackerProp, onClose }: ModalProps) {
                   <label>Discord</label>
                   <input
                     type="text"
-                    className="border-b-2 focus:border-indigo-300 focus:outline-none w-[95%] mb-3"
+                    className="text-[5vw] sm:text-md md:text-lg lg:text-xl xl:text-2xl border-b-2 focus:border-indigo-300 focus:outline-none w-[95%] mb-3"
                     placeholder="Enter Discord"
                     value={discord}
                     onChange={(e) => setDiscord(e.target.value)}
@@ -130,7 +130,7 @@ function EditProfileModal({ hackerProp, onClose }: ModalProps) {
                     data-modal-hide="default-modal"
                     onClick={update}
                     type="button"
-                    className="py-2.5 px-5 ms-3 text-sm font-medium text-white focus:outline-none bg-[#97d9c3] shadow-lg rounded-lg border border-gray-200 hover:cursor-pointer hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100"
+                    className="py-2.5 px-5 ms-3 text-[5vw] sm:text-md md:text-lg lg:text-xl xl:text-2xl font-bold text-white focus:outline-none bg-[#97d9c3] shadow-lg rounded-lg border border-gray-200 hover:cursor-pointer hover:cursor-pointer hover:bg-[#72e9d3] focus:z-10 focus:ring-4 focus:ring-gray-100"
                   >
                     Save
                   </button>

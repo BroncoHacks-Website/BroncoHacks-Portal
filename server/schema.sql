@@ -22,5 +22,6 @@ CREATE TABLE teams (
     owner TEXT,
     teamMember1 TEXT,
     teamMember2 TEXT,
-    teamMember3 TEXT
+    teamMember3 TEXT,
+    status TEXT
 );
