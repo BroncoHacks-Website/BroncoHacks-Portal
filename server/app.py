@@ -1005,7 +1005,7 @@ def addTeamMember():
             return jsonify(status=400, message="Team member already on a team")
 
         # Check if team is full
-        find_team = conn.execute("SELECT teamMember1, teamMember2, teamMember3 FROM teams WHERE teamID=?", (teamID,)).fetchone()
+        find_team = conn.execute("SELECT status, teamMember1, teamMember2, teamMember3 FROM teams WHERE teamID=?", (teamID,)).fetchone()
         if sum(1 for m in find_team if m is not None) >= 3:
             return jsonify(status=400, message="Team is full")
 
@@ -1019,6 +1019,8 @@ def addTeamMember():
 
         # Update hacker's teamID
         conn.execute("UPDATE hackers SET teamID=? WHERE UUID=?", (teamID, member))
+
+
         if find_team["status"] == "approved":
             conn.execute("UPDATE teams SET status = 'unregistered' WHERE teamID = ?", (teamID,))
         conn.commit()
