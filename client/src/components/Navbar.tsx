@@ -122,15 +122,18 @@ function Navbar() {
   };
 
   return (
-    <div className="flex flex-row justify-between items-center h-[15vh] border-1 py-4 px-8">
+    <div className="flex flex-row justify-between items-center h-[15vh] py-4 px-8">
       {/* Left Section */}
       <div className="flex flex-row items-center gap-4">
+        <a href="/">
         <img
           src="BroncoHacksSquareLogo.png"
           className="h-[10vh] w-[10vh]"
           alt="BroncoHacks Logo"
-        />
-        <div className="font-bold text-2xl sm:text-5xl">BroncoHacks Portal</div>
+        /> </a>
+        <a href="/">
+          <div className="font-bold text-2xl sm:text-5xl">BroncoHacks Portal</div>
+        </a>
       </div>
 
       {/* Right Section */}
@@ -152,6 +155,9 @@ function Navbar() {
                 className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
               >
                 Back to BroncoHacks.org
+              </a>
+              <a href="/FAQ" className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100">
+                FAQ
               </a>
               {isLoggedIn && (
                 <div>
