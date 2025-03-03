@@ -485,7 +485,8 @@ def get_users_team():
             "message": "success, we got them",
             "team": {
                 "teamID" : team["teamID"],
-                "teamName" : team["teamName"] 
+                "teamName" : team["teamName"],
+                "status": team["status"]
             },
             "owner" : {
                 "UUID" : owner["UUID"] if owner else None,
@@ -582,7 +583,7 @@ def create_tuah():
         while id in list_of_ids:
             id = generate_team_id()
 
-        conn.execute("INSERT INTO teams (teamID, teamName, owner, teamMember1, teamMember2, teamMember3) VALUES (?, ?, ?, ?, ?, ?)", (id, team_name, owner, None, None, None))
+        conn.execute("INSERT INTO teams (teamID, teamName, owner, teamMember1, teamMember2, teamMember3, status) VALUES (?, ?, ?, ?, ?, ?)", (id, team_name, owner, None, None, None, "unregistered"))
         conn.execute("UPDATE hackers SET teamID = ? where UUID = ?",(id, int(owner)))
         conn.commit()
 
@@ -692,6 +693,10 @@ def remove_that_playa():
         """, (team_member_to_kick, team_member_to_kick, team_member_to_kick, team_member_to_kick, team_member_to_kick, team_member_to_kick, team_id)
         )
         conn.execute("UPDATE hackers SET teamID = NULL WHERE UUID = ?", (team_member_to_kick,))
+
+        if team["status"] == "approved":
+            conn.execute("UPDATE teams SET status = unregistered WHERE teamID = ?", (team_id,))
+
         conn.commit()
         
         kicked_member_info = get_hacker_by_id(team_member_to_kick)
@@ -807,6 +812,8 @@ def memberLeave():
         # remove teamID from hacker
         remove = conn.execute('UPDATE hackers SET teamID=NULL WHERE UUID=?', (member,))
         
+        if teamData["status"] == "approved":
+            conn.execute("UPDATE teams SET status = 'unregistered' WHERE teamID = ?", (teamID,))
         conn.commit()
         
         res = conn.execute('SELECT UUID, teamID FROM hackers WHERE UUID=?', (member,))
@@ -987,6 +994,8 @@ def addTeamMember():
 
         # Update hacker's teamID
         conn.execute("UPDATE hackers SET teamID=? WHERE UUID=?", (teamID, member))
+        if find_team["status"] == "approved":
+            conn.execute("UPDATE teams SET status = 'unregistered' WHERE teamID = ?", (teamID,))
         conn.commit()
 
         # Fetch updated data
