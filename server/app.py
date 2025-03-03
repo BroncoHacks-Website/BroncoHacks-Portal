@@ -697,7 +697,7 @@ def delete_tuah():
         conn.commit()
 
         return jsonify({
-            "message": "team deleted","status":"200"})
+            "message": "team deleted","status":200})
     except Exception as e:
         return jsonify(message=str(e),status=500)
     finally:
