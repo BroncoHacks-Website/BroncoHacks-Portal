@@ -723,10 +723,10 @@ def remove_that_playa():
         if not team:
             return jsonify(status=404, message="Team does not exist in the database")
         
-        if owner != team["owner"]:
+        if str(owner) != team["owner"]:
             return jsonify(status=418, message="This user is not the owner of the team")
         
-        if team_member_to_kick not in [team["teamMember1"], team["teamMember2"], team["teamMember3"]]:
+        if str(team_member_to_kick) not in [team["teamMember1"], team["teamMember2"], team["teamMember3"]]:
             return jsonify(status=404, message="Team Member the Owner is trying to kick is not in the team")
 
         #shift the other teamMembers up when the player needing to be kicked is either teamMember1 or teamMember2 and set teamMember3 to null
