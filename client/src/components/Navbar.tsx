@@ -125,12 +125,15 @@ function Navbar() {
     <div className="flex flex-row justify-between items-center h-[15vh] py-4 px-8">
       {/* Left Section */}
       <div className="flex flex-row items-center gap-4">
+        <a href="/">
         <img
           src="BroncoHacksSquareLogo.png"
           className="h-[10vh] w-[10vh]"
           alt="BroncoHacks Logo"
-        />
-        <div className="font-bold text-2xl sm:text-5xl">BroncoHacks Portal</div>
+        /> </a>
+        <a href="/">
+          <div className="font-bold text-2xl sm:text-5xl">BroncoHacks Portal</div>
+        </a>
       </div>
 
       {/* Right Section */}
