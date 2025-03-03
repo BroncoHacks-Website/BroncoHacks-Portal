@@ -1,5 +1,6 @@
 import sqlite3
 import bcrypt
+import sqlitecloud
 
 def run_db():
     def hash_password(password):
@@ -8,8 +9,8 @@ def run_db():
         return hashed
 
     try:
-
-        connection = sqlite3.connect('database.db')
+        connection = sqlitecloud.connect("sqlitecloud://cfawyd0phk.g5.sqlite.cloud:8860/database.db?apikey=h6RbzRFgvnXNEQndPRpqwKiXCjwN17pQRbUr8mqa1nA")
+        # connection = sqlite3.connect('database.db')
 
 
         with open('schema.sql') as f:
