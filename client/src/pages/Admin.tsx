@@ -93,6 +93,10 @@ function Admin() {
     setResponse(json.message);
   };
 
+  const approve = async (teamID: number) => {
+    const body = 1;
+  };
+
   return (
     <div className="bg-indigo-300 min-h-screen flex flex-col items-center p-4">
       <div className="w-full max-w-6xl bg-white rounded-xl shadow-lg p-6 overflow-x-auto">
@@ -154,6 +158,16 @@ function Admin() {
                       {String(value)}
                     </td>
                   ))}
+                  {team.status != "approved" && (
+                    <td
+                      className="p-2 border bg-red-200 cursor-pointer"
+                      onClick={() => {
+                        approve(team.teamID);
+                      }}
+                    >
+                      Approve Team
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
