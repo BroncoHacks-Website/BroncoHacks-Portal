@@ -60,55 +60,7 @@ def generate_confirmation_number():
 #Admin
 @app.route("/")
 def index():
-    string = """
-                <h1>Hackers</h1>
-                <table>
-                    <tr>
-                        <th>UUID</th>
-                        <th>teamID</th>
-                        <th>firstName</th>
-                        <th>lastName</th>
-                        <th>password</th>
-                        <th>email</th>
-                        <th>school</th>
-                        <th>disord</th>
-                        <th>confirmationNumber</th>
-                        <th>isConfirmed</th>
-                        <th>isAdmin</th>
-                    </tr>
-             """
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT * FROM hackers")
-    hackers = cursor.fetchall()
-
-    for hacker in hackers:
-        string += "<tr>"
-        for attr in hacker:
-            string += "<th>" + str(attr) + "</th>"
-        string += "</tr>"
-    string += """</table>
-                <h1>Teams</h1>
-                <table>
-                    <tr>
-                        <th>teamID</th>
-                        <th>teamName</th>
-                        <th>owner</th>
-                        <th>teamMember1</th>
-                        <th>teamMember2</th>
-                        <th>teamMember3</th>
-                    </tr>
-                """
-    cursor.execute("SELECT * FROM teams")
-    teams = cursor.fetchall()
-
-    for team in teams:
-        string += "<tr>"
-        for attr in team:
-            string += "<th>" + str(attr) + "</th>"
-        string += "</tr>"
-    return string + "</table>"
+    return "Server is Running :)"
 
 @app.route("/admin", methods=['GET'])
 @jwt_required()
