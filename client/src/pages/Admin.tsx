@@ -14,7 +14,7 @@ function Admin() {
   useEffect(() => {
     const checkAuth = async () => {
       if (!token) {
-        navigate("/");
+        // navigate("/");
         return;
       }
 
@@ -33,12 +33,12 @@ function Admin() {
             Authorization: `Bearer ${token}`,
           },
         });
-
         const hackerJSON = await hackerRes.json();
 
         if (hackerJSON["status"] !== 200 || !hackerJSON.hacker["isAdmin"]) {
           localStorage.removeItem("token");
-          navigate("/");
+          console.log("2")
+          // navigate("/");
           return;
         }
 
@@ -56,6 +56,7 @@ function Admin() {
         console.log(jsonData);
       } catch {
         localStorage.removeItem("token");
+
         navigate("/");
       }
     };
@@ -94,7 +95,27 @@ function Admin() {
   };
 
   const approve = async (teamID: number) => {
-    const body = 1;
+    try {
+      const reqJSON = {teamID: teamID};
+
+      const approveRes = await fetch(uri + "admin/approve", {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(reqJSON),
+      });
+
+      const resJSON = await approveRes.json();
+      if (resJSON.status != 200) {
+        throw `${resJSON.message}`
+      } else {
+        setResponse("Yippee")
+      }
+    } catch (error) {
+      alert(error);
+    }
   };
 
   return (

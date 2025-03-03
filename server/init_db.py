@@ -46,8 +46,8 @@ def run_db():
                     (123456, "Hawk Tuahers", 1, "unregistered"))
         cur.execute("INSERT INTO teams (teamID, teamName, owner, status) VALUES (?, ?, ?, ?)",
                     (222222, "Skibidist", 7, "pending"))
-        # cur.execute("INSERT INTO teams (teamID, teamName, owner, status) VALUES (?, ?, ?, ?)",
-                    # (333333, "Bruhh", 8, "approved")) 
+        cur.execute("INSERT INTO teams (teamID, teamName, owner, status) VALUES (?, ?, ?, ?)",
+                    (333333, "Bruhh", 8, "approved")) 
 
         cur.execute("UPDATE teams SET teamMember1 = 3 WHERE teamID = 123456")
         cur.execute("UPDATE teams SET teamMember2 = 4 WHERE teamID = 123456")
