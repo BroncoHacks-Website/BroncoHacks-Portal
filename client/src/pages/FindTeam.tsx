@@ -173,15 +173,15 @@ function FindTeam() {
 
   return (
     <>
-      <div className="bg-[#c3d3eb] h-[85vh] flex flex-col sm:flex-row justify-center">
-        <div className="flex flex-col mt-10 mx-2">
+      <div className="bg-[#c3d3eb] min-h-[85vh] flex flex-col sm:flex-row justify-center">
+        <div className="flex flex-col mt-5 mx-2 mb-5">
           <InfoAlert></InfoAlert>
-          <div className="w-full h-full flex flex-col xl:flex-row items-center justify-center">
-            <div className="bg-white h-[35vh] w-[80vw] sm:w-[65vw] md:w-[55vw] lg:w-[45vw] xl:h-[60vh] xl:w-[45vw] 2xl:w-[75vh] rounded-2xl border-lg shadow-lg mx-auto text-center">
+          <div className="w-full h-full flex flex-col md:flex-row items-center justify-center mt-5">
+            <div className="bg-white min-h-[35vh] w-[80vw] sm:w-[65vw] md:w-[45vw] md:h-[50vh] lg:w-[45vw] xl:h-[60vh] xl:w-[45vw] 2xl:w-[75vh] rounded-2xl border-lg shadow-lg mx-auto text-center">
               <img
                 src="horse.png"
                 alt="single user default image"
-                className="h-[15vh] xl:h-[35vh] w-[15vh] xl:w-[35vh] mx-auto scale-50"
+                className="h-[15vh] xl:h-[35vh] w-[15vh] xl:w-[35vh] mx-auto scale-50 "
               />
               <div className="flex items-center justify-center font-black text-3xl xl:text-5xl">
                 <h1>Create a Team</h1>
@@ -200,7 +200,7 @@ function FindTeam() {
                   type="submit"
                   value="Create New Team"
                   onClick={createTeam}
-                  className="bg-[#97d9c3] h-[5vh] w-[40vw] md:w-[30vw] lg:w-[20vw] xl:w-[10vw] rounded-xl text-white font-bold shadow-lg hover:cursor-pointer hover:bg-[#72e9d3]"
+                  className="bg-[#97d9c3] min-h-[5vh] w-[40vw] md:w-[25vw] lg:w-[20vw] xl:w-[20vw] rounded-xl text-white font-bold shadow-lg hover:cursor-pointer hover:bg-[#72e9d3]"
                 />
                 {/* <br /> */}
                 <br />
@@ -210,11 +210,11 @@ function FindTeam() {
             <div className="xl:hidden py-4"></div>
             <div className="sm:max-md:hidden px-4"></div>
             {/* join team via code tab */}
-            <div className="bg-white h-[35vh] w-[80vw] sm:w-[65vw] md:w-[55vw] lg:w-[45vw] xl:h-[60vh] xl:w-[45vw] 2xl:w-[75vh] rounded-2xl border-lg shadow-lg mx-auto text-center">
+            <div className="bg-white min-h-[35vh] w-[80vw] sm:w-[65vw] md:w-[45vw] md:h-[50vh] lg:w-[45vw] xl:h-[60vh] xl:w-[45vw] 2xl:w-[75vh] rounded-2xl border-lg shadow-lg mx-auto text-center">
               <img
                 src="group.png"
                 alt="single user default image"
-                className="h-[15vh] xl:h-[35vh] [35vh] w-[15vh] xl:w-[35vh] mx-auto"
+                className="h-[15vh] xl:h-[35vh] [35vh] w-[15vh] xl:w-[35vh] mx-auto "
               />
               <div className="flex items-center justify-center font-black text-3xl xl:text-5xl">
                 <h1>Join Team via Code</h1>
@@ -234,7 +234,7 @@ function FindTeam() {
                   onClick={joinTeam}
                   type="submit"
                   value="Join"
-                  className="bg-[#97d9c3] h-[5vh] w-[40vw] md:w-[30vw] lg:w-[20vw] xl:w-[10vw] rounded-xl text-white font-bold shadow-lg hover:cursor-pointer hover:bg-[#72e9d3]"
+                  className="bg-[#97d9c3] min-h-[5vh] w-[40vw] md:w-[20vw] lg:w-[20vw] xl:w-[10vw] rounded-xl text-white font-bold shadow-lg hover:cursor-pointer hover:bg-[#72e9d3]"
                 />
                 <span className="text-red-500 text-sm ml-3">{joinMessage}</span>
               </div>
