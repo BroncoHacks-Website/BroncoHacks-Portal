@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { HackerModel } from "../models/hacker";
 import { useNavigate } from "react-router";
 import { uri } from "../App";
@@ -40,6 +40,9 @@ function ManageTeam() {
   const [role, setRole] = useState<
     "owner" | "teamMember1" | "teamMember2" | "teamMember3" | undefined
   >(undefined);
+
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [newName, setNewName] = useState("");
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -149,14 +152,17 @@ function ManageTeam() {
     setFunction1(() => {});
     setAlertButtonMsg2("");
     setFunction2(() => {});
-    setShowAlert(false)
+    setShowAlert(false);
   };
 
-  const makeOwnerAlertFirstBecauseFuckingMobileHasToLikeNeedAnAlert = (newPerson: PartialHackerModel) => {
-    resetAlertState()
+  const makeOwnerAlertFirstBecauseFuckingMobileHasToLikeNeedAnAlert = (
+    newPerson: PartialHackerModel
+  ) => {
+    resetAlertState();
     setAlertMsg(
       "Are you sure you want to make " +
-        newPerson.firstName + " " +
+        newPerson.firstName +
+        " " +
         newPerson.lastName +
         " owner of the team?"
     );
@@ -171,6 +177,44 @@ function ManageTeam() {
       setShowAlert(false);
     });
     setShowAlert(true);
+  };
+
+  const handleInputChange = (e: {
+    target: { value: SetStateAction<string> };
+  }) => {
+    setNewName(e.target.value);
+  };
+
+  const changeTeamName = async () => {
+    if (newName == "") {
+      console.log(role);
+      return;
+    }
+    const body = {
+      teamID: team?.teamID,
+      newName: newName,
+    };
+    try {
+      const newNameRes = await fetch(`${uri}team/changeName`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(body),
+      });
+      const json = await newNameRes.json();
+      console.log(json);
+      if (json.status == 200) {
+        resetAlertState();
+        setAlertMsg("Team name updated to: " + newName);
+        setAlertButtonMsg("Ok");
+        setFunction1(() => () => window.location.reload());
+        setShowAlert(true);
+      }
+    } catch {
+      alert("Something went wrong");
+    }
   };
 
   const makeOwner = async (newPerson: PartialHackerModel) => {
@@ -195,7 +239,7 @@ function ManageTeam() {
 
       const data = await newOwnerRes.json();
       if (data.status === 200) {
-        resetAlertState()
+        resetAlertState();
         setAlertMsg(
           "Ownership successfully transferred to " +
             newPerson.firstName +
@@ -206,7 +250,7 @@ function ManageTeam() {
         setFunction1(() => () => window.location.reload());
         setShowAlert(true);
       } else {
-        resetAlertState()
+        resetAlertState();
         setAlertMsg("Error transferring Ownership");
         setAlertButtonMsg("Ok");
         setFunction1(() => () => resetAlertState());
@@ -221,11 +265,12 @@ function ManageTeam() {
     }
   };
 
-  const removeMemberAlert = async (memberToRemove : PartialHackerModel) => {
-    resetAlertState()
+  const removeMemberAlert = async (memberToRemove: PartialHackerModel) => {
+    resetAlertState();
     setAlertMsg(
       "Are you sure you want to kick " +
-        memberToRemove.firstName + " " +
+        memberToRemove.firstName +
+        " " +
         memberToRemove.lastName +
         "?"
     );
@@ -240,7 +285,7 @@ function ManageTeam() {
       setShowAlert(false);
     });
     setShowAlert(true);
-  }
+  };
 
   const removeMember = async (memberToRemove: PartialHackerModel) => {
     if (!hacker || !team) {
@@ -263,7 +308,7 @@ function ManageTeam() {
       });
       const data = await removeRes.json();
       if (data.status === 200) {
-        resetAlertState()
+        resetAlertState();
         setAlertMsg(
           memberToRemove.firstName +
             " " +
@@ -274,7 +319,7 @@ function ManageTeam() {
         setFunction1(() => () => window.location.reload());
         setShowAlert(true);
       } else {
-        resetAlertState()
+        resetAlertState();
         setAlertMsg("Error removing member");
         setAlertButtonMsg("Ok");
         setFunction1(() => () => window.location.reload());
@@ -287,10 +332,8 @@ function ManageTeam() {
   };
 
   const leaveTeamAlert = () => {
-    resetAlertState()
-    setAlertMsg(
-      "Are you sure you want to leave the team?"
-    );
+    resetAlertState();
+    setAlertMsg("Are you sure you want to leave the team?");
     setAlertButtonMsg("No");
     setFunction1(() => () => {
       resetAlertState();
@@ -302,13 +345,13 @@ function ManageTeam() {
       setShowAlert(false);
     });
     setShowAlert(true);
-  }
+  };
 
   const leaveTeam = async () => {
     if (!hacker || !team) {
       console.error("TS MISSING");
       return;
-    };;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    }
 
     try {
       const leaveRes = await fetch(`${uri}team/leave`, {
@@ -324,13 +367,13 @@ function ManageTeam() {
       });
       const data = await leaveRes.json();
       if (data.status === 200) {
-        resetAlertState()
+        resetAlertState();
         setAlertMsg("Successfully left your team.");
         setAlertButtonMsg("Ok");
         setFunction1(() => () => window.location.reload());
         setShowAlert(true);
       } else {
-        resetAlertState()
+        resetAlertState();
         setAlertMsg("Error leaving.");
         setAlertButtonMsg("Ok");
         setShowAlert(true);
@@ -343,10 +386,8 @@ function ManageTeam() {
   };
 
   const deleteTeamAlert = () => {
-    resetAlertState()
-    setAlertMsg(
-      "Are you sure you want to delete the team?"
-    );
+    resetAlertState();
+    setAlertMsg("Are you sure you want to delete the team?");
     setAlertButtonMsg("No");
     setFunction1(() => () => {
       resetAlertState();
@@ -358,7 +399,7 @@ function ManageTeam() {
       setShowAlert(false);
     });
     setShowAlert(true);
-  }
+  };
 
   const deleteTeam = async () => {
     if (!hacker || !team) {
@@ -380,14 +421,16 @@ function ManageTeam() {
       });
       const data = await deleteRes.json();
       if (data.status === 200) {
-        resetAlertState()
+        resetAlertState();
         setAlertMsg("Successfully deleted your team.");
         setAlertButtonMsg("Ok");
         setFunction1(() => () => window.location.reload());
         setShowAlert(true);
       } else {
-        resetAlertState()
-        setAlertMsg("Error deleting team. You must be the only member in the team.");
+        resetAlertState();
+        setAlertMsg(
+          "Error deleting team. You must be the only member in the team."
+        );
         setAlertButtonMsg("Ok");
         setFunction1(() => () => resetAlertState());
         setShowAlert(true);
@@ -447,12 +490,22 @@ function ManageTeam() {
       return;
     }
 
+    if (!teamMember1?.UUID) {
+      setShowAlert(true);
+      setAlertMsg(
+        "Need at least 2 members on your team to register for the event"
+      );
+      setFunction1(() => () => {
+        resetAlertState();
+        setShowAlert(false);
+      });
+      setAlertButtonMsg("ok");
+    }
     try {
       const reqJSON = {
-        "teamID": team?.teamID,
-        "owner": owner?.UUID
-      }
-      console.log(reqJSON);
+        teamID: team?.teamID,
+        owner: owner?.UUID,
+      };
 
       const res = await fetch(uri + "team/sendApplication", {
         method: "PUT",
@@ -460,7 +513,7 @@ function ManageTeam() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(reqJSON)
+        body: JSON.stringify(reqJSON),
       });
 
       const resJSON = await res.json();
@@ -468,15 +521,58 @@ function ManageTeam() {
       console.log(resJSON);
 
       if (resJSON.status === 200) {
-        setAlertMsg("Successfully Registered Team.");
+        setAlertMsg(
+          "Successfully Registered Team. Your team will be notified via email once your application has been approved"
+        );
         setAlertButtonMsg("Ok");
         setFunction1(() => () => window.location.reload());
         setShowAlert(true);
       } else {
         console.error("you stuck here forever");
       }
-    } catch (error) {
+    } catch {
       setAlertMsg("Error Registering");
+      setAlertButtonMsg("Ok");
+      setShowAlert(true);
+      setFunction1(() => () => window.location.reload());
+      console.error("massive error registering");
+    }
+  };
+
+  const withdrawTeam = async () => {
+    if (!hacker || !team) {
+      console.error("sumting wong");
+      return;
+    }
+
+    try {
+      const reqJSON = {
+        teamID: team?.teamID,
+      };
+
+      const res = await fetch(uri + "team/withdrawApplication", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(reqJSON),
+      });
+
+      const resJSON = await res.json();
+
+      console.log(resJSON);
+
+      if (resJSON.status === 200) {
+        setAlertMsg("Application Withdrawn");
+        setAlertButtonMsg("Ok");
+        setFunction1(() => () => window.location.reload());
+        setShowAlert(true);
+      } else {
+        console.error("you stuck here forever");
+      }
+    } catch {
+      setAlertMsg("Error Withdrawing");
       setAlertButtonMsg("Ok");
       setShowAlert(true);
       setFunction1(() => () => window.location.reload());
@@ -491,18 +587,79 @@ function ManageTeam() {
             id=""
             className="min-h-[60vh] w-[77vw] pl-8 pt-4 pb-4 pr-4 bg-white rounded-4xl flex flex-col items-shadow-xl align-middle my-4"
           >
-            <h1 className="mt-2 md:mt-5 relative font-bold text-[2rem] md:text-[3.5rem]">
-              {team.teamName}
-            </h1>
+            {isEditingName ? (
+              <div className="flex flex-row gap-2">
+                <input
+                  placeholder="Input New Team Name"
+                  onChange={handleInputChange}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-[40vw] pl-2"
+                />
+                <button
+                  onClick={() => {
+                    setIsEditingName(false);
+                  }}
+                  className="p-3 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:outline-none"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+                <button
+                  className="p-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none"
+                  onClick={changeTeamName}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M5 12h14M12 5l7 7-7 7"
+                    />
+                  </svg>
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-row">
+                <h1 className="mt-2 md:mt-5 relative font-bold text-[2rem] md:text-[3.5rem]">
+                  {team.teamName}
+                </h1>
+                {hacker?.UUID === parseInt(owner?.UUID ?? "") && (
+                  <img
+                    onClick={() => {
+                      setIsEditingName(true);
+                    }}
+                    src="edit.png"
+                    className="w-[3vh] h-[3vh] my-auto ml-2 cursor-pointer"
+                  ></img>
+                )}
+              </div>
+            )}
             <h2 className="relative font-bold text-md md:text-2xl">
               Access Code: {team.teamID}
             </h2>
             {team.status == "approved" && (
-              <h3 className="relative font-bold text-md md:text-xl">
+              <h3 className="flex flex-row relative font-bold text-md md:text-xl">
                 Application Status:{" "}
                 <u className="text-green-400 underline ml-2">Approved</u>
                 <div
-                  className="text-lg text-gray-700 underline my-auto ml-2 cursor-pointer"
+                  className="text-lg text-gray-700 my-auto ml-2 cursor-pointer"
                   onClick={() => {
                     whatToDo(team.status!);
                   }}
@@ -512,11 +669,11 @@ function ManageTeam() {
               </h3>
             )}
             {team.status == "pending" && (
-              <h3 className="relative font-bold text-md md:text-xl">
+              <h3 className="flex flex-row relative font-bold text-md md:text-xl">
                 Application Status:
                 <u className="text-yellow-400 underline ml-2">In Review</u>
                 <div
-                  className="text-lg text-gray-700 underline my-auto ml-2 cursor-pointer"
+                  className="text-lg text-gray-700 my-auto ml-2 cursor-pointer"
                   onClick={() => {
                     whatToDo(team.status!);
                   }}
@@ -528,9 +685,11 @@ function ManageTeam() {
             {team.status == "unregistered" && (
               <h3 className="flex flex-row relative font-bold text-md md:text-xl">
                 Application Status:{" "}
-                <u className="text-red-400 ml-2">Requires Submission</u>
+                <u className="text-red-400 ml-2 underline">
+                  Requires Submission
+                </u>
                 <div
-                  className="text-lg text-gray-700 underlined my-auto ml-2 cursor-pointer"
+                  className="text-lg text-gray-700 my-auto ml-2 cursor-pointer"
                   onClick={() => {
                     whatToDo(team.status!);
                   }}
@@ -546,7 +705,9 @@ function ManageTeam() {
                     <h4 className="text-[1.2rem]">Owner:</h4>
                     <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold flex gap-1">
                       {owner.firstName} {owner.lastName}{" "}
-                      {hacker?.UUID === parseInt(owner?.UUID ?? "") && <span className="text-green-400">(you)</span>}
+                      {hacker?.UUID === parseInt(owner?.UUID ?? "") && (
+                        <span className="text-green-400">(you)</span>
+                      )}
                     </h4>
                   </div>
                   <div className="inline-flex w-auto justify-end items-center">
@@ -568,7 +729,9 @@ function ManageTeam() {
                     <h4 className="text-[1.2rem]">Teammate:</h4>
                     <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold flex gap-1">
                       {teamMember1.firstName} {teamMember1.lastName}
-                      {hacker?.UUID === parseInt(teamMember1?.UUID ?? "") && <span className="text-green-400">(you)</span>}
+                      {hacker?.UUID === parseInt(teamMember1?.UUID ?? "") && (
+                        <span className="text-green-400">(you)</span>
+                      )}
                     </h4>
                   </div>
                   {teamMember1?.UUID !== null ? (
@@ -629,7 +792,9 @@ function ManageTeam() {
                     <h4 className="text-[1.2rem]">Teammate:</h4>
                     <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold flex gap-1">
                       {teamMember2.firstName} {teamMember2.lastName}
-                      {hacker?.UUID === parseInt(teamMember2?.UUID ?? "") && <span className="text-green-400">(you)</span>}
+                      {hacker?.UUID === parseInt(teamMember2?.UUID ?? "") && (
+                        <span className="text-green-400">(you)</span>
+                      )}
                     </h4>
                   </div>
                   {teamMember2?.UUID !== null ? (
@@ -691,7 +856,9 @@ function ManageTeam() {
                     <h4 className="text-[1.2rem]">Teammate:</h4>
                     <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold flex gap-1">
                       {teamMember3.firstName} {teamMember3.lastName}
-                      {hacker?.UUID === parseInt(teamMember3?.UUID ?? "") && <span className="text-green-400">(you)</span>}
+                      {hacker?.UUID === parseInt(teamMember3?.UUID ?? "") && (
+                        <span className="text-green-400">(you)</span>
+                      )}
                     </h4>
                   </div>
                   {teamMember3?.UUID !== null ? (
@@ -751,13 +918,23 @@ function ManageTeam() {
               <div className="relative inset-0 flex flex-col-reverse items-center md:flex-row md:justify-between md:mb-5 md:mr-2 w-[100vw]">
                 {hacker?.UUID === parseInt(owner?.UUID ?? "") ? (
                   <div>
-                    <button
-                      type="button"
-                      onClick={registerTeam}
-                      className="text-[#F8FAFC] bg-blue-400 hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-xl w-[45vw] h-[5vh] md:w-[12vw] md:h-[7vh] relative overflow-hidden anmat-th-bttn-gng"
-                    >
-                      Register Team
-                    </button>
+                    {team.status == "unregistered" ? (
+                      <button
+                        type="button"
+                        onClick={registerTeam}
+                        className="text-[#F8FAFC] bg-blue-400 hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-xl w-[45vw] h-[5vh] md:w-[12vw] md:h-[7vh] relative overflow-hidden anmat-th-bttn-gng"
+                      >
+                        Register Team
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={withdrawTeam}
+                        className="text-[#F8FAFC] bg-yellow-400 focus:outline-none  font-bold rounded-lg text-sm sm:text-xl w-[45vw] h-[5vh] md:w-[12vw] md:h-[7vh] relative overflow-hidden anmat-th-bttn-gng"
+                      >
+                        Withdraw Application
+                      </button>
+                    )}
                   </div>
                 ) : (
                   ""

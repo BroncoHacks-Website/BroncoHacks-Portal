@@ -14,7 +14,7 @@ function Admin() {
   useEffect(() => {
     const checkAuth = async () => {
       if (!token) {
-        // navigate("/");
+        navigate("/");
         return;
       }
 
@@ -33,6 +33,7 @@ function Admin() {
             Authorization: `Bearer ${token}`,
           },
         });
+
         const hackerJSON = await hackerRes.json();
 
         if (hackerJSON["status"] !== 200 || !hackerJSON.hacker["isAdmin"]) {
