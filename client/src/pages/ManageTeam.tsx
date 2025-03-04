@@ -162,7 +162,7 @@ function ManageTeam() {
   ) => {
     setAlertMsg(
       "Are you sure you want to make " +
-        newPerson.firstName +
+        newPerson.firstName + " " +
         newPerson.lastName +
         " owner of the team?"
     );
@@ -230,7 +230,28 @@ function ManageTeam() {
     }
   };
 
+  const removeMemberAlert = async (memberToRemove : PartialHackerModel) => {
+    setAlertMsg(
+      "Are you sure you want to kick " +
+        memberToRemove.firstName + " " +
+        memberToRemove.lastName +
+        "?"
+    );
+    setAlertButtonMsg("No");
+    setFunction1(() => () => {
+      resetAlertState();
+      setShowAlert(false);
+    });
+    setAlertButtonMsg2("Yes");
+    setFunction2(() => () => {
+      removeMember(memberToRemove);
+      setShowAlert(false);
+    });
+    setShowAlert(true);
+  }
+
   const removeMember = async (memberToRemove: PartialHackerModel) => {
+    resetAlertState();
     if (!hacker || !team) {
       console.error("TS MISSING");
       return;
@@ -438,7 +459,7 @@ function ManageTeam() {
                         <button
                           className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none foc[1.1rem]:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-[1.1rem] w-[10vw] h-[5vh] sm:px-1 relative overflow-hidden anmat-th-bttn-gng"
                           onClick={() =>
-                            teamMember1 && removeMember(teamMember1)
+                            teamMember1 && removeMemberAlert(teamMember1)
                           }
                         >
                           <span className="block sm:hidden text-sm">✕</span>
@@ -498,7 +519,7 @@ function ManageTeam() {
                         <button
                           className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-[1.1rem] w-[10vw] h-[5vh] sm:px-1 relative overflow-hidden anmat-th-bttn-gng"
                           onClick={() =>
-                            teamMember2 && removeMember(teamMember2)
+                            teamMember2 && removeMemberAlert(teamMember2)
                           }
                         >
                           <span className="block sm:hidden text-sm">✕</span>
@@ -559,7 +580,7 @@ function ManageTeam() {
                         <button
                           className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring[1.1rem] focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-[1.1rem] w-[10vw] h-[5vh] sm:px-1 relative overflow-hidden anmat-th-bttn-gng"
                           onClick={() =>
-                            teamMember3 && removeMember(teamMember3)
+                            teamMember3 && removeMemberAlert(teamMember3)
                           }
                         >
                           <span className="block sm:hidden text-sm">✕</span>
