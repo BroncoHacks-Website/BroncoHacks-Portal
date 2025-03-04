@@ -13,7 +13,10 @@ function ForgotPassword() {
       if (json.status != 200) {
         setMessage(json.message);
       } else {
-        setMessage(json.message);
+        setMessage(
+          json.message +
+            ": *note that the email sent will most likely be sent to spam, so check your spam folder"
+        );
       }
       console.log(json);
     } catch {
@@ -76,7 +79,9 @@ function ForgotPassword() {
                 ></img>
               </button>
             </div>
-            <span className="text-red-500 text-sm">{message}</span>
+            <span className="text-red-500 text-sm text-center mx-3">
+              {message}
+            </span>
             <h5 className="mt-4">----------or----------</h5>
             <Link className="text-purple-500 mt-7" to={{ pathname: "/Login" }}>
               Back To Login
