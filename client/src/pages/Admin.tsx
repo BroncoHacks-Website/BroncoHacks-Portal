@@ -52,7 +52,6 @@ function Admin() {
 
         setHackers(jsonData["hackers"]);
         setTeams(jsonData["teams"]);
-        console.log(jsonData);
       } catch {
         localStorage.removeItem("token");
         navigate("/");
@@ -78,7 +77,6 @@ function Admin() {
 
   const send = async () => {
     const body = { sql: sql, secret: secret };
-    console.log(body);
     const res = await fetch(uri + "admin/sql", {
       method: "PUT",
       headers: {
@@ -115,8 +113,35 @@ function Admin() {
     }
   };
 
+  const download = async () => {
+    const response = await fetch(uri + "admin/download", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "database.db"; // File name for the download
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="bg-indigo-300 min-h-screen flex flex-col items-center p-4">
+      <button
+        onClick={download}
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      >
+        Download
+      </button>
+
       <div className="w-full max-w-6xl bg-white rounded-xl shadow-lg p-6 overflow-x-auto">
         <h1 className="text-4xl font-bold text-center mb-6" onClick={send}>
           Admin Dashboard
