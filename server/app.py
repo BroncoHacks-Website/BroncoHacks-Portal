@@ -1381,7 +1381,62 @@ def approveApplication():
         return jsonify({"message": str(e), "status":500})
     finally:
         conn.close()
+
+
+@app.route("/team/changeName", methods=['PUT'])
+@jwt_required()
+@cross_origin()
+def changeTeamName():
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify(message="no data provided", status=400)
+
+        # check if body had correct fields
+        required_fields = ['teamID', 'newName']
+        for field in required_fields:
+            if field not in data:
+                return jsonify(status=400, message=f"Missing {field}")
+
+        teamID = data['teamID']
+        newName = data['newName'] # do i have to validate the name for anything? idk
+
+        # check if teamID is int
+        try:
+            int(teamID)
+        except:
+            return jsonify(status=422, message="Unprocessable Entity (teamID is of wrong type)")
+
+        # check if team exists
+        try:
+            conn = get_db_connection()
+            find_team = conn.execute('SELECT * FROM teams WHERE teamID=?', (teamID,)).fetchall()
+            convert_team = [dict(row) for row in find_team]
+            if len(find_team) == 0:
+                return jsonify(status=404, message="Team Not Found")
+            conn.close()
+        except Exception as e:
+            return jsonify(status=404, message=str(e))
+
+        # update teamName
+        try:
+            conn = get_db_connection()
+            
+            updateName = conn.execute('UPDATE teams SET teamName=? WHERE teamID=?', (newName, int(teamID),))
+            conn.commit()
+            
+            # send res to show the name changed
+            res = conn.execute('SELECT * FROM teams WHERE teamID=?', (teamID,)).fetchall()
+            convert_res = [dict(row) for row in res]
+            
+            conn.close()
+            return jsonify(status=200, message="Successfully Changed Name", team=next(iter(convert_res)))
+        except Exception as e:
+            return jsonify(status=400, message=str(e))
+
         
+    except Exception as e:
+        return jsonify(status=400, message=str(e))
     
 if __name__ == "__main__":
     app.run(debug=True)
