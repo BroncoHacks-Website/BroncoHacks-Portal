@@ -21,10 +21,9 @@ CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}}, supports_cred
 load_dotenv()
 
 def get_db_connection():
-    # conn = sqlite3.connect('database.db')
-    api = os.getenv('SQLITE')
-    conn = sqlitecloud.connect("sqlitecloud://cfawyd0phk.g5.sqlite.cloud:8860/dev?apikey=" + str(api))
+    conn = sqlite3.connect('database.db')
     conn.row_factory = sqlite3.Row
+    print("Here")
     return conn
 
 def generate_team_id():
@@ -51,6 +50,7 @@ def generate_confirmation_number():
 #Admin
 @app.route("/")
 def index():
+    conn = get_db_connection()
     return "Server is Running :)"
 
 @app.route("/admin", methods=['GET'])

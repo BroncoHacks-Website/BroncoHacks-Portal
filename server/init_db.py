@@ -9,10 +9,8 @@ def run_db():
         return hashed
 
     try:
-        # connection = sqlitecloud.connect("sqlitecloud://cfawyd0phk.g5.sqlite.cloud:8860/dev?apikey=h6RbzRFgvnXNEQndPRpqwKiXCjwN17pQRbUr8mqa1nA")
-        connection = sqlite3.connect('dev.db')
-        print("here")
-
+        connection = sqlitecloud.connect("sqlitecloud://cfawyd0phk.g5.sqlite.cloud:8860/dev?apikey=h6RbzRFgvnXNEQndPRpqwKiXCjwN17pQRbUr8mqa1nA")
+        # connection = sqlite3.connect('dev.db')
 
         with open('schema.sql') as f:
             connection.executescript(f.read())
