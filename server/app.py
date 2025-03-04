@@ -10,6 +10,7 @@ from flask_cors import CORS, cross_origin
 from dotenv import load_dotenv
 import os
 import requests
+import sqlitecloud
 
 #Settings
 app = Flask(__name__)
@@ -20,7 +21,9 @@ CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}}, supports_cred
 load_dotenv()
 
 def get_db_connection():
-    conn = sqlite3.connect('database.db')
+    # conn = sqlite3.connect('database.db')
+    api = os.getenv('SQLITE')
+    conn = sqlitecloud.connect("sqlitecloud://cfawyd0phk.g5.sqlite.cloud:8860/dev?apikey=" + str(api))
     conn.row_factory = sqlite3.Row
     return conn
 
