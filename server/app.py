@@ -1418,18 +1418,20 @@ def changeTeamName():
         # update teamName
         try:
             conn = get_db_connection()
-            updateName = conn.execute('UPDATE teams SET teamName=? WHERE teamID=?', (newName, teamID,))
+            
+            updateName = conn.execute('UPDATE teams SET teamName=? WHERE teamID=?', (newName, int(teamID),))
             conn.commit()
+            
+            # send res to show the name changed
+            res = conn.execute('SELECT * FROM teams WHERE teamID=?', (teamID,)).fetchall()
+            convert_res = [dict(row) for row in res]
+            
             conn.close()
+            return jsonify(status=200, message="Successfully Changed Name", team=next(iter(convert_res)))
         except Exception as e:
             return jsonify(status=400, message=str(e))
 
-        # send res to show the name changed
-        conn = get_db_connection()
-        res = conn.execute('SELECT * FROM teams WHERE teamID=?', (teamID)).fetchall()
-        convert_res = [dict(row) for row in find_team]
-        conn.close()
-        return jsonify(status=200, message="Successfully Changed Name", team=next(iter(res)))
+        
     except Exception as e:
         return jsonify(status=400, message=str(e))
     
