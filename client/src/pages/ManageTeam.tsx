@@ -375,6 +375,49 @@ function ManageTeam() {
       setAlertButtonMsg("ok");
     }
   };
+
+  const registerTeam = async () => {
+    if (!hacker || !team) {
+      console.error("sumting wong");
+      return;
+    }
+
+    try {
+      const reqJSON = {
+        "teamID": team?.teamID,
+        "owner": owner?.UUID
+      }
+      console.log(reqJSON);
+
+      const res = await fetch(uri + "team/sendApplication", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(reqJSON)
+      });
+
+      const resJSON = await res.json();
+
+      console.log(resJSON);
+
+      if (resJSON.status === 200) {
+        setAlertMsg("Successfully Registered Team.");
+        setAlertButtonMsg("Ok");
+        setFunction1(() => () => window.location.reload());
+        setShowAlert(true);
+      } else {
+        console.error("you stuck here forever");
+      }
+    } catch (error) {
+      setAlertMsg("Error Registering");
+      setAlertButtonMsg("Ok");
+      setShowAlert(true);
+      setFunction1(() => () => window.location.reload());
+      console.error("massive error registering");
+    }
+  };
   return (
     <>
       {team && (
@@ -645,6 +688,7 @@ function ManageTeam() {
                   <div>
                     <button
                       type="button"
+                      onClick={registerTeam}
                       className="text-[#F8FAFC] bg-blue-400 hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-xl w-[45vw] h-[5vh] md:w-[12vw] md:h-[7vh] relative overflow-hidden anmat-th-bttn-gng"
                     >
                       Register Team
