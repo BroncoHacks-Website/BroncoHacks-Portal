@@ -1320,13 +1320,15 @@ def send_application():
         if not team:
             return jsonify(status=404, message="Team does not exist in the database")
         
-        if owner != team["owner"]:
+        stuff = dict(team)
+        
+        if owner != int(stuff["owner"]):
             return jsonify(status=418, message="This user is not the owner of the team")
     
         if not team["teamMember1"]:
             return jsonify(status=403, message="Teams must have at least 2 members")
 
-        conn.execute("UPDATE teams SET status=pending WHERE teamID=?", (team_id))
+        conn.execute("UPDATE teams SET status=? WHERE teamID=?", ("pending", team_id,))
 
         conn.commit()
         
