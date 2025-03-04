@@ -11,6 +11,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Admin from "./pages/Admin";
 import FAQ from "./pages/FAQ";
+import Devs from "./pages/Devs";
 
 // export const uri = "http://127.0.0.1:8000/";
 export const uri = "https://bhportal.onrender.com/";
@@ -29,6 +30,7 @@ function App() {
         <Route path="/ForgotPassword" element={<ForgotPassword />} />
         <Route path="/ResetPassword" element={<ResetPassword />} />
         <Route path="/Admin" element={<Admin />} />
+        <Route path="/Devs" element={<Devs />} />
         <Route path="*" element={<NotFound />} />
         <Route path="/FAQ" element={<FAQ />} />
       </Routes>

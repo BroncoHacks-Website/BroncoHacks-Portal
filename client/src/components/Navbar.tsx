@@ -145,6 +145,7 @@ function Navbar() {
               >
                 Home
               </Link>
+              <hr></hr>
               <a
                 href="https://www.broncohacks.org/"
                 target="_blank"
@@ -159,10 +160,16 @@ function Navbar() {
               >
                 FAQ/Help
               </Link>
+              <Link
+                className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+                to={{ pathname: "/Devs" }}
+              >
+                Meet The Devs
+              </Link>
 
               {isLoggedIn && (
                 <div>
-                  {" "}
+                  <hr></hr>
                   <button
                     onClick={() => {
                       setModalVisibility(!modalVisibility);
