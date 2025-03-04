@@ -30,12 +30,11 @@ function ForgotPassword() {
   };
   return (
     <>
-      <div className="bg-indigo-300 h-[85vh] flex flex-col items-center">
-        <div className="w-full h-full flex items-center justify-center">
+      <div className="bg-indigo-300 min-h-[85vh] flex flex-col items-center">
+        <div className="w-full flex items-center justify-center pt-14">
           <div
-            className={`flex flex-col gap-3 items-center h-[70vh] sm:h-[70vh] w-[75vw] sm:w-[55vw] md:w-[45vw] lg:w-[28vw] mx-auto rounded-xl bg-white shadow-lg shadow-black/75 backface-hidden `}
-          >
-            <h1 className="text-3xl mt-20">Forgot Your Password? 🐴</h1>
+            className={`flex flex-col gap-3 items-center min-h-[50vh]  w-[75vw] sm:w-[55vw] md:w-[45vw] lg:w-[28vw] mx-auto rounded-xl bg-white shadow-lg shadow-black/75 backface-hidden `}>
+            <h1 className="text-3xl font-bold text-center w-full mt-10 mb-5 md:text-4xl">Forgot Your Password?</h1>
             <h1 className="text-xl mt-1 text-center mx-3">
               If you already have an account, enter your email below. We'll send
               you an email to reset your password :)
@@ -79,11 +78,9 @@ function ForgotPassword() {
                 ></img>
               </button>
             </div>
-            <span className="text-red-500 text-sm text-center mx-3">
-              {message}
-            </span>
-            <h5 className="mt-4">----------or----------</h5>
-            <Link className="text-purple-500 mt-7" to={{ pathname: "/Login" }}>
+            <span className="text-red-500 text-sm">{message}</span>
+            <h5 className="mt-4 text-xl">or</h5>
+            <Link className="text-purple-500 mt-7 text-xl mb-8" to={{ pathname: "/Login" }}>
               Back To Login
             </Link>
           </div>

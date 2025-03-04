@@ -10,6 +10,5 @@ COPY . .
 # Expose the application on port 8000
 EXPOSE 8000
 
-# Run the application using Gunicorn]
-# CMD ["sh", "-c", "gunicorn -b 0.0.0.0:8000 app:app"]
+# Run the application using Gunicorn
 CMD ["sh", "-c", "gunicorn -b 0.0.0.0:8000 app:app"]
