@@ -92,7 +92,7 @@ function ManageTeam() {
               }
             );
             const teamJSON = await teamRes.json();
-            console.log(teamJSON);
+
             if (teamJSON.status == 200) {
               setTeam({
                 teamID: teamJSON.team.teamID,
@@ -103,7 +103,6 @@ function ManageTeam() {
                 teamMember3: teamJSON.teamMemer3,
                 status: teamJSON.team.status,
               });
-              //console.log(teamJSON);
               setOwner(teamJSON.owner);
               if (teamJSON.owner.UUID == hackerJSON.UUID) {
                 setRole("owner");
@@ -181,9 +180,6 @@ function ManageTeam() {
     }
 
     try {
-      console.log(owner?.UUID);
-      console.log(newPerson?.UUID);
-      console.log(team.teamID);
       const newOwnerRes = await fetch(`${uri}team/owner`, {
         method: "PUT",
         headers: {
@@ -198,7 +194,6 @@ function ManageTeam() {
       });
 
       const data = await newOwnerRes.json();
-      console.log(data);
       if (data.status === 200) {
         setAlertMsg(
           "Ownership successfully transferred to " +
@@ -285,7 +280,6 @@ function ManageTeam() {
         }),
       });
       const data = await leaveRes.json();
-      console.log(data);
       if (data.status === 200) {
         setAlertMsg("Successfully left your team.");
         setAlertButtonMsg("Ok");
@@ -322,7 +316,6 @@ function ManageTeam() {
         }),
       });
       const data = await deleteRes.json();
-      console.log(data);
       if (data.status === 200) {
         setAlertMsg("Successfully deleted your team.");
         setAlertButtonMsg("Ok");
@@ -349,6 +342,39 @@ function ManageTeam() {
     setContactContent(null);
   };
 
+  const whatToDo = (status: "approved" | "unregistered" | "pending") => {
+    if (status == "approved") {
+      setShowAlert(true);
+      setAlertMsg(
+        "Your team has been approved. No further actions are needed until the day of the hackathon :)"
+      );
+      setFunction1(() => () => {
+        resetAlertState();
+        setShowAlert(false);
+      });
+      setAlertButtonMsg("ok");
+    } else if (status == "pending") {
+      setShowAlert(true);
+      setAlertMsg(
+        "Your team has submitted an application and is awaiting review. If it has been over 72 hours since you've sent your application, you can email cppbroncohacks@gmail.com or send a message in the discord for a status update"
+      );
+      setFunction1(() => () => {
+        resetAlertState();
+        setShowAlert(false);
+      });
+      setAlertButtonMsg("ok");
+    } else if (status == "unregistered") {
+      setShowAlert(true);
+      setAlertMsg(
+        "Your team hasn't submitted an application to compete in BroncoHacks2025 yet. Once all of your team members are finalized, have the owner register your team on this same page by clicking the 'Register Team' button on the bottom of this page (only the owner can click/see this button)."
+      );
+      setFunction1(() => () => {
+        resetAlertState();
+        setShowAlert(false);
+      });
+      setAlertButtonMsg("ok");
+    }
+  };
   return (
     <>
       {team && (
@@ -365,19 +391,44 @@ function ManageTeam() {
             </h2>
             {team.status == "approved" && (
               <h3 className="relative font-bold text-md md:text-xl">
-                Application Status: <u className="text-green-400">Approved</u>
+                Application Status:{" "}
+                <u className="text-green-400 underline ml-2">Approved</u>
+                <div
+                  className="text-lg text-gray-700 underline my-auto ml-2 cursor-pointer"
+                  onClick={() => {
+                    whatToDo(team.status!);
+                  }}
+                >
+                  ⓘ
+                </div>
               </h3>
             )}
             {team.status == "pending" && (
-              <h3 className="relative font-bold text-md md:text-xl underlined">
+              <h3 className="relative font-bold text-md md:text-xl">
                 Application Status:
-                <u className="text-yellow-400">In Review</u>
+                <u className="text-yellow-400 underline ml-2">In Review</u>
+                <div
+                  className="text-lg text-gray-700 underline my-auto ml-2 cursor-pointer"
+                  onClick={() => {
+                    whatToDo(team.status!);
+                  }}
+                >
+                  ⓘ
+                </div>
               </h3>
             )}
             {team.status == "unregistered" && (
-              <h3 className="relative font-bold text-md md:text-xl underlined">
+              <h3 className="flex flex-row relative font-bold text-md md:text-xl">
                 Application Status:{" "}
-                <u className="text-red-400">Requires Submission</u>
+                <u className="text-red-400 ml-2">Requires Submission</u>
+                <div
+                  className="text-lg text-gray-700 underlined my-auto ml-2 cursor-pointer"
+                  onClick={() => {
+                    whatToDo(team.status!);
+                  }}
+                >
+                  ⓘ
+                </div>
               </h3>
             )}
             <div className="flex flex-col gap-12 mt-5">
@@ -386,7 +437,8 @@ function ManageTeam() {
                   <div className="flex flex-col md:flex-row items-start justify-center md:items-center gap-1">
                     <h4 className="text-[1.2rem]">Owner:</h4>
                     <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold">
-                      {owner.firstName} {owner.lastName}
+                      {owner.firstName} {owner.lastName}{" "}
+                      {role == "owner" && "(you)"}
                     </h4>
                   </div>
                   <div className="inline-flex w-auto justify-end items-center">
@@ -395,7 +447,7 @@ function ManageTeam() {
                       onClick={() => displayContact(owner)}
                     >
                       <span className="block sm:hidden text-sm">✉</span>
-                      <span className="hidden sm:block text-center mx-auto my-auto text-xs lg:text-lg">
+                      <span className="hidden sm:block text-center mx-auto my-auto text-xs lg:text-md">
                         Contact Info
                       </span>
                     </button>
@@ -408,6 +460,7 @@ function ManageTeam() {
                     <h4 className="text-[1.2rem]">Teammate:</h4>
                     <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold">
                       {teamMember1.firstName} {teamMember1.lastName}
+                      {role == "teamMember1" && "(you)"}
                     </h4>
                   </div>
                   {teamMember1?.UUID !== null ? (
@@ -468,6 +521,7 @@ function ManageTeam() {
                     <h4 className="text-[1.2rem]">Teammate:</h4>
                     <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold">
                       {teamMember2.firstName} {teamMember2.lastName}
+                      {role == "teamMember2" && "(you)"}
                     </h4>
                   </div>
                   {teamMember2?.UUID !== null ? (
@@ -529,6 +583,7 @@ function ManageTeam() {
                     <h4 className="text-[1.2rem]">Teammate:</h4>
                     <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold">
                       {teamMember3.firstName} {teamMember3.lastName}
+                      {role == "teamMember3" && <span>you</span>}
                     </h4>
                   </div>
                   {teamMember3?.UUID !== null ? (
@@ -592,7 +647,7 @@ function ManageTeam() {
                       type="button"
                       className="text-[#F8FAFC] bg-blue-400 hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-xl w-[45vw] h-[5vh] md:w-[12vw] md:h-[7vh] relative overflow-hidden anmat-th-bttn-gng"
                     >
-                      Submit Team
+                      Register Team
                     </button>
                   </div>
                 ) : (

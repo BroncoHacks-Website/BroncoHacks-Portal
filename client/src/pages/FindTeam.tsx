@@ -4,6 +4,7 @@ import { uri } from "../App";
 import { Filter } from "bad-words";
 import { HackerModel } from "../models/hacker";
 import InfoAlert from "../components/InfoAlert";
+import Alert from "../components/Alert";
 
 function FindTeam() {
   const navigate = useNavigate();
@@ -19,9 +20,9 @@ function FindTeam() {
   const [joinMessage, setJoinMessage] = useState<string>("");
 
   const [showAlert, setShowAlert] = useState(false);
-	const [alertMsg, setAlertMsg] = useState("");
-	const [function1, setFunction1] = useState<(() => void) | null>(null)
-	const [alertButtonMsg, setAlertButtonMsg] = useState("");
+  const [alertMsg, setAlertMsg] = useState("");
+  const [function1, setFunction1] = useState<(() => void) | null>(null);
+  const [alertButtonMsg, setAlertButtonMsg] = useState("");
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -114,7 +115,6 @@ function FindTeam() {
       teamID: newTeamCode,
       teamMember: hacker?.UUID,
     };
-    console.log(body);
     const res = await fetch(
       uri + "team/addTeamMember",
 
@@ -128,7 +128,6 @@ function FindTeam() {
       }
     );
     const json = await res.json();
-    console.log(json);
     if (
       json.message === "Team does not exist" ||
       json.message === "Team is full"
@@ -137,10 +136,12 @@ function FindTeam() {
     } else if (json.status != 200) {
       setJoinMessage("Team does not exist");
     } else {
-      setAlertMsg("Joining Team ...")
-      setAlertButtonMsg("Ok")
-      setFunction1(() => () => {navigate("/ManageTeam")})
-      setShowAlert(true)
+      setAlertMsg("Joining Team ...");
+      setAlertButtonMsg("Ok");
+      setFunction1(() => () => {
+        navigate("/ManageTeam");
+      });
+      setShowAlert(true);
     }
   };
 
@@ -167,14 +168,13 @@ function FindTeam() {
       });
 
       const resJSON = await createTeamRes.json();
-      console.log(resJSON);
       if (resJSON.status != 200) {
-        console.log("error");
+        setJoinMessage("Something went wrong");
       } else {
         navigate("/ManageTeam");
       }
     } catch {
-      console.log("Hi");
+      setJoinMessage("Something went wrong");
     }
   };
 
@@ -249,7 +249,13 @@ function FindTeam() {
           </div>
         </div>
       </div>
-      {showAlert && (<Alert msg={alertMsg} function1={function1 ?? (() => {})} message1={alertButtonMsg}/>)}
+      {showAlert && (
+        <Alert
+          msg={alertMsg}
+          function1={function1 ?? (() => {})}
+          message1={alertButtonMsg}
+        />
+      )}
     </>
   );
 }

@@ -52,7 +52,6 @@ function Admin() {
 
         setHackers(jsonData["hackers"]);
         setTeams(jsonData["teams"]);
-        console.log(jsonData);
       } catch {
         localStorage.removeItem("token");
         navigate("/");
@@ -78,7 +77,6 @@ function Admin() {
 
   const send = async () => {
     const body = { sql: sql, secret: secret };
-    console.log(body);
     const res = await fetch(uri + "admin/sql", {
       method: "PUT",
       headers: {
