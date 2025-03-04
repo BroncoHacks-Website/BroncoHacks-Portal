@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, make_response
+from flask import Flask, jsonify, request, make_response, send_from_directory, abort
 import sqlite3
 import random
 import bcrypt
@@ -19,11 +19,11 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=5)
 jwt = JWTManager(app)
 CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
 load_dotenv()
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 
 def get_db_connection():
-    # conn = sqlite3.connect('database.db')
-    api = os.getenv('SQLITE')
-    conn = sqlitecloud.connect("sqlitecloud://cfawyd0phk.g5.sqlite.cloud:8860/dev?apikey=" + str(api))
+    conn = sqlite3.connect('database.db')
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -51,6 +51,7 @@ def generate_confirmation_number():
 #Admin
 @app.route("/")
 def index():
+    conn = get_db_connection()
     return "Server is Running :)"
 
 @app.route("/admin", methods=['GET'])
@@ -230,16 +231,24 @@ def approve():
         except Exception as e:
             return jsonify(status=404, message=str(e))
         
-        
-        # final res
-        conn = get_db_connection()
-        res = conn.execute("SELECT * FROM teams WHERE teamID=?", (teamID,)).fetchall()
-        convert_res = [dict(row) for row in res]
-        conn.close()
-        return jsonify(status=200, message="Approved Successfully", res=convert_res[0])
     except Exception as e:
         return jsonify(status=400, message=str(e))
     
+@app.route('/admin/download', methods=['GET'])
+@jwt_required()
+@cross_origin()
+def download_file():
+    UUID = get_jwt_identity()
+    hacker = get_hacker_by_id(UUID)
+    if not hacker["isAdmin"]:
+        return jsonify(status=401, message="fuck outta here bitch",)
+    file_path = os.path.join(BASE_DIR, "database.db")
+    
+    if not os.path.isfile(file_path):
+        abort(404, "File not found")
+
+    return send_from_directory(BASE_DIR, "database.db", as_attachment=True)
+
 #Tokens
 @app.route("/login", methods=["GET"])
 @cross_origin()
