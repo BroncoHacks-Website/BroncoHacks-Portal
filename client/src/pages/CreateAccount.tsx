@@ -510,6 +510,9 @@ function CreateAccount() {
         setConfirmPasswordMessage("*passwords do not match");
         invalid = true;
       }
+      if (email.endsWith(".edu")) {
+        setEmailMessage(".edu emails not allowed");
+      }
       if (invalid) {
         return;
       }
@@ -725,7 +728,7 @@ function CreateAccount() {
               <span className="text-red-500 text-xs ml-3">
                 {lastNameMessage}
               </span>
-              <p>Email</p>
+              <p>Email (.edu emails not allowed)</p>
               <input
                 onChange={changeEmail}
                 value={email}

@@ -28,7 +28,9 @@ function EditProfileModal({ hackerProp, onClose }: ModalProps) {
       lastName: lastName,
       school: school,
       UUID: hackerProp.UUID,
+      discord: discord,
     };
+    setRequestMessage("");
 
     if (
       firstName == hackerProp.firstName &&
@@ -36,6 +38,7 @@ function EditProfileModal({ hackerProp, onClose }: ModalProps) {
       school == hackerProp.school &&
       discord == hackerProp.discord
     ) {
+      setRequestMessage("Update a field before saving");
       return;
     }
     try {
@@ -122,7 +125,7 @@ function EditProfileModal({ hackerProp, onClose }: ModalProps) {
                     onChange={(e) => setDiscord(e.target.value)}
                   />
                 </div>
-                <span className="text-red-500 text-sm text-center">
+                <span className="flex text-red-500 text-sm text-center justify-center">
                   {requestMessage}
                 </span>{" "}
                 <div className="flex justify-center">

@@ -7,9 +7,9 @@ from datetime import datetime, timedelta, timezone
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
                                unset_jwt_cookies, jwt_required, JWTManager
 from flask_cors import CORS, cross_origin
-from flask_mail import Mail, Message 
 from dotenv import load_dotenv
 import os
+import requests
 
 #Settings
 app = Flask(__name__)
@@ -18,18 +18,6 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=5)
 jwt = JWTManager(app)
 CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
 load_dotenv()
-
-   
-# configuration of mail 
-mail = Mail(app) # instantiate the mail class 
-app.config['MAIL_SERVER']='smtp.gmail.com'
-app.config['MAIL_PORT'] = 465
-app.config['MAIL_USERNAME'] = 'cppbroncohacks@gmail.com'
-app.config['MAIL_PASSWORD'] = os.getenv('MAILING_PASSWORD')
-app.config['MAIL_USE_TLS'] = False
-app.config['MAIL_USE_SSL'] = True
-mail = Mail(app)
-
 
 def get_db_connection():
     conn = sqlite3.connect('database.db')
@@ -185,13 +173,52 @@ def approve():
                 if value is not None:
                     hacker = get_hacker_by_id(value)
                     if hacker["email"]:     
-                        msg = Message(
-                        'BroncoHacks2025 Team Approval',
-                        sender = 'cppbroncohacks@gmail.com',
-                        recipients = [hacker["email"]]
-                        )
-                        msg.body = 'Your team has been approved for BroncoHacks 2025! If you wish to make changes regarding your team, please unsubmit your application and resubmit. Otherwise, lock in and Start Hacking!'
-                        mail.send(msg)
+                        sendmail = requests.post(
+                                                "https://api.mailgun.net/v3/send.broncohacksportal.org/messages",
+                                                auth=("api", os.getenv('API_KEY')),
+                                                data={
+                                                    "from": "BroncoHacks2025 <postmaster@send.broncohacksportal.org>",
+                                                    "to": f"{hacker["firstName"]} {hacker["lastName"]} <{hacker["email"]}>",
+                                                    "subject": "[BroncoHacks2025] Your Team Has Been Approved!",
+                                                    "html": """
+                                                        <!DOCTYPE html>
+                                                        <html lang="en">
+                                                            <head>
+                                                                <meta charset="UTF-8">
+                                                                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                                                <title>Your Team is Approved!</title>
+                                                            </head>
+                                                            <body style="font-family: Arial, sans-serif; color: #01426A; background-color: #f4f4f4; padding: 20px; margin: 0;">
+                                                                <div style="max-width: 600px; margin: auto; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); text-align: center;">
+                                                                    
+                                                                    <!-- Logo -->
+                                                                    <img src="https://www.broncohacks.org/assets/BroncoHacks_Logo-DleTz4ik.png" alt="BroncoHacks Logo" style="max-width: 200px; margin-bottom: 20px;">
+
+                                                                    <!-- Header -->
+                                                                    <h2 style="color: #00843D;">Your Team Has Been Approved for BroncoHacks 2025! 🎉</h2>
+
+                                                                    <!-- Message -->
+                                                                    <p style="font-size: 16px; line-height: 1.6;">
+                                                                        If you wish to make changes regarding your team, please <strong>unsubmit your application and resubmit.</strong>
+                                                                    </p>
+
+                                                                    <p style="font-size: 16px; line-height: 1.6; font-weight: bold;">
+                                                                        Otherwise, lock in and Start Hacking! 🚀
+                                                                    </p>
+
+                                                                    <!-- Call to Action -->
+                                                                    <a href="https://broncohacks.org" 
+                                                                        style="display: inline-block; padding: 12px 20px; font-size: 16px; color: #ffffff; background-color: #00843D; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 20px;">
+                                                                        Visit BroncoHacks Portal
+                                                                    </a>
+
+                                                                </div>
+                                                            </body>
+                                                        </html>
+                                                    """
+                                                }
+                                            )
+
                 
             conn.close()
             
@@ -279,13 +306,53 @@ def sendPasswordReset():
         else:
             hacker_id = hacker["UUID"]
             access_token = create_access_token(identity=str(hacker_id))
-            msg = Message( 
-                'Confirm your email for BroncoHacks2025' , 
-                sender ='cppbroncohacks@gmail.com', 
-                recipients = [email] 
-               ) 
-            msg.body = 'Click here to reset your password: http://localhost:5173/ResetPassword?token=' + str(access_token)
-            mail.send(msg)
+            sendmail = requests.post(
+                                    "https://api.mailgun.net/v3/send.broncohacksportal.org/messages",
+                                    auth=("api", os.getenv('API_KEY')),
+                                    data={
+                                        "from": "BroncoHacks2025 <postmaster@send.broncohacksportal.org>",
+                                        "to": email,
+                                        "subject": "BroncoHacks2025",
+                                        "html": f"""
+                                            <!DOCTYPE html>
+                                            <html lang="en">
+                                                <head>
+                                                    <meta charset="UTF-8">
+                                                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                                    <title>Reset Your Password</title>
+                                                </head>
+                                                <body style="font-family: Arial, sans-serif; color: #01426A; background-color: #f4f4f4; padding: 20px; margin: 0;">
+                                                    <div style="max-width: 600px; margin: auto; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); text-align: center;">
+                                                        
+                                                        <!-- Logo -->
+                                                        <img src="https://www.broncohacks.org/assets/BroncoHacks_Logo-DleTz4ik.png" alt="BroncoHacks Logo" style="max-width: 200px; margin-bottom: 20px;">
+
+                                                        <!-- Header -->
+                                                        <h2 style="color: #00843D;">Reset Your Password</h2>
+
+                                                        <!-- Message -->
+                                                        <p style="font-size: 16px; line-height: 1.6;">
+                                                            You recently requested to reset your password for <strong>BroncoHacks 2025</strong>.
+                                                            Click the button below to proceed.
+                                                        </p>
+
+                                                        <!-- Reset Password Button -->
+                                                        <a href="http://broncohacksportal.org/ResetPassword?token={access_token}" 
+                                                            style="display: inline-block; padding: 12px 20px; font-size: 16px; color: #ffffff; background-color: #00843D; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 20px;">
+                                                            Reset Your Password
+                                                        </a>
+
+                                                        <!-- Expiry Notice -->
+                                                        <p style="font-size: 14px; color: #777; margin-top: 20px;">
+                                                            This link will expire soon. If you did not request a password reset, please ignore this email.
+                                                        </p>
+                                                    </div>
+                                                </body>
+                                            </html>
+                                        """
+                                    }
+                                )
+            print(sendmail)
             return jsonify(status=200,message="Email Sent!"),200
 
     except Exception as e:
@@ -373,14 +440,57 @@ def create_hacker():
         hacker_id = cursor.lastrowid
         new_hacker = get_hacker_by_id(hacker_id)
         conn.close()
+        sendmail =  requests.post(
+                                 "https://api.mailgun.net/v3/send.broncohacksportal.org/messages",
+                                 auth=("api", os.getenv('API_KEY')),
+                                 data={
+                                    "from": "BroncoHacks2025 <postmaster@send.broncohacksportal.org>",
+                                    "to": email,
+                                    "subject": "[BroncoHacks2025] Welcome To BroncoHacks",
+                                    "html": f"""
+                                        <html>
+                                            <body style="font-family: Arial, sans-serif; color: #01426A; background-color: #f4f4f4; padding: 20px;">
+                                                <div style="max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+                                                    
+                                                    <!-- Logo -->
+                                                    <div style="text-align: center; margin-bottom: 20px;">
+                                                        <img src="https://www.broncohacks.org/assets/BroncoHacks_Logo-DleTz4ik.png" alt="BroncoHacks Logo" style="max-width: 200px;">
+                                                    </div>
 
-        msg = Message( 
-                'Confirm your email for BroncoHacks2025' , 
-                sender ='cppbroncohacks@gmail.com', 
-                recipients = [email] 
-               ) 
-        msg.body = 'Your verification code is: ' + str(confirmationNumber) + ". You can confrim you account here: [INSERT LINK WHEN READY].\nIf you haven't already, join the discord for updates & changes about the hackathon, as well as communication during the event: https://discord.gg/fHp9nB5eYc \nThank you for registering and happy hacking!\n~BroncoHacks2025 Organizers (April 18-April 19)"
-        mail.send(msg)
+                                                    <!-- Header -->
+                                                    <h2 style="color: #00843D; text-align: center;">Welcome to BroncoHacks 2025!</h2>
+                                                    
+                                                    <!-- Greeting -->
+                                                    <p style="font-size: 16px; line-height: 1.6; text-align: center;">
+                                                        Hello <strong>{firstName} {lastName}</strong>,  
+                                                    </p>
+                                                    
+                                                    <!-- Message -->
+                                                    <p style="font-size: 16px; line-height: 1.6; text-align: center;">
+                                                        Thank you for registering for BroncoHacks 2025! To complete your registration, use the verification code below:
+                                                    </p>
+
+                                                    <!-- Verification Code Box -->
+                                                    <div style="background-color: #00843D; color: #FFB500; padding: 15px; border-radius: 6px; text-align: center; font-size: 22px; font-weight: bold; letter-spacing: 2px; margin: 20px 0;">
+                                                        {confirmationNumber}
+                                                    </div>
+
+                                                    <!-- Closing Message -->
+                                                    <p style="font-size: 16px; line-height: 1.6; text-align: center;">
+                                                        We’re excited to have you join us at BroncoHacks! 🚀  
+                                                    </p>
+
+                                                    <!-- Contact Info -->
+                                                    <p style="font-size: 14px; color: #777; text-align: center;">
+                                                        If you have any questions, reach out at  
+                                                        <a href="mailto:contact@broncohacks.org" style="color: #01426A; font-weight: bold;">contact@broncohacks.org</a>.
+                                                    </p>
+                                                </div>
+                                            </body>
+                                        </html>
+                                    """
+                                }
+                            )
         access_token = create_access_token(identity=str(hacker_id))
         return jsonify(status=200, message="Hacker created successfully", hacker=new_hacker, token=access_token),200
     except Exception as e:
@@ -475,13 +585,58 @@ def changeCode():
         conn = get_db_connection()
         conn.execute("UPDATE hackers SET confirmationNumber = ? WHERE UUID = ?", (confirmationNumber, UUID))
         conn.commit()
-        msg = Message( 
-        'Confirm your email for BroncoHacks2025' , 
-        sender ='cppbroncohacks@gmail.com', 
-        recipients = [hacker["email"]] 
-    ) 
-        msg.body = 'Your new verification code is: ' + str(confirmationNumber) + ". You can confrim you account here: [INSERT LINK WHEN READY].\nIf you haven't already, join the discord for updates & changes about the hackathon, as well as communication during the event: https://discord.gg/fHp9nB5eYc \nThank you for registering and happy hacking!\n~BroncoHacks2025 Organizers (April 18-April 19)"
-        mail.send(msg)
+        sendmail =  requests.post(
+                                 "https://api.mailgun.net/v3/send.broncohacksportal.org/messages",
+                                 auth=("api", os.getenv('API_KEY')),
+                                 data={
+                                    "from": "BroncoHacks2025 <postmaster@send.broncohacksportal.org>",
+                                    "to": f"{hacker["firstName"]} {hacker["lastName"]} <{hacker["email"]}>",
+                                    "subject": "[BroncoHacks2025] Welcome To BroncoHacks",
+                                    "html": f"""
+                                        <html>
+                                            <body style="font-family: Arial, sans-serif; color: #01426A; background-color: #f4f4f4; padding: 20px;">
+                                                <div style="max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+                                                    
+                                                    <!-- Logo -->
+                                                    <div style="text-align: center; margin-bottom: 20px;">
+                                                        <img src="https://www.broncohacks.org/assets/BroncoHacks_Logo-DleTz4ik.png" alt="BroncoHacks Logo" style="max-width: 200px;">
+                                                    </div>
+
+                                                    <!-- Header -->
+                                                    <h2 style="color: #00843D; text-align: center;">Welcome to BroncoHacks 2025!</h2>
+                                                    
+                                                    <!-- Greeting -->
+                                                    <p style="font-size: 16px; line-height: 1.6; text-align: center;">
+                                                        Hello <strong>{hacker["firstName"]} {hacker["lastName"]}</strong>,  
+                                                    </p>
+                                                    
+                                                    <!-- Message -->
+                                                    <p style="font-size: 16px; line-height: 1.6; text-align: center;">
+                                                        Thank you for registering for BroncoHacks 2025! To complete your registration, use the verification code below:
+                                                    </p>
+
+                                                    <!-- Verification Code Box -->
+                                                    <div style="background-color: #00843D; color: #FFB500; padding: 15px; border-radius: 6px; text-align: center; font-size: 22px; font-weight: bold; letter-spacing: 2px; margin: 20px 0;">
+                                                        {confirmationNumber}
+                                                    </div>
+
+                                                    <!-- Closing Message -->
+                                                    <p style="font-size: 16px; line-height: 1.6; text-align: center;">
+                                                        We’re excited to have you join us at BroncoHacks! 🚀  
+                                                    </p>
+
+                                                    <!-- Contact Info -->
+                                                    <p style="font-size: 14px; color: #777; text-align: center;">
+                                                        If you have any questions, reach out at  
+                                                        <a href="mailto:contact@broncohacks.org" style="color: #01426A; font-weight: bold;">contact@broncohacks.org</a>.
+                                                    </p>
+                                                </div>
+                                            </body>
+                                        </html>
+                                    """
+                                }
+                            )
+        
         return jsonify(status=200, message="New Verification Code is Sent!"),200
     except Exception as e:
         return jsonify(status=400, message=str(e)),400
@@ -595,10 +750,10 @@ def get_users_team():
         if not team:
             return jsonify(message= "hacker is not in a team", status=406)
         
-        owner = conn.execute("SELECT UUID, firstName, lastName, email, school FROM hackers WHERE UUID = ?", (team["owner"],)).fetchone()
-        team_member_1 = conn.execute("SELECT UUID, firstName, lastName, email, school FROM hackers WHERE UUID = ?", (team["teamMember1"],)).fetchone()
-        team_member_2 = conn.execute("SELECT UUID, firstName, lastName, email, school FROM hackers WHERE UUID = ?", (team["teamMember2"],)).fetchone()
-        team_member_3 = conn.execute("SELECT UUID, firstName, lastName, email, school FROM hackers WHERE UUID = ?", (team["teamMember3"],)).fetchone()
+        owner = conn.execute("SELECT UUID, firstName, lastName, email, school, discord FROM hackers WHERE UUID = ?", (team["owner"],)).fetchone()
+        team_member_1 = conn.execute("SELECT UUID, firstName, lastName, email, school, discord FROM hackers WHERE UUID = ?", (team["teamMember1"],)).fetchone()
+        team_member_2 = conn.execute("SELECT UUID, firstName, lastName, email, school, discord FROM hackers WHERE UUID = ?", (team["teamMember2"],)).fetchone()
+        team_member_3 = conn.execute("SELECT UUID, firstName, lastName, email, school, discord FROM hackers WHERE UUID = ?", (team["teamMember3"],)).fetchone()
         
         #otherwise, return the team id and the team name
         return jsonify({
@@ -614,6 +769,7 @@ def get_users_team():
                 "lastName" : owner["lastName"] if owner else None,
                 "email": owner["email"] if owner else None,
                 "school": owner["school"] if owner else None,
+                "discord": owner["discord"] if owner else None,
             },
             "teamMember1" : {
                 "UUID" : team_member_1["UUID"] if team_member_1 else None,
@@ -621,6 +777,7 @@ def get_users_team():
                 "lastName" : team_member_1["lastName"] if team_member_1 else None,
                 "email": team_member_1["email"] if team_member_1 else None,
                 "school": team_member_1["school"] if team_member_1 else None,
+                "discord": team_member_1["discord"] if team_member_1 else None,
             },
             "teamMember2" : {
                 "UUID" : team_member_2["UUID"] if team_member_2 else None,
@@ -628,13 +785,15 @@ def get_users_team():
                 "lastName" : team_member_2["lastName"] if team_member_2 else None,
                 "email": team_member_2["email"] if team_member_2 else None,
                 "school": team_member_2["school"] if team_member_2 else None,
+                "discord": team_member_2["discord"] if team_member_2 else None,
             },
             "teamMember3" : {
                 "UUID" : team_member_3["UUID"] if team_member_3 else None,
                 "firstName" : team_member_3["firstName"] if team_member_3 else None,
                 "lastName" : team_member_3["lastName"] if team_member_3 else None,
                 "email": team_member_3["email"] if team_member_3 else None,
-                "school": team_member_3["school"] if team_member_3 else None
+                "school": team_member_3["school"] if team_member_3 else None,
+                "discord": team_member_3["discord"] if team_member_3 else None,
             },
             "status":200
         })
@@ -1101,7 +1260,7 @@ def addTeamMember():
 
         # Check if team is full
         find_team = conn.execute("SELECT status, teamMember1, teamMember2, teamMember3 FROM teams WHERE teamID=?", (teamID,)).fetchone()
-        if sum(1 for m in find_team if m is not None) >= 3:
+        if find_team["teamMember3"]:
             return jsonify(status=400, message="Team is full")
 
         # Add member to the first available spot

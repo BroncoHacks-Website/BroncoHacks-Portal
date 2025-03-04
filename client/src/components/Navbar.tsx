@@ -102,7 +102,6 @@ function Navbar() {
     } catch {
       alert("No Session Found: Going Back to Home");
       localStorage.removeItem("token");
-      console.log("9");
       navigate("/");
       window.location.reload();
     }
@@ -134,20 +133,31 @@ function Navbar() {
             <span className="hidden sm:block text-center px-2">Menu</span>
           </button>
           {dropdownOpen && (
-            <div className="absolute mt-2 right-0 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+            <div
+              onClick={() => {
+                setDropdownOpen(false);
+              }}
+              className="absolute mt-2 right-0 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50"
+            >
+              <Link
+                className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+                to={{ pathname: "/" }}
+              >
+                Home
+              </Link>
               <a
                 href="https://www.broncohacks.org/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
               >
-                Back to BroncoHacks.org
+                What is BroncoHacks?
               </a>
               <Link
                 className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
                 to={{ pathname: "/FAQ" }}
               >
-                FAQ
+                FAQ/Help
               </Link>
 
               {isLoggedIn && (
