@@ -75,10 +75,10 @@ function ResetPassword() {
   };
   return (
     <>
-      <div className="bg-indigo-300 h-[85vh] flex flex-col items-center">
-        <div className="w-full h-full flex items-center justify-center">
+      <div className="bg-indigo-300 min-h-[85vh] flex flex-col items-center">
+        <div className="w-full min-h-full flex items-center justify-center">
           <div
-            className={`flex flex-col items-center h-[70vh] sm:h-[70vh] w-[75vw] sm:w-[55vw] md:w-[45vw] lg:w-[28vw] mx-auto rounded-xl bg-white shadow-lg shadow-black/75 backface-hidden `}
+            className={`flex flex-col items-center min-h-[70vh]  w-[75vw] sm:w-[55vw] md:w-[45vw] lg:w-[28vw] mx-auto rounded-xl bg-white shadow-lg shadow-black/75 backface-hidden my-10`}
           >
             <h1 className="mt-10 text-3xl">Reset Password 🐴</h1>
             <label className="mt-15">Password</label>
@@ -154,7 +154,10 @@ function ResetPassword() {
               </div>
             )}
             <h5 className="mt-4">----------or----------</h5>
-            <Link className="text-purple-500 mt-7" to={{ pathname: "/Login" }}>
+            <Link
+              className="text-purple-500 mt-7 mb-7"
+              to={{ pathname: "/Login" }}
+            >
               Back To Login
             </Link>
           </div>
