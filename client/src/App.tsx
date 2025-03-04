@@ -12,8 +12,8 @@ import ResetPassword from "./pages/ResetPassword";
 import Admin from "./pages/Admin";
 import FAQ from "./pages/FAQ";
 
-// export const uri = "http://127.0.0.1:8000/";
-export const uri = "https://bhportal.onrender.com/";
+export const uri = "http://127.0.0.1:8000/";
+// export const uri = "https://bhportal.onrender.com/";
 
 function App() {
   return (

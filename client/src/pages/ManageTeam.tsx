@@ -501,7 +501,7 @@ function ManageTeam() {
                 <div className="flex flex-row justify-between">
                   <div className="flex flex-col md:flex-row items-start justify-center md:items-center gap-1">
                     <h4 className="text-[1.2rem]">Owner:</h4>
-                    <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold">
+                    <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold flex gap-1">
                       {owner.firstName} {owner.lastName}{" "}
                       {hacker?.UUID === parseInt(owner?.UUID ?? "") && <span className="text-green-400">(you)</span>}
                     </h4>
@@ -523,7 +523,7 @@ function ManageTeam() {
                 <div className="flex flex-row justify-between">
                   <div className="flex flex-col md:flex-row items-start justify-center md:items-center gap-1">
                     <h4 className="text-[1.2rem]">Teammate:</h4>
-                    <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold">
+                    <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold flex gap-1">
                       {teamMember1.firstName} {teamMember1.lastName}
                       {hacker?.UUID === parseInt(teamMember1?.UUID ?? "") && <span className="text-green-400">(you)</span>}
                     </h4>
@@ -584,7 +584,7 @@ function ManageTeam() {
                 <div className="flex flex-row justify-between">
                   <div className="flex flex-col md:flex-row items-start justify-center md:items-center gap-1">
                     <h4 className="text-[1.2rem]">Teammate:</h4>
-                    <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold">
+                    <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold flex gap-1">
                       {teamMember2.firstName} {teamMember2.lastName}
                       {hacker?.UUID === parseInt(teamMember2?.UUID ?? "") && <span className="text-green-400">(you)</span>}
                     </h4>
@@ -646,7 +646,7 @@ function ManageTeam() {
                 <div className="flex flex-row justify-between">
                   <div className="flex flex-col md:flex-row items-start justify-center md:items-center gap-1">
                     <h4 className="text-[1.2rem]">Teammate:</h4>
-                    <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold">
+                    <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold flex gap-1">
                       {teamMember3.firstName} {teamMember3.lastName}
                       {hacker?.UUID === parseInt(teamMember3?.UUID ?? "") && <span className="text-green-400">(you)</span>}
                     </h4>

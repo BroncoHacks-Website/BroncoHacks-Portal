@@ -11,4 +11,5 @@ COPY . .
 EXPOSE 8000
 
 # Run the application using Gunicorn
-CMD ["sh", "-c", "gunicorn -b 0.0.0.0:8000 app:app"]
+#CMD ["sh", "-c", "gunicorn -b 0.0.0.0:8000 app:app"]
+CMD ["sh", "-c", "python3 ./init_db.py && gunicorn -b 0.0.0.0:8000 app:app"]
