@@ -503,7 +503,7 @@ function ManageTeam() {
                     <h4 className="text-[1.2rem]">Owner:</h4>
                     <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold">
                       {owner.firstName} {owner.lastName}{" "}
-                      {role == "owner" && "(you)"}
+                      {hacker?.UUID === parseInt(owner?.UUID ?? "") && <span className="text-green-400">(you)</span>}
                     </h4>
                   </div>
                   <div className="inline-flex w-auto justify-end items-center">
@@ -525,7 +525,7 @@ function ManageTeam() {
                     <h4 className="text-[1.2rem]">Teammate:</h4>
                     <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold">
                       {teamMember1.firstName} {teamMember1.lastName}
-                      {role == "teamMember1" && "(you)"}
+                      {hacker?.UUID === parseInt(teamMember1?.UUID ?? "") && <span className="text-green-400">(you)</span>}
                     </h4>
                   </div>
                   {teamMember1?.UUID !== null ? (
@@ -586,7 +586,7 @@ function ManageTeam() {
                     <h4 className="text-[1.2rem]">Teammate:</h4>
                     <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold">
                       {teamMember2.firstName} {teamMember2.lastName}
-                      {role == "teamMember2" && "(you)"}
+                      {hacker?.UUID === parseInt(teamMember2?.UUID ?? "") && <span className="text-green-400">(you)</span>}
                     </h4>
                   </div>
                   {teamMember2?.UUID !== null ? (
@@ -648,7 +648,7 @@ function ManageTeam() {
                     <h4 className="text-[1.2rem]">Teammate:</h4>
                     <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold">
                       {teamMember3.firstName} {teamMember3.lastName}
-                      {role == "teamMember3" && <span>you</span>}
+                      {hacker?.UUID === parseInt(teamMember3?.UUID ?? "") && <span className="text-green-400">(you)</span>}
                     </h4>
                   </div>
                   {teamMember3?.UUID !== null ? (
