@@ -874,7 +874,7 @@ def create_tuah():
         while id in list_of_ids:
             id = generate_team_id()
 
-        conn.execute("INSERT INTO teams (teamID, teamName, owner, teamMember1, teamMember2, teamMember3, status) VALUES (?, ?, ?, ?, ?, ?)", (id, team_name, owner, None, None, None, "unregistered"))
+        conn.execute("INSERT INTO teams (teamID, teamName, owner, teamMember1, teamMember2, teamMember3, status) VALUES (?, ?, ?, ?, ?, ?)", (id, team_name, owner, None, None, None, "unregistered",))
         conn.execute("UPDATE hackers SET teamID = ? where UUID = ?",(id, int(owner)))
         conn.commit()
 
@@ -886,7 +886,8 @@ def create_tuah():
                 "owner": owner,
                 "teamMember1": None,
                 "teamMember2": None,
-                "teamMember3": None
+                "teamMember3": None,
+                "status" : 'unregistered'
             },
             "status": 200})
     except Exception as e:
