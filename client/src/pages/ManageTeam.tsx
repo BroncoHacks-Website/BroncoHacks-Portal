@@ -149,13 +149,14 @@ function ManageTeam() {
     setFunction1(() => {});
     setAlertButtonMsg2("");
     setFunction2(() => {});
+    setShowAlert(false)
   };
-  const makeOwnerAlertFirstBecauseFuckingMobileHasToLikeNeedAnAlert = (
-    newPerson: PartialHackerModel
-  ) => {
+
+  const makeOwnerAlertFirstBecauseFuckingMobileHasToLikeNeedAnAlert = (newPerson: PartialHackerModel) => {
+    resetAlertState()
     setAlertMsg(
       "Are you sure you want to make " +
-        newPerson.firstName +
+        newPerson.firstName + " " +
         newPerson.lastName +
         " owner of the team?"
     );
@@ -173,7 +174,6 @@ function ManageTeam() {
   };
 
   const makeOwner = async (newPerson: PartialHackerModel) => {
-    resetAlertState();
     if (!hacker || !team) {
       console.error("TS MISSING");
       return;
@@ -195,6 +195,7 @@ function ManageTeam() {
 
       const data = await newOwnerRes.json();
       if (data.status === 200) {
+        resetAlertState()
         setAlertMsg(
           "Ownership successfully transferred to " +
             newPerson.firstName +
@@ -205,19 +206,41 @@ function ManageTeam() {
         setFunction1(() => () => window.location.reload());
         setShowAlert(true);
       } else {
+        resetAlertState()
+        setAlertMsg("Error transferring Ownership");
+        setAlertButtonMsg("Ok");
+        setFunction1(() => () => resetAlertState());
+        setShowAlert(true);
         console.error(
           "FUCK YOU YOU'RE STUPID I HATE YOU YOU ALWAYS WERE A DUMB SACK OF LARD",
           data.error
         );
       }
     } catch (e) {
-      setAlertMsg("Error transferring Ownership");
-      setAlertButtonMsg("Ok");
-      setFunction1(() => () => window.location.reload());
-      setShowAlert(true);
       console.error("error transffering owenrship", e);
     }
   };
+
+  const removeMemberAlert = async (memberToRemove : PartialHackerModel) => {
+    resetAlertState()
+    setAlertMsg(
+      "Are you sure you want to kick " +
+        memberToRemove.firstName + " " +
+        memberToRemove.lastName +
+        "?"
+    );
+    setAlertButtonMsg("No");
+    setFunction1(() => () => {
+      resetAlertState();
+      setShowAlert(false);
+    });
+    setAlertButtonMsg2("Yes");
+    setFunction2(() => () => {
+      removeMember(memberToRemove);
+      setShowAlert(false);
+    });
+    setShowAlert(true);
+  }
 
   const removeMember = async (memberToRemove: PartialHackerModel) => {
     if (!hacker || !team) {
@@ -240,6 +263,7 @@ function ManageTeam() {
       });
       const data = await removeRes.json();
       if (data.status === 200) {
+        resetAlertState()
         setAlertMsg(
           memberToRemove.firstName +
             " " +
@@ -250,22 +274,41 @@ function ManageTeam() {
         setFunction1(() => () => window.location.reload());
         setShowAlert(true);
       } else {
+        resetAlertState()
+        setAlertMsg("Error removing member");
+        setAlertButtonMsg("Ok");
+        setFunction1(() => () => window.location.reload());
+        setShowAlert(true);
         console.error("error removing member", data.error);
       }
     } catch (e) {
-      setAlertMsg("Error removing member");
-      setAlertButtonMsg("Ok");
-      setFunction1(() => () => window.location.reload());
-      setShowAlert(true);
       console.error("error removing member", e);
     }
   };
+
+  const leaveTeamAlert = () => {
+    resetAlertState()
+    setAlertMsg(
+      "Are you sure you want to leave the team?"
+    );
+    setAlertButtonMsg("No");
+    setFunction1(() => () => {
+      resetAlertState();
+      setShowAlert(false);
+    });
+    setAlertButtonMsg2("Yes");
+    setFunction2(() => () => {
+      leaveTeam();
+      setShowAlert(false);
+    });
+    setShowAlert(true);
+  }
 
   const leaveTeam = async () => {
     if (!hacker || !team) {
       console.error("TS MISSING");
       return;
-    }
+    };;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     try {
       const leaveRes = await fetch(`${uri}team/leave`, {
@@ -281,21 +324,41 @@ function ManageTeam() {
       });
       const data = await leaveRes.json();
       if (data.status === 200) {
+        resetAlertState()
         setAlertMsg("Successfully left your team.");
         setAlertButtonMsg("Ok");
         setFunction1(() => () => window.location.reload());
         setShowAlert(true);
       } else {
+        resetAlertState()
+        setAlertMsg("Error leaving.");
+        setAlertButtonMsg("Ok");
+        setShowAlert(true);
+        setFunction1(() => () => resetAlertState());
         console.error("you can't leave gang 😂😂😂", data.error);
       }
     } catch (e) {
-      setAlertMsg("Error leaving");
-      setAlertButtonMsg("Ok");
-      setShowAlert(true);
-      setFunction1(() => () => window.location.reload());
       console.error("you can't leave gang 😂😂😂", e);
     }
   };
+
+  const deleteTeamAlert = () => {
+    resetAlertState()
+    setAlertMsg(
+      "Are you sure you want to delete the team?"
+    );
+    setAlertButtonMsg("No");
+    setFunction1(() => () => {
+      resetAlertState();
+      setShowAlert(false);
+    });
+    setAlertButtonMsg2("Yes");
+    setFunction2(() => () => {
+      deleteTeam();
+      setShowAlert(false);
+    });
+    setShowAlert(true);
+  }
 
   const deleteTeam = async () => {
     if (!hacker || !team) {
@@ -317,18 +380,20 @@ function ManageTeam() {
       });
       const data = await deleteRes.json();
       if (data.status === 200) {
+        resetAlertState()
         setAlertMsg("Successfully deleted your team.");
         setAlertButtonMsg("Ok");
         setFunction1(() => () => window.location.reload());
         setShowAlert(true);
       } else {
+        resetAlertState()
+        setAlertMsg("Error deleting team. You must be the only member in the team.");
+        setAlertButtonMsg("Ok");
+        setFunction1(() => () => resetAlertState());
+        setShowAlert(true);
         console.error("u cnt dlt ts gng 😂😂😂", data.error);
       }
     } catch (e) {
-      setAlertMsg("Error deleting team");
-      setAlertButtonMsg("Ok");
-      setFunction1(() => () => window.location.reload());
-      setShowAlert(true);
       console.error("u cnt dlt ts gng 😂😂😂", e);
     }
   };
@@ -436,9 +501,9 @@ function ManageTeam() {
                 <div className="flex flex-row justify-between">
                   <div className="flex flex-col md:flex-row items-start justify-center md:items-center gap-1">
                     <h4 className="text-[1.2rem]">Owner:</h4>
-                    <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold">
+                    <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold flex gap-1">
                       {owner.firstName} {owner.lastName}{" "}
-                      {role == "owner" && "(you)"}
+                      {hacker?.UUID === parseInt(owner?.UUID ?? "") && <span className="text-green-400">(you)</span>}
                     </h4>
                   </div>
                   <div className="inline-flex w-auto justify-end items-center">
@@ -458,9 +523,9 @@ function ManageTeam() {
                 <div className="flex flex-row justify-between">
                   <div className="flex flex-col md:flex-row items-start justify-center md:items-center gap-1">
                     <h4 className="text-[1.2rem]">Teammate:</h4>
-                    <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold">
+                    <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold flex gap-1">
                       {teamMember1.firstName} {teamMember1.lastName}
-                      {role == "teamMember1" && "(you)"}
+                      {hacker?.UUID === parseInt(teamMember1?.UUID ?? "") && <span className="text-green-400">(you)</span>}
                     </h4>
                   </div>
                   {teamMember1?.UUID !== null ? (
@@ -498,7 +563,7 @@ function ManageTeam() {
                         <button
                           className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none foc[1.1rem]:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-[1.1rem] w-[10vw] h-[5vh] sm:px-1 relative overflow-hidden anmat-th-bttn-gng"
                           onClick={() =>
-                            teamMember1 && removeMember(teamMember1)
+                            teamMember1 && removeMemberAlert(teamMember1)
                           }
                         >
                           <span className="block sm:hidden text-sm">✕</span>
@@ -519,9 +584,9 @@ function ManageTeam() {
                 <div className="flex flex-row justify-between">
                   <div className="flex flex-col md:flex-row items-start justify-center md:items-center gap-1">
                     <h4 className="text-[1.2rem]">Teammate:</h4>
-                    <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold">
+                    <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold flex gap-1">
                       {teamMember2.firstName} {teamMember2.lastName}
-                      {role == "teamMember2" && "(you)"}
+                      {hacker?.UUID === parseInt(teamMember2?.UUID ?? "") && <span className="text-green-400">(you)</span>}
                     </h4>
                   </div>
                   {teamMember2?.UUID !== null ? (
@@ -559,7 +624,7 @@ function ManageTeam() {
                         <button
                           className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring-4 focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-[1.1rem] w-[10vw] h-[5vh] sm:px-1 relative overflow-hidden anmat-th-bttn-gng"
                           onClick={() =>
-                            teamMember2 && removeMember(teamMember2)
+                            teamMember2 && removeMemberAlert(teamMember2)
                           }
                         >
                           <span className="block sm:hidden text-sm">✕</span>
@@ -581,9 +646,9 @@ function ManageTeam() {
                 <div className="flex flex-row justify-between">
                   <div className="flex flex-col md:flex-row items-start justify-center md:items-center gap-1">
                     <h4 className="text-[1.2rem]">Teammate:</h4>
-                    <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold">
+                    <h4 className="text-[1.4rem] md:text-[1.7rem] font-semibold flex gap-1">
                       {teamMember3.firstName} {teamMember3.lastName}
-                      {role == "teamMember3" && <span>you</span>}
+                      {hacker?.UUID === parseInt(teamMember3?.UUID ?? "") && <span className="text-green-400">(you)</span>}
                     </h4>
                   </div>
                   {teamMember3?.UUID !== null ? (
@@ -621,7 +686,7 @@ function ManageTeam() {
                         <button
                           className="text-[#F8FAFC] bg-[#1E293B] hover:bg-[#64748B] focus:outline-none focus:ring[1.1rem] focus:ring-[#0EA5E9] font-bold rounded-lg text-sm sm:text-[1.1rem] w-[10vw] h-[5vh] sm:px-1 relative overflow-hidden anmat-th-bttn-gng"
                           onClick={() =>
-                            teamMember3 && removeMember(teamMember3)
+                            teamMember3 && removeMemberAlert(teamMember3)
                           }
                         >
                           <span className="block sm:hidden text-sm">✕</span>
@@ -660,11 +725,11 @@ function ManageTeam() {
                       : "md:ml-auto"
                   }`}
                 >
-                  {teamMember1?.UUID !== null ? (
+                  {hacker?.UUID !== parseInt(owner?.UUID ?? "") ? (
                     <button
                       type="button"
                       className="focus:outline-none text-white bg-yellow-500 font-medium rounded-lg text-sm px-5 py-2.5"
-                      onClick={leaveTeam}
+                      onClick={leaveTeamAlert}
                     >
                       Leave Team
                     </button>
@@ -675,7 +740,7 @@ function ManageTeam() {
                     <button
                       type="button"
                       className="focus:outline-none text-white bg-red-500 font-medium rounded-lg text-sm px-5 py-2.5"
-                      onClick={deleteTeam}
+                      onClick={deleteTeamAlert}
                     >
                       Delete Team
                     </button>

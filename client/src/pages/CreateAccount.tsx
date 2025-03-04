@@ -498,7 +498,7 @@ function CreateAccount() {
         setEmailMessage("*enter email name before continuing");
         invalid = true;
       }
-      if (!/\S+@\S+\.\S+/.test(email)) {
+      if (!/^\S+@\S+\.(?!edu$)\S+$/.test(email)) {
         setEmailMessage("*please enter a valid email");
         invalid = true;
       }
