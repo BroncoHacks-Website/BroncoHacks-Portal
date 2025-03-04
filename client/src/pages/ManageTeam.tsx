@@ -149,10 +149,11 @@ function ManageTeam() {
     setFunction1(() => {});
     setAlertButtonMsg2("");
     setFunction2(() => {});
+    setShowAlert(false)
   };
-  const makeOwnerAlertFirstBecauseFuckingMobileHasToLikeNeedAnAlert = (
-    newPerson: PartialHackerModel
-  ) => {
+
+  const makeOwnerAlertFirstBecauseFuckingMobileHasToLikeNeedAnAlert = (newPerson: PartialHackerModel) => {
+    resetAlertState()
     setAlertMsg(
       "Are you sure you want to make " +
         newPerson.firstName + " " +
@@ -173,7 +174,6 @@ function ManageTeam() {
   };
 
   const makeOwner = async (newPerson: PartialHackerModel) => {
-    resetAlertState();
     if (!hacker || !team) {
       console.error("TS MISSING");
       return;
@@ -195,6 +195,7 @@ function ManageTeam() {
 
       const data = await newOwnerRes.json();
       if (data.status === 200) {
+        resetAlertState()
         setAlertMsg(
           "Ownership successfully transferred to " +
             newPerson.firstName +
@@ -205,21 +206,23 @@ function ManageTeam() {
         setFunction1(() => () => window.location.reload());
         setShowAlert(true);
       } else {
+        resetAlertState()
+        setAlertMsg("Error transferring Ownership");
+        setAlertButtonMsg("Ok");
+        setFunction1(() => () => resetAlertState());
+        setShowAlert(true);
         console.error(
           "FUCK YOU YOU'RE STUPID I HATE YOU YOU ALWAYS WERE A DUMB SACK OF LARD",
           data.error
         );
       }
     } catch (e) {
-      setAlertMsg("Error transferring Ownership");
-      setAlertButtonMsg("Ok");
-      setFunction1(() => () => window.location.reload());
-      setShowAlert(true);
       console.error("error transffering owenrship", e);
     }
   };
 
   const removeMemberAlert = async (memberToRemove : PartialHackerModel) => {
+    resetAlertState()
     setAlertMsg(
       "Are you sure you want to kick " +
         memberToRemove.firstName + " " +
@@ -240,7 +243,6 @@ function ManageTeam() {
   }
 
   const removeMember = async (memberToRemove: PartialHackerModel) => {
-    resetAlertState();
     if (!hacker || !team) {
       console.error("TS MISSING");
       return;
@@ -261,6 +263,7 @@ function ManageTeam() {
       });
       const data = await removeRes.json();
       if (data.status === 200) {
+        resetAlertState()
         setAlertMsg(
           memberToRemove.firstName +
             " " +
@@ -271,22 +274,41 @@ function ManageTeam() {
         setFunction1(() => () => window.location.reload());
         setShowAlert(true);
       } else {
+        resetAlertState()
+        setAlertMsg("Error removing member");
+        setAlertButtonMsg("Ok");
+        setFunction1(() => () => window.location.reload());
+        setShowAlert(true);
         console.error("error removing member", data.error);
       }
     } catch (e) {
-      setAlertMsg("Error removing member");
-      setAlertButtonMsg("Ok");
-      setFunction1(() => () => window.location.reload());
-      setShowAlert(true);
       console.error("error removing member", e);
     }
   };
+
+  const leaveTeamAlert = () => {
+    resetAlertState()
+    setAlertMsg(
+      "Are you sure you want to leave the team?"
+    );
+    setAlertButtonMsg("No");
+    setFunction1(() => () => {
+      resetAlertState();
+      setShowAlert(false);
+    });
+    setAlertButtonMsg2("Yes");
+    setFunction2(() => () => {
+      leaveTeam();
+      setShowAlert(false);
+    });
+    setShowAlert(true);
+  }
 
   const leaveTeam = async () => {
     if (!hacker || !team) {
       console.error("TS MISSING");
       return;
-    }
+    };;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     try {
       const leaveRes = await fetch(`${uri}team/leave`, {
@@ -302,21 +324,41 @@ function ManageTeam() {
       });
       const data = await leaveRes.json();
       if (data.status === 200) {
+        resetAlertState()
         setAlertMsg("Successfully left your team.");
         setAlertButtonMsg("Ok");
         setFunction1(() => () => window.location.reload());
         setShowAlert(true);
       } else {
+        resetAlertState()
+        setAlertMsg("Error leaving.");
+        setAlertButtonMsg("Ok");
+        setShowAlert(true);
+        setFunction1(() => () => resetAlertState());
         console.error("you can't leave gang 😂😂😂", data.error);
       }
     } catch (e) {
-      setAlertMsg("Error leaving");
-      setAlertButtonMsg("Ok");
-      setShowAlert(true);
-      setFunction1(() => () => window.location.reload());
       console.error("you can't leave gang 😂😂😂", e);
     }
   };
+
+  const deleteTeamAlert = () => {
+    resetAlertState()
+    setAlertMsg(
+      "Are you sure you want to delete the team?"
+    );
+    setAlertButtonMsg("No");
+    setFunction1(() => () => {
+      resetAlertState();
+      setShowAlert(false);
+    });
+    setAlertButtonMsg2("Yes");
+    setFunction2(() => () => {
+      deleteTeam();
+      setShowAlert(false);
+    });
+    setShowAlert(true);
+  }
 
   const deleteTeam = async () => {
     if (!hacker || !team) {
@@ -338,18 +380,20 @@ function ManageTeam() {
       });
       const data = await deleteRes.json();
       if (data.status === 200) {
+        resetAlertState()
         setAlertMsg("Successfully deleted your team.");
         setAlertButtonMsg("Ok");
         setFunction1(() => () => window.location.reload());
         setShowAlert(true);
       } else {
+        resetAlertState()
+        setAlertMsg("Error deleting team. You must be the only member in the team.");
+        setAlertButtonMsg("Ok");
+        setFunction1(() => () => resetAlertState());
+        setShowAlert(true);
         console.error("u cnt dlt ts gng 😂😂😂", data.error);
       }
     } catch (e) {
-      setAlertMsg("Error deleting team");
-      setAlertButtonMsg("Ok");
-      setFunction1(() => () => window.location.reload());
-      setShowAlert(true);
       console.error("u cnt dlt ts gng 😂😂😂", e);
     }
   };
@@ -681,11 +725,11 @@ function ManageTeam() {
                       : "md:ml-auto"
                   }`}
                 >
-                  {teamMember1?.UUID !== null ? (
+                  {hacker?.UUID !== parseInt(owner?.UUID ?? "") ? (
                     <button
                       type="button"
                       className="focus:outline-none text-white bg-yellow-500 font-medium rounded-lg text-sm px-5 py-2.5"
-                      onClick={leaveTeam}
+                      onClick={leaveTeamAlert}
                     >
                       Leave Team
                     </button>
@@ -696,7 +740,7 @@ function ManageTeam() {
                     <button
                       type="button"
                       className="focus:outline-none text-white bg-red-500 font-medium rounded-lg text-sm px-5 py-2.5"
-                      onClick={deleteTeam}
+                      onClick={deleteTeamAlert}
                     >
                       Delete Team
                     </button>
