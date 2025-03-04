@@ -9,7 +9,7 @@ def run_db():
         return hashed
 
     try:
-        connection = sqlite3.connect('database.db')
+        connection = sqlite3.connect('dev.db')
 
         with open('schema.sql') as f:
             connection.executescript(f.read())
@@ -19,38 +19,6 @@ def run_db():
 
         cur.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     (None, 'Daniel', 'Pasion', hash_password('MeQuieroMatar'), 'dnpaxion@gmail.com', 'Cal Poly Pomona','.theDaniel', 666420, True, True ))
-        cur.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    (None, 'Cesar Henry', 'de Paula', hash_password('urdad'), 'chdp@cpp.edu', 'cpp','putanginamo', 666420, True, False ))
-
-        cur.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    (123456, 'LeCaleb', 'chung', hash_password('ursis'), 'lbj@cpp.edu', 'cpp','thebigtig', 666420, True, False ))
-
-        cur.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    (123456, 'Nick', 'Amancio', hash_password('urcousin'), 'namancio@cpp.edu', 'cpp','nickthecan', 666420, False, True ))
-
-        cur.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    (222222, 'Habibi', 'Mark', hash_password('1'), 'hmark@cpp.edu', 'cpp','habibimark', 666420, True, True ))
-        
-        cur.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    (333333, 'Chris J', 'Lo', hash_password('1'), 'cjlo@cpp.edu', 'cpp','randompotato', 666420, True, True ))
-        cur.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    (222222, 'RealCaleb', 'C', hash_password('1'), 'kaichun24@gmail.com', 'cpp','tigga', 666420, True, True ))
-        cur.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    (222222, 'RealCale', 'C', hash_password('1'), 'ckchung@cpp.edu', 'cpp','tiggar', 666420, True, True ))
-        
-
-        cur.execute("INSERT INTO teams (teamID, teamName, owner, status) VALUES (?, ?, ?, ?)",
-                    (123456, "Hawk Tuahers", 1, "unregistered"))
-        cur.execute("INSERT INTO teams (teamID, teamName, owner, status) VALUES (?, ?, ?, ?)",
-                    (222222, "Skibidist", 7, "pending"))
-        cur.execute("INSERT INTO teams (teamID, teamName, owner, status) VALUES (?, ?, ?, ?)",
-                    (333333, "Bruhh", 8, "approved")) 
-
-        cur.execute("UPDATE teams SET teamMember1 = 3 WHERE teamID = 123456")
-        cur.execute("UPDATE teams SET teamMember2 = 4 WHERE teamID = 123456")
-        cur.execute("UPDATE teams SET teamMember3 = 5 WHERE teamID = 123456")
-        cur.execute("UPDATE teams SET teamMember1 = 8 WHERE teamID = 222222")
-        cur.execute("UPDATE teams SET teamMember1 = 3 WHERE teamID = 123456")
 
         connection.commit()
         connection.close()
