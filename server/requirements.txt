@@ -7,3 +7,4 @@ flask-cors==5.0.1
 Flask-Mail==0.10.0
 python-dotenv==1.0.1
 sqlitecloud==0.0.83
+requests==2.32.3

@@ -168,8 +168,9 @@ function FindTeam() {
       });
 
       const resJSON = await createTeamRes.json();
+      console.log(resJSON);
       if (resJSON.status != 200) {
-        setJoinMessage("Something went wrong");
+        setCreateMessage("Something went wrong");
       } else {
         navigate("/ManageTeam");
       }
