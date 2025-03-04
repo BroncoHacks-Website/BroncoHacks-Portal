@@ -1382,6 +1382,43 @@ def approveApplication():
     finally:
         conn.close()
 
+@app.route("/team/withdrawApplication", methods=['PUT'])
+@jwt_required()
+@cross_origin()
+def withdrawApplication():
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify(message="no data provided",status=400)
+        
+        team_id = data.get("teamID")
+
+        UUID = get_jwt_identity()
+        hacker = get_hacker_by_id(UUID)
+
+        if str(hacker["teamID"]) != str(team_id):
+            return jsonify(status=401, message="not member of team",)
+
+        conn = get_db_connection()
+
+        team = conn.execute("SELECT * FROM teams WHERE teamID = ?", (int(team_id),)).fetchone()
+
+        if not team:
+            return jsonify(status=404, message="Team does not exist in the database")
+        
+        conn.execute("UPDATE teams SET status=? WHERE teamID=?", ('unregistered',team_id,))
+        conn.commit()
+
+        return jsonify({
+            "message": "Success",
+            "status": 200,
+        })
+    except Exception as e:
+        return jsonify({"message": str(e), "status":500})
+    finally:
+        if conn:
+            conn.close()
+
 
 @app.route("/team/changeName", methods=['PUT'])
 @jwt_required()
@@ -1411,7 +1448,6 @@ def changeTeamName():
         try:
             conn = get_db_connection()
             find_team = conn.execute('SELECT * FROM teams WHERE teamID=?', (teamID,)).fetchall()
-            convert_team = [dict(row) for row in find_team]
             if len(find_team) == 0:
                 return jsonify(status=404, message="Team Not Found")
             conn.close()
@@ -1421,8 +1457,8 @@ def changeTeamName():
         # update teamName
         try:
             conn = get_db_connection()
-            
-            updateName = conn.execute('UPDATE teams SET teamName=? WHERE teamID=?', (newName, int(teamID),))
+            print(newName, teamID)
+            conn.execute('UPDATE teams SET teamName=? WHERE teamID=?', (newName, str(teamID),))
             conn.commit()
             
             # send res to show the name changed

@@ -512,6 +512,7 @@ function CreateAccount() {
       }
       if (email.endsWith(".edu")) {
         setEmailMessage(".edu emails not allowed");
+        invalid = true;
       }
       if (invalid) {
         return;
@@ -737,7 +738,12 @@ function CreateAccount() {
               </div>
 
               <div className="flex flex-col gap-1">
-                <p>Email (.edu emails not allowed)</p>
+                <p>
+                  Email{" "}
+                  <span className="text-xs text-green-300">
+                    .edu emails not allowed
+                  </span>
+                </p>
                 <input
                   onChange={changeEmail}
                   value={email}
