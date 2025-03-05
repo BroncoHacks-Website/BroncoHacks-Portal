@@ -14,7 +14,7 @@ const MeetTheTeamProfile = ({
       <img
         src={pfp}
         alt={`${name}'s profile picture`}
-        className="w-24 h-24 rounded-full object-cover border-2 border-gray-300"
+        className="w-24 lg:h-12 h-24 lg:w-12 rounded-full object-cover border-2 border-gray-300"
       />
       <h2 className="mt-3 text-lg font-semibold text-gray-800">{name}</h2>
       <a

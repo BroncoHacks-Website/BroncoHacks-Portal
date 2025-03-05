@@ -91,9 +91,10 @@ function Navbar() {
       });
       const json = await res.json();
       if (json.status == 200) {
-        setAlertMsg("Logging out...");
+        setAlertMsg("You have been logged out!");
         setAlertButtonMsg("Ok");
         setShowAlert(true);
+        localStorage.removeItem("token");
       } else {
         setAlertMsg("error " + json.message);
         setAlertButtonMsg("Ok");

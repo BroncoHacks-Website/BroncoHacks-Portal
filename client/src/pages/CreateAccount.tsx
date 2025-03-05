@@ -502,8 +502,8 @@ function CreateAccount() {
         setEmailMessage("*please enter a valid email");
         invalid = true;
       }
-      if (password.length < 5) {
-        setPasswordMessage("*please set a password longer than 5 characters");
+      if (password.length < 6) {
+        setPasswordMessage("*please set password to at least 6 characters");
         invalid = true;
       }
       if (password !== confirmPassword) {
@@ -590,7 +590,7 @@ function CreateAccount() {
           >
             <h1 className="text-3xl font-bold m-5 sm:m-10 md:text-5xl">🐴</h1>
             <div className="flex flex-col gap-2 w-[90%] items-start">
-              <p className="bolded">Discord Name (if none put N/A)</p>
+              <p className="bolded">Discord</p>
               <input
                 onChange={changeDiscord}
                 value={discord}
@@ -653,9 +653,9 @@ function CreateAccount() {
                   required
                 ></input>
                 <p className="ml-5 text-xs">
-                  I agree to the Terms of Service, including the collection of
-                  my information for registration and communication purposes,
-                  and I consent to receiving emails related to the hackathon.
+                  I agree to the collection of my information for registration
+                  and communication purposes, and I consent to receiving emails
+                  related to the hackathon.
                 </p>
               </div>
               <span className="text-red-500 text-xs ml-3 text-center">
