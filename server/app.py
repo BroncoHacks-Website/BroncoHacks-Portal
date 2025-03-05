@@ -743,7 +743,7 @@ def update_hacker():
 
 ########## Team ########## 
 
-@app.route("/team", methods=['GET'])
+@app.route("/team", methods=['GET']) #Done
 @jwt_required()
 @cross_origin()
 def get_users_team():
@@ -771,6 +771,20 @@ def get_users_team():
         team_member_1 = conn.execute("SELECT UUID, firstName, lastName, email, school, discord FROM hackers WHERE UUID = ?", (team["teamMember1"],)).fetchone()
         team_member_2 = conn.execute("SELECT UUID, firstName, lastName, email, school, discord FROM hackers WHERE UUID = ?", (team["teamMember2"],)).fetchone()
         team_member_3 = conn.execute("SELECT UUID, firstName, lastName, email, school, discord FROM hackers WHERE UUID = ?", (team["teamMember3"],)).fetchone()
+
+        token_UUID = get_jwt_identity()
+        UUIDs = []
+        if owner["UUID"]:
+            UUIDs.append(str(owner["UUID"]))
+        if team_member_1["UUID"]:
+            UUIDs.append(str(team_member_1["UUID"]))
+        if team_member_2["UUID"]:
+            UUIDs.append(str(team_member_2["UUID"]))
+        if team_member_3["UUID"]:
+            UUIDs.append(str(team_member_3["UUID"]))
+        if (str(token_UUID) not in UUIDs):
+            return jsonify(message= "hacker is not in a team, TOKEN NOT ACCEPTED", status=403)
+
         
         #otherwise, return the team id and the team name
         return jsonify({
@@ -820,7 +834,7 @@ def get_users_team():
     finally:
         conn.close()
 
-@app.route("/team", methods=["POST"])
+@app.route("/team", methods=["POST"]) #Done
 @jwt_required()
 @cross_origin()
 def create_tuah():
@@ -836,6 +850,10 @@ def create_tuah():
         
         team_name = data.get("teamName")
         owner = data.get("owner")
+
+        token_UUID = get_jwt_identity()
+        if str(owner) != str(token_UUID):
+            return jsonify(message= "Invalid Token", status=403)
 
 
         if team_name == "":
@@ -900,7 +918,7 @@ def create_tuah():
     finally:
         conn.close()
 
-@app.route("/team", methods=["DELETE"])
+@app.route("/team", methods=["DELETE"]) #Done
 @jwt_required()
 @cross_origin()
 def delete_tuah():
@@ -916,6 +934,10 @@ def delete_tuah():
         
         team_id = data.get("teamID")
         owner = data.get("owner")
+
+        token_UUID = get_jwt_identity()
+        if str(owner) != str(token_UUID):
+            return jsonify(message= "Invalid Token", status=403)
 
         try:
             int(owner)
@@ -953,7 +975,7 @@ def delete_tuah():
     finally:
         conn.close()
 
-@app.route("/team/removeTeamMember", methods=['PUT'])
+@app.route("/team/removeTeamMember", methods=['PUT']) #Done
 @jwt_required()
 @cross_origin()
 def remove_that_playa():
@@ -965,6 +987,10 @@ def remove_that_playa():
         team_id = data.get("teamID")
         owner = data.get("owner")
         team_member_to_kick = data.get("teamMember")
+
+        token_UUID = get_jwt_identity()
+        if str(owner) != str(token_UUID):
+            return jsonify(message= "Invalid Token", status=403)
 
         conn = get_db_connection()
 
@@ -1058,7 +1084,7 @@ def get_team():
     except Exception as e:
         return jsonify(status=400, message=str(e))
         
-@app.route("/team/leave", methods=["PUT"])
+@app.route("/team/leave", methods=["PUT"]) #Done
 @jwt_required()
 @cross_origin()
 def memberLeave():
@@ -1077,6 +1103,10 @@ def memberLeave():
             
         teamID = data["teamID"]
         member = data["teamMember"]
+
+        token_UUID = get_jwt_identity()
+        if str(member) != str(token_UUID):
+            return jsonify(message= "Invalid Token", status=403)
 
         try:
             int(teamID)
@@ -1160,6 +1190,10 @@ def switcheroo():
         owner = data['owner']
         member = data['teamMember']
         teamID = data['teamID']
+
+        token_UUID = get_jwt_identity()
+        if str(owner) != str(token_UUID):
+            return jsonify(message= "Invalid Token", status=403)
         
         # Check if owner and member are ints
         try:
@@ -1274,6 +1308,9 @@ def addTeamMember():
         try:
             teamID = int(data['teamID'])
             member = int(data['teamMember'])
+            token_UUID = get_jwt_identity()
+            if str(member) != str(token_UUID):
+                return jsonify(message= "Invalid Token", status=403)
         except ValueError:
             return jsonify(status=422, message="Unprocessable Entity (Invalid data type)")
 
@@ -1337,6 +1374,10 @@ def send_application():
         
         team_id = data.get("teamID")
         owner = data.get("owner")
+        token_UUID = get_jwt_identity()
+        if str(owner) != str(token_UUID):
+            return jsonify(message= "Invalid Token", status=403)
+        
 
         conn = get_db_connection()
 
@@ -1462,6 +1503,11 @@ def changeTeamName():
 
         teamID = data['teamID']
         newName = data['newName'] # do i have to validate the name for anything? idk
+
+        token_UUID = get_jwt_identity()
+        hacker = get_hacker_by_id(token_UUID)
+        if str(hacker["teamID"]) != str(teamID):
+            return jsonify(message= "Invalid Token", status=403)
 
         # check if teamID is int
         try:
