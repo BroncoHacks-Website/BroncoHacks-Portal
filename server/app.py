@@ -541,7 +541,6 @@ def getCode():
     # get req param from url
     try:
         data = request.get_json()
-
         required_fields = ['UUID','confirmationNumber']
         for field in required_fields:
             if field not in data:
@@ -551,7 +550,10 @@ def getCode():
         confirmationNumber = data["confirmationNumber"]
         token_UUID = get_jwt_identity()
 
-        if UUID != token_UUID:
+        print("here")
+        print(UUID,token_UUID)
+        if str(UUID) != str(token_UUID):
+            print("there")
             return jsonify(status=403,message="Forbidden")
         
         if UUID is None:
