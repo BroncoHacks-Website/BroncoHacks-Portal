@@ -14,7 +14,6 @@ function EmailConfirmation() {
   const [isFinallyConfirmed, setIsFinallyConfirmed] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [loggedIn, setLoggedIn] = useState(false);
 
   //Authentication
   useEffect(() => {
