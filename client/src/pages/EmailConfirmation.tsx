@@ -13,6 +13,9 @@ function EmailConfirmation() {
   const [codeMessage, setCodeMessage] = useState("");
   const [isFinallyConfirmed, setIsFinallyConfirmed] = useState(false);
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
+
   //Authentication
   useEffect(() => {
     const checkAuth = async () => {
@@ -103,6 +106,7 @@ function EmailConfirmation() {
   const confirmAccount = async (value: string) => {
     setCodeMessage("");
     try {
+      setIsLoading(true);
       const res = await fetch(uri + `code`, {
         method: "POST",
 
@@ -121,9 +125,11 @@ function EmailConfirmation() {
         navigate("/FindTeam");
       } else {
         setCodeMessage("Incorrect Code");
+        setIsLoading(false);
       }
     } catch {
       alert("An Error has Occured");
+      setIsLoading(false);
     }
   };
 
