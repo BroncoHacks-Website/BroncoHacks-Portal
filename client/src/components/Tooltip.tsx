@@ -27,7 +27,7 @@ function Tooltip({ message }: ToolTipProps) {
         </svg>
         <div
           id="tooltip-animation"
-          className={`absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-[15vw] md:max-w-[8vw] p-2 text-[.3em] text-white bg-gray-900 rounded-lg shadow-md opacity-0 ${
+          className={`absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-[9em] p-2 text-[.3em] text-white bg-gray-900 rounded-lg shadow-md opacity-0 ${
             isVisible ? "opacity-100" : "opacity-0"
           } group-hover:opacity-100 transition-opacity`}
         >
