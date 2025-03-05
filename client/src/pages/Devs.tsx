@@ -52,6 +52,7 @@ export const Devs = () => {
   return (
     <div className="min-h-[85vh] w-[100vw] bg-indigo-300 flex items-center justify-center">
       <div className="min-h-[75vh] w-[65vw] min-h-lg:h-[70vh] lg:w-[75vw] bg-white rounded-2xl shadow-lg shadow-black/75 backface-hidden my-5">
+        <h1 className=" mt-4 text-center text-[2rem] sm:text-[2.5rem] md:text-[4rem] font-bold">Meet the Developers!</h1>
         <div className="flex justify-center items-center flex-wrap gap-8 p-8">
           {teamMembers.map((member, index) => (
             <MeetTheTeamProfile
