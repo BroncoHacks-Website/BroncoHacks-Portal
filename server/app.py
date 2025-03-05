@@ -364,7 +364,6 @@ def sendPasswordReset():
                                         """
                                     }
                                 )
-            print(sendmail)
             return jsonify(status=200,message="Email Sent!"),200
 
     except Exception as e:
@@ -773,13 +772,13 @@ def get_users_team():
 
         token_UUID = get_jwt_identity()
         UUIDs = []
-        if owner["UUID"]:
+        if owner:
             UUIDs.append(str(owner["UUID"]))
-        if team_member_1["UUID"]:
+        if team_member_1:
             UUIDs.append(str(team_member_1["UUID"]))
-        if team_member_2["UUID"]:
+        if team_member_2:
             UUIDs.append(str(team_member_2["UUID"]))
-        if team_member_3["UUID"]:
+        if team_member_3:
             UUIDs.append(str(team_member_3["UUID"]))
         if (str(token_UUID) not in UUIDs):
             return jsonify(message= "hacker is not in a team, TOKEN NOT ACCEPTED", status=403)
@@ -1527,7 +1526,6 @@ def changeTeamName():
         # update teamName
         try:
             conn = get_db_connection()
-            print(newName, teamID)
             conn.execute('UPDATE teams SET teamName=? WHERE teamID=?', (newName, str(teamID),))
             conn.commit()
             
