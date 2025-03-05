@@ -502,7 +502,7 @@ def create_hacker():
     except Exception as e:
         return jsonify(status=400,message=str(e)),400
     
-@app.route("/hacker", methods=['GET'])
+@app.route("/hacker", methods=['GET']) #Done
 @jwt_required()
 @cross_origin()
 def getOneHacker():
@@ -534,7 +534,7 @@ def getOneHacker():
     except Exception as e:
         return jsonify(status=400, message=str(e)),400
     
-@app.route("/code", methods=['POST'])
+@app.route("/code", methods=['POST']) #Done
 @jwt_required()
 @cross_origin()
 def getCode():
@@ -546,10 +546,14 @@ def getCode():
         for field in required_fields:
             if field not in data:
                 return jsonify(status=400, message=f"Missing {field}")
-
+        
         UUID = data['UUID']
         confirmationNumber = data["confirmationNumber"]
+        token_UUID = get_jwt_identity()
 
+        if UUID != token_UUID:
+            return jsonify(status=403,message="Forbidden")
+        
         if UUID is None:
             return jsonify(status=400, message=f"Missing UUID in query paramter"),400
         
@@ -651,27 +655,27 @@ def changeCode():
     except Exception as e:
         return jsonify(status=400, message=str(e)),400
     
-@app.route("/hackers",  methods=['GET'])
-@jwt_required()
-@cross_origin()
-def urmom():
-    try:
-        conn = get_db_connection() 
-        posts = conn.execute('SELECT * FROM hackers').fetchall()
-        conn.close()
-        posts_list = []
+# @app.route("/hackers",  methods=['GET'])
+# @jwt_required()
+# @cross_origin()
+# def urmom():
+#     try:
+#         conn = get_db_connection() 
+#         posts = conn.execute('SELECT * FROM hackers').fetchall()
+#         conn.close()
+#         posts_list = []
 
-        for row in posts:
-            hacker = dict(row)
-            del hacker["password"]
-            # hacker['password'] = hacker['password'].decode('utf-8')  # Convert bytes to string
-            posts_list.append(hacker)
+#         for row in posts:
+#             hacker = dict(row)
+#             del hacker["password"]
+#             # hacker['password'] = hacker['password'].decode('utf-8')  # Convert bytes to string
+#             posts_list.append(hacker)
         
-        return jsonify(status=200,message="success",hackers=posts_list)
-    except Exception as e:
-        return jsonify(status=400,message=str(e))
+#         return jsonify(status=200,message="success",hackers=posts_list)
+#     except Exception as e:
+#         return jsonify(status=400,message=str(e))
     
-@app.route("/hacker", methods=['PUT'])
+@app.route("/hacker", methods=['PUT']) #Done
 @jwt_required()
 @cross_origin()
 def update_hacker():
@@ -690,6 +694,9 @@ def update_hacker():
         discord = data.get('discord', None)
         school = data.get('school', None)
 
+        token_UUID = get_jwt_identity()
+        if UUID != token_UUID:
+            return jsonify(status=403,message="Forbidden")
 
         try:
             int(UUID)
