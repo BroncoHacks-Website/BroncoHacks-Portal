@@ -510,7 +510,7 @@ def getOneHacker():
     UUID = request.args.get('UUID')
 
     token_UUID = get_jwt_identity()
-    if UUID != token_UUID:
+    if str(UUID) != str(token_UUID):
         return jsonify(status=403, message=f"Incorrect User"),403
     
     if UUID is None:
@@ -550,10 +550,7 @@ def getCode():
         confirmationNumber = data["confirmationNumber"]
         token_UUID = get_jwt_identity()
 
-        print("here")
-        print(UUID,token_UUID)
         if str(UUID) != str(token_UUID):
-            print("there")
             return jsonify(status=403,message="Forbidden")
         
         if UUID is None:
@@ -697,7 +694,7 @@ def update_hacker():
         school = data.get('school', None)
 
         token_UUID = get_jwt_identity()
-        if UUID != token_UUID:
+        if str(UUID) != str(token_UUID):
             return jsonify(status=403,message="Forbidden")
 
         try:
