@@ -119,6 +119,7 @@ function EmailConfirmation() {
 
       if (json.status == 200) {
         setCodeMessage("Account is now confirmed: redirecting to app");
+        setIsLoading(false);
         setIsFinallyConfirmed(true);
         await new Promise((r) => setTimeout(r, 1000));
         navigate("/FindTeam");
@@ -165,7 +166,7 @@ function EmailConfirmation() {
                 regexCriteria={/^[ A-Za-z0-9_@./#&+-]*$/}
               />
               {isLoading && (
-                <div role="status">
+                <div role="status" className="mt-3">
                   <svg
                     aria-hidden="true"
                     className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
