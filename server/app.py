@@ -54,7 +54,7 @@ def index():
     conn = get_db_connection()
     return "Server is Running :)"
 
-@app.route("/admin", methods=['GET'])
+@app.route("/admin", methods=['GET']) #Good
 @jwt_required()
 @cross_origin()
 def get_all_data():
@@ -82,7 +82,7 @@ def get_all_data():
     except Exception as e:
         return jsonify(status=400, message=str(e))
 
-@app.route("/admin/sql", methods=['PUT'])
+@app.route("/admin/sql", methods=['PUT']) #Good
 @jwt_required()
 @cross_origin()
 def switchit():
@@ -108,7 +108,7 @@ def switchit():
         return jsonify(status=400, message=str(e))
     
     
-@app.route("/admin/approve", methods=['PUT'])
+@app.route("/admin/approve", methods=['PUT']) #Good
 @jwt_required()
 @cross_origin()
 def approve():
@@ -234,7 +234,7 @@ def approve():
     except Exception as e:
         return jsonify(status=400, message=str(e))
     
-@app.route('/admin/download', methods=['GET'])
+@app.route('/admin/download', methods=['GET']) #Good
 @jwt_required()
 @cross_origin()
 def download_file():
@@ -250,7 +250,7 @@ def download_file():
     return send_from_directory(BASE_DIR, "database.db", as_attachment=True)
 
 #Tokens
-@app.route("/login", methods=["GET"])
+@app.route("/login", methods=["GET"]) #Good
 @cross_origin()
 def login():
     email = request.args.get('email')
@@ -279,7 +279,7 @@ def login():
     except Exception as e:
         return jsonify(status=400, message=str(e)),400
     
-@app.route("/whoami", methods=["GET"])
+@app.route("/whoami", methods=["GET"]) #Good
 @jwt_required()
 @cross_origin()
 def whoami():
@@ -292,7 +292,7 @@ def whoami():
     except Exception as e:
         return jsonify(status=400, message=str(e)),400
     
-@app.route("/logout", methods=["POST"])
+@app.route("/logout", methods=["POST"]) #Good
 @jwt_required()
 @cross_origin()
 def logout():
@@ -303,7 +303,7 @@ def logout():
     except Exception as e:
         return jsonify(status=401,message=str(e)),401
     
-@app.route("/sendPasswordReset", methods=['GET'])
+@app.route("/sendPasswordReset", methods=['GET']) #Good
 @cross_origin()
 def sendPasswordReset():
     try:
@@ -370,7 +370,7 @@ def sendPasswordReset():
     except Exception as e:
         return jsonify(status=400,message=str(e)),400
     
-@app.route("/resetPassword", methods=['PUT'])
+@app.route("/resetPassword", methods=['PUT']) #Good
 @jwt_required()
 @cross_origin()
 def resetPassword():
@@ -392,7 +392,7 @@ def resetPassword():
 
 
 @app.after_request
-def refresh_expiring_jwts(response):
+def refresh_expiring_jwts(response): #Done
     try:
         exp_timestamp = get_jwt()["exp"]
         now = datetime.now(timezone.utc)
@@ -409,7 +409,7 @@ def refresh_expiring_jwts(response):
         return response
 
 ########## Hackers ##########
-@app.route("/hacker", methods=['POST'])
+@app.route("/hacker", methods=['POST']) #Done
 @cross_origin()
 def create_hacker():
     try:
@@ -509,6 +509,10 @@ def getOneHacker():
     # get req param from url
     UUID = request.args.get('UUID')
 
+    token_UUID = get_jwt_identity()
+    if UUID != token_UUID:
+        return jsonify(status=403, message=f"Incorrect User"),403
+    
     if UUID is None:
         return jsonify(status=400, message=f"Missing UUID in query paramter"),400
     
