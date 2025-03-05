@@ -89,7 +89,7 @@ function FindTeam() {
     checkAuth();
   }, [navigate, token]);
 
-  const createTeamTooltip = "Create an APPROPRIATE team name!";
+  const createTeamTooltip = "Every team must have an APPROPRIATE name!";
   const joinTeamTooltip = "Ask a team owner for their 6-digit access code on their team page!"
 
   const changeTeamName = (event: {

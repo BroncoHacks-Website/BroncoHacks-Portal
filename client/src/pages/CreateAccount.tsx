@@ -502,8 +502,8 @@ function CreateAccount() {
         setEmailMessage("*please enter a valid email");
         invalid = true;
       }
-      if (password.length < 5) {
-        setPasswordMessage("*please set a password longer than 5 characters");
+      if (password.length < 6) {
+        setPasswordMessage("*please set password to at least 6 characters");
         invalid = true;
       }
       if (password !== confirmPassword) {

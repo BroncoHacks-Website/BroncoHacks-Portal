@@ -1,4 +1,11 @@
+import { useState } from "react";
+import Modal from "../components/Modal";
+
 function FAQ() {
+  const [showImage1, setShowImage1] = useState<boolean>(false);
+  const [showImage2, setShowImage2] = useState<boolean>(false);
+  const [showImage3, setShowImage3] = useState<boolean>(false);
+
   return (
     <>
       <div className="min-h-[85vh] w-[100vw] bg-indigo-300 flex items-center justify-center">
@@ -33,20 +40,64 @@ function FAQ() {
               Q: How do I know if I'm officially registered for the hackathon?
             </p>
             <p>
-              A: Once you have created a team, press the "Submit Application
-              button" your application will be reviewed ~48 hours. Once you were
-              approved, you will recieve and email, your team page will have a
-              status = approved, and you team should be seen here:
-              [broncohacks.org]
+              A: Once you have created a team, press the "Register Team" button, and your application will be reviewed within ~48 hours. Once you are
+              approved, you will receive an email, your team page will have a
+              status = approved, and your team should be seen {" "}
+              <a 
+                href="https://www.broncohacks.org/"
+                className="text-blue-500 hover:text-blue-300">
+                here.
+              </a>
             </p>
+
+            <div className="flex justify-center overflow-x-auto scrollbar-hidden">
+              <img 
+                src="faqteampage1.jpg" 
+                alt="FAQ Team Page 1" 
+                className="max-w-xs m-2 object-contain overflow-hidden hover:cursor-pointer"
+                onClick={() => setShowImage1(!showImage1)}/>
+              <img 
+                src="registration-approval-email.png"
+                alt="Registration Approval Email" 
+                className="max-w-xs m-2 object-contain overflow-hidden hover:cursor-pointer"
+                onClick={() => setShowImage2(!showImage2)}/>
+              <img 
+                src="faqteampage2.jpg" 
+                alt="FAQ Team Page 2"
+                className="max-w-xs m-2 object-contain overflow-hidden hover:cursor-pointer"
+                onClick={() => setShowImage3(!showImage3)}/>
+              
+            </div>
             <p className="font-bold pt-3">
               Q: I have a bug, who should i contact?
             </p>
             <p>
-              A: you can email cppbroncohacks@gmail.com with any problems you
+              A: You can email cppbroncohacks@gmail.com with any problems you
               may have. Alternatively, you can message .thedaniel on discord.
             </p>
           </div>
+          {showImage1 && (
+            <Modal 
+              onClose={()=>setShowImage1(false)} 
+              caption="Register Team Page" 
+              src="faqteampage1.jpg" 
+              alt="Register Team Page"/>
+          )}
+          {showImage2 && (
+            <Modal 
+              onClose={()=>setShowImage2(false)}
+              caption="Approved Team Status" 
+              src="registration-approval-email.png" 
+              alt="Registration Approval Email"/>
+          )}
+          {showImage3 && (
+            <Modal
+              onClose={()=>setShowImage3(false)}
+              caption="Approved Team Status" 
+              src="faqteampage2.jpg" 
+              alt="FAQ Team Page 2" />
+          )}
+
         </div>
       </div>
     </>
