@@ -12,6 +12,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Admin from "./pages/Admin";
 import FAQ from "./pages/FAQ";
 import Devs from "./pages/Devs";
+import Secret from "./pages/HiddenCard";
 import Competitors from "./pages/Competitors";
 
 export const uri = "http://127.0.0.1:8000/";
@@ -32,6 +33,8 @@ function App() {
         <Route path="/ResetPassword" element={<ResetPassword />} />
         <Route path="/Admin" element={<Admin />} />
         <Route path="/Devs" element={<Devs />} />
+        <Route path="/FAQ" element={<FAQ />} />
+        <Route path="/Lebron" element={<Secret />} />
         <Route path="*" element={<NotFound />} />
         <Route path="/FAQ" element={<FAQ />} />
         <Route path="/Competitors" element={<Competitors />} />
