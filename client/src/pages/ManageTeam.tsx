@@ -428,7 +428,7 @@ function ManageTeam() {
       } else {
         resetAlertState();
         setAlertMsg(
-          "Error deleting team. You must be the only member in the team."
+          "Error deleting team. You must be the only member in the team to delete it. Transfer ownership to another team member if you want to leave, or remove all team members if you want to delete the team."
         );
         setAlertButtonMsg("Ok");
         setFunction1(() => () => resetAlertState());
