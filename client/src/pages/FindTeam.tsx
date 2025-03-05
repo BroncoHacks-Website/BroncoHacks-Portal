@@ -5,6 +5,7 @@ import { Filter } from "bad-words";
 import { HackerModel } from "../models/hacker";
 import InfoAlert from "../components/InfoAlert";
 import Alert from "../components/Alert";
+import Tooltip from "../components/Tooltip";
 
 function FindTeam() {
   const navigate = useNavigate();
@@ -88,6 +89,9 @@ function FindTeam() {
     checkAuth();
   }, [navigate, token]);
 
+  const createTeamTooltip = "Create an APPROPRIATE team name!";
+  const joinTeamTooltip = "Ask a team owner for their 6-digit access code on their team page!"
+
   const changeTeamName = (event: {
     target: { value: SetStateAction<string> };
   }) => {
@@ -136,7 +140,7 @@ function FindTeam() {
     } else if (json.status != 200) {
       setJoinMessage("Team does not exist");
     } else {
-      setAlertMsg("Joining Team ...");
+      setAlertMsg("Successfully joined team");
       setAlertButtonMsg("Ok");
       setFunction1(() => () => {
         navigate("/ManageTeam");
@@ -172,10 +176,15 @@ function FindTeam() {
       if (resJSON.status != 200) {
         setCreateMessage("Something went wrong");
       } else {
-        navigate("/ManageTeam");
+        setAlertMsg("Successfully created team");
+        setAlertButtonMsg("Ok");
+        setFunction1(() => () => {
+          navigate("/ManageTeam");
+        });
+        setShowAlert(true);
       }
     } catch {
-      setJoinMessage("Something went wrong");
+      setCreateMessage("Please enter a team name");
     }
   };
 
@@ -192,7 +201,10 @@ function FindTeam() {
                 className="h-[15vh] xl:h-[35vh] w-[15vh] xl:w-[35vh] mx-auto scale-50 "
               />
               <div className="flex items-center justify-center font-black text-3xl xl:text-5xl">
-                <h1>Create a Team</h1>
+                <h1 className="mr-2">Create a Team</h1>
+                
+                <Tooltip message={createTeamTooltip} />
+          
               </div>
 
               <div className="flex items-center justify-center font-black pt-2">
@@ -203,7 +215,7 @@ function FindTeam() {
                   className="border-b-1 ml-2 pl-2"
                 />
               </div>
-              <div className="flex items-center justify-center my-5">
+              <div className="flex flex-col items-center justify-center my-5">
                 <input
                   type="submit"
                   value="Create New Team"
@@ -211,9 +223,11 @@ function FindTeam() {
                   className="bg-[#97d9c3] min-h-[5vh] w-[40vw] md:w-[25vw] lg:w-[20vw] xl:w-[20vw] rounded-xl text-white font-bold shadow-lg hover:cursor-pointer hover:bg-[#72e9d3]"
                 />
                 {/* <br /> */}
-                <br />
+                <span className="text-red-500 text-sm pt-2">{createMessage}</span>
+                
+                
               </div>
-              <span className="text-red-500 text-sm ml-3">{createMessage}</span>
+              
             </div>
             <div className="xl:hidden py-4"></div>
             <div className="sm:max-md:hidden px-4"></div>
@@ -225,7 +239,8 @@ function FindTeam() {
                 className="h-[15vh] xl:h-[35vh] [35vh] w-[15vh] xl:w-[35vh] mx-auto "
               />
               <div className="flex items-center justify-center font-black text-3xl xl:text-5xl">
-                <h1>Join Team via Code</h1>
+                <h1 className="mr-2">Join Team via Code</h1>
+                <Tooltip message={joinTeamTooltip} />
               </div>
 
               <div className="flex items-center justify-center font-black pt-2">
@@ -244,7 +259,7 @@ function FindTeam() {
                   value="Join"
                   className="bg-[#97d9c3] min-h-[5vh] w-[40vw] md:w-[20vw] lg:w-[20vw] xl:w-[10vw] rounded-xl text-white font-bold shadow-lg hover:cursor-pointer hover:bg-[#72e9d3]"
                 />
-                <span className="text-red-500 text-sm ml-3">{joinMessage}</span>
+                <span className="text-red-500 text-sm pt-2">{joinMessage}</span>
               </div>
             </div>
           </div>
