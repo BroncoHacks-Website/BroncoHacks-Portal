@@ -16,7 +16,11 @@ def run_db():
 
         cur = connection.cursor()
         cur.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    (123456, 'Daniel', 'Pasion', hash_password('passwordurmom'), 'dnpaxion@gmail.com', 'cpp','.theDaniel', 123456, True, True ))
+                    (None, 'Daniel', 'Pasion', hash_password('passwordurmom'), 'dnpaxion@gmail.com', 'Cobra Kai','.theDaniel', 123456, True, True ))
+        cur.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    (None, 'Admin', 'Admin', hash_password('passwordurdad'), 'cppbroncohacks@gmail.com', 'Miyagi Do','CPPBroncoHacks', 123456, True, True ))
+        cur.execute("INSERT INTO hackers (teamID, firstName, lastName, password, email, school, discord, confirmationNumber, isConfirmed, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    (None, 'Backup', 'Admin', hash_password('passwordpassword'), 'adming@gmail.com', 'Eagle Fang','COBRAKAI!!!!!', 123456, True, True ))
 
         connection.commit()
         connection.close()

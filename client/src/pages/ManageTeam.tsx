@@ -204,7 +204,6 @@ function ManageTeam() {
         body: JSON.stringify(body),
       });
       const json = await newNameRes.json();
-      console.log(json);
       if (json.status == 200) {
         resetAlertState();
         setAlertMsg("Team name updated to: " + newName);
@@ -518,8 +517,6 @@ function ManageTeam() {
 
       const resJSON = await res.json();
 
-      console.log(resJSON);
-
       if (resJSON.status === 200) {
         setAlertMsg(
           "Successfully Registered Team. Your team will be notified via email once your application has been approved"
@@ -560,8 +557,6 @@ function ManageTeam() {
       });
 
       const resJSON = await res.json();
-
-      console.log(resJSON);
 
       if (resJSON.status === 200) {
         setAlertMsg("Application Withdrawn");
