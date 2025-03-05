@@ -89,8 +89,10 @@ function FindTeam() {
     checkAuth();
   }, [navigate, token]);
 
-  const createTeamTooltip = "Every team must have an APPROPRIATE name!";
-  const joinTeamTooltip = "Ask a team owner for their 6-digit access code on their team page!"
+  const createTeamTooltip =
+    "Enter a team name to start a team. You will be given a code you can send for your teammates to join!";
+  const joinTeamTooltip =
+    "Ask a team owner for their 6-digit access code on their team page and enter it here to join!";
 
   const changeTeamName = (event: {
     target: { value: SetStateAction<string> };
@@ -202,9 +204,8 @@ function FindTeam() {
               />
               <div className="flex items-center justify-center font-black text-3xl xl:text-5xl">
                 <h1 className="mr-2">Create a Team</h1>
-                
+
                 <Tooltip message={createTeamTooltip} />
-          
               </div>
 
               <div className="flex items-center justify-center font-black pt-2">
@@ -223,11 +224,10 @@ function FindTeam() {
                   className="bg-[#97d9c3] min-h-[5vh] w-[40vw] md:w-[25vw] lg:w-[20vw] xl:w-[20vw] rounded-xl text-white font-bold shadow-lg hover:cursor-pointer hover:bg-[#72e9d3]"
                 />
                 {/* <br /> */}
-                <span className="text-red-500 text-sm pt-2">{createMessage}</span>
-                
-                
+                <span className="text-red-500 text-sm pt-2">
+                  {createMessage}
+                </span>
               </div>
-              
             </div>
             <div className="xl:hidden py-4"></div>
             <div className="sm:max-md:hidden px-4"></div>

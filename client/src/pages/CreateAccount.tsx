@@ -590,7 +590,7 @@ function CreateAccount() {
           >
             <h1 className="text-3xl font-bold m-5 sm:m-10 md:text-5xl">🐴</h1>
             <div className="flex flex-col gap-2 w-[90%] items-start">
-              <p className="bolded">Discord Name (if none put N/A)</p>
+              <p className="bolded">Discord</p>
               <input
                 onChange={changeDiscord}
                 value={discord}

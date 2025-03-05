@@ -491,12 +491,6 @@ def create_hacker():
                                                     <p style="font-size: 16px; line-height: 1.6; text-align: center;">
                                                         We’re excited to have you join us at BroncoHacks! 🚀  
                                                     </p>
-
-                                                    <!-- Contact Info -->
-                                                    <p style="font-size: 14px; color: #777; text-align: center;">
-                                                        If you have any questions, reach out at  
-                                                        <a href="mailto:contact@broncohacks.org" style="color: #01426A; font-weight: bold;">contact@broncohacks.org</a>.
-                                                    </p>
                                                 </div>
                                             </body>
                                         </html>
