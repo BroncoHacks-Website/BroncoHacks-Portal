@@ -14,10 +14,6 @@ Running the Image
 
 - docker run --env-file .env -d -p 8000:8000 danielpasion/bhportal
 
-Pushing to the cloud
-
-- docker push danielpasion/bhportal
-
 Calling the enpoint
 
 - http://127.0.0.1:800py0/{whatever uri u created}

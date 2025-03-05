@@ -174,7 +174,6 @@ function FindTeam() {
       });
 
       const resJSON = await createTeamRes.json();
-      console.log(resJSON);
       if (resJSON.status != 200) {
         setCreateMessage("Something went wrong");
       } else {

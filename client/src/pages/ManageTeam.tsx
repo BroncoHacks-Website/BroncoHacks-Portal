@@ -204,7 +204,6 @@ function ManageTeam() {
         body: JSON.stringify(body),
       });
       const json = await newNameRes.json();
-      console.log(json);
       if (json.status == 200) {
         resetAlertState();
         setAlertMsg("Team name updated to: " + newName);
@@ -518,8 +517,6 @@ function ManageTeam() {
 
       const resJSON = await res.json();
 
-      console.log(resJSON);
-
       if (resJSON.status === 200) {
         setAlertMsg(
           "Successfully Registered Team. Your team will be notified via email once your application has been approved"
@@ -560,8 +557,6 @@ function ManageTeam() {
       });
 
       const resJSON = await res.json();
-
-      console.log(resJSON);
 
       if (resJSON.status === 200) {
         setAlertMsg("Application Withdrawn");
@@ -914,7 +909,7 @@ function ManageTeam() {
                 </div>
               )}
             </div>
-            <div className="flex justify-end align-end mt-5">
+            <div className="flex mt-auto justify-end align-end mt-5">
               <div className="relative inset-0 flex flex-col-reverse items-center md:flex-row md:justify-between md:mb-5 md:mr-2 w-[100vw]">
                 {hacker?.UUID === parseInt(owner?.UUID ?? "") ? (
                   <div>
@@ -960,7 +955,7 @@ function ManageTeam() {
                   {hacker?.UUID === parseInt(owner?.UUID ?? "") ? (
                     <button
                       type="button"
-                      className="focus:outline-none text-white bg-red-500 font-medium rounded-lg text-sm px-5 py-2.5"
+                      className="focus:outline-none text-white bg-red-500 font-medium rounded-lg text-sm px-5 py-2.5 "
                       onClick={deleteTeamAlert}
                     >
                       Delete Team

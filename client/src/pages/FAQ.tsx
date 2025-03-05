@@ -43,13 +43,7 @@ function FAQ() {
               A: Once you have created a team, press the "Register Team" button,
               and your application will be reviewed within ~48 hours. Once you
               are approved, you will receive an email, your team page will have
-              a status = approved, and your team should be seen{"  "}
-              <a
-                href="https://www.broncohacks.org/"
-                className="text-blue-500 hover:text-blue-300"
-              >
-                here.
-              </a>
+              a status = approved.
             </p>
 
             <div className="flex justify-center overflow-x-auto scrollbar-hidden">
