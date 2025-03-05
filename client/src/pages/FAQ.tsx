@@ -89,11 +89,12 @@ function FAQ() {
             />
           )}
           {showImage2 && (
-            <Modal 
-              onClose={()=>setShowImage2(false)}
-              caption="Registration Approval Email" 
-              src="registration-approval-email.png" 
-              alt="Registration Approval Email"/>
+            <Modal
+              onClose={() => setShowImage2(false)}
+              caption="Registration Approval Email"
+              src="registeredteam.png"
+              alt="Registration Approval Email"
+            />
           )}
           {showImage3 && (
             <Modal

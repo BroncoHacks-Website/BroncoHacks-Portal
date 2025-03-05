@@ -1009,21 +1009,41 @@ def remove_that_playa():
     finally:
         conn.close()
         
-@app.route("/teams", methods=['GET'])
-@jwt_required()
-@cross_origin()
+@app.route("/teamsApproved", methods=['GET'])
 def get_team():
     try:
         conn = get_db_connection()
-        posts = conn.execute('SELECT * FROM teams').fetchall()
+        teams_unformatted = conn.execute('SELECT * FROM teams WHERE status = "approved"').fetchall()
         conn.close()
-        posts_list = []
+        all_teams = []
         
-        for row in posts:
-            team = dict(row)
-            posts_list.append(team)
+        for row in teams_unformatted:
+            team = {}
+            team["teamName"] = row["teamName"]
+            if row["owner"]:
+                owner = get_hacker_by_id(row["owner"])
+                firstName = owner["firstName"]
+                lastName = owner["lastName"]
+                team["owner"] = str(firstName) + " " + str(lastName)
+            if row["teamMember1"]:
+                member = get_hacker_by_id(row["teamMember1"])
+                firstName = member["firstName"]
+                lastName = member["lastName"]
+                team["teamMember1"] = str(firstName) + " " + str(lastName)
+            if row["teamMember2"]:
+                member = get_hacker_by_id(row["teamMember2"])
+                firstName = member["firstName"]
+                lastName = member["lastName"]
+                team["teamMember2"] = str(firstName) + " " + str(lastName)
+            if row["teamMember3"]:
+                member = get_hacker_by_id(row["teamMember3"])
+                firstName = member["firstName"]
+                lastName = member["lastName"]
+                team["teamMember3"] = str(firstName) + " " + str(lastName)
+            all_teams.append(team)
+
     
-        return jsonify(status=200, message="success", teams=posts_list)
+        return jsonify(status=200, message="success", teams=all_teams)
     except Exception as e:
         return jsonify(status=400, message=str(e))
         

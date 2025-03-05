@@ -42,16 +42,28 @@ function Home() {
               </Link>
             </div>
             <div className="flex justify-center pt-5 md:pt-20 mb-30">
-              <a href="https://discord.gg/aMP4nYbaX4">
+              <a
+                href="https://discord.gg/aMP4nYbaX4"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <img
                   src="discord.jpeg"
                   className="h-[50px] rounded-xl mr-10"
                 ></img>
               </a>
-              <a href="https://www.instagram.com/cppbroncohacks/">
+              <a
+                href="https://www.instagram.com/cppbroncohacks/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <img src="insta.png" className="h-[50px] mr-10"></img>
               </a>
-              <a href="https://www.BroncoHacks.org">
+              <a
+                href="https://www.BroncoHacks.org"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <img
                   src="BroncoHacksSquareLogo.png"
                   className="h-[50px] rounded-xl"

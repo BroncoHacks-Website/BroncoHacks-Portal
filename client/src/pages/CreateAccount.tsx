@@ -653,9 +653,9 @@ function CreateAccount() {
                   required
                 ></input>
                 <p className="ml-5 text-xs">
-                  I agree to the Terms of Service, including the collection of
-                  my information for registration and communication purposes,
-                  and I consent to receiving emails related to the hackathon.
+                  I agree to the collection of my information for registration
+                  and communication purposes, and I consent to receiving emails
+                  related to the hackathon.
                 </p>
               </div>
               <span className="text-red-500 text-xs ml-3 text-center">

@@ -95,8 +95,6 @@ function Navbar() {
         setAlertButtonMsg("Ok");
         setShowAlert(true);
         localStorage.removeItem("token");
-        navigate("/");
-        window.location.reload();
       } else {
         setAlertMsg("error " + json.message);
         setAlertButtonMsg("Ok");
