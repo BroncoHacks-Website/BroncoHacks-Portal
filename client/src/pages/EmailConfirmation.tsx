@@ -115,7 +115,7 @@ function EmailConfirmation() {
       const json = await res.json();
 
       if (json.status == 200) {
-        setCodeMessage("Account is now confrimed: redirecting to app");
+        setCodeMessage("Account is now confirmed: redirecting to app");
         setIsFinallyConfirmed(true);
         await new Promise((r) => setTimeout(r, 1000));
         navigate("/FindTeam");

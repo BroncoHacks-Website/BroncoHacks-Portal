@@ -9,7 +9,7 @@ function Secret() {
             className={`flex flex-col gap-4 items-center h-[70vh] sm:h-[70vh] w-[75vw] sm:w-[55vw] md:w-[45vw] lg:w-[28vw] mx-auto rounded-xl bg-white shadow-lg shadow-black/75 backface-hidden`}
           >
             <h1 className="text-4xl font-bold m-15 md:text-4xl">James!!!!!</h1>
-            <img src="LBJ.jpeg" className="h-[25vh] w-[25vh]"></img>
+            <img src="https://media.tenor.com/zH-prIWKzFAAAAAM/lebron-james.gif" className="h-[25vh] w-[25vh]"></img>
             <Link
               className="text-center mx-auto mt-20 md:mt-10 text-white h-[4vh] md:h-[6vh] w-[50vw] sm:w-[30vw] md:w-[20vw] text-[1.5rem] shadow-2xl bg-[#035BA5] hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-400 anmat-th-bttn-gng transition-all duration-500 focus:outline-none focus:ring-4 focus:ring-blue-300 font-bold rounded-[20px] transform hover:scale-105"
               to={{ pathname: "/" }}
