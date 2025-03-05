@@ -86,7 +86,7 @@ function FAQ() {
           {showImage2 && (
             <Modal 
               onClose={()=>setShowImage2(false)}
-              caption="Approved Team Status" 
+              caption="Registration Approval Email" 
               src="registration-approval-email.png" 
               alt="Registration Approval Email"/>
           )}

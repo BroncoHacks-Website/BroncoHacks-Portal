@@ -25,7 +25,7 @@ function Modal({onClose, caption, src, alt}: ModalProps) {
             <img 
               src={src} 
               alt={alt} 
-              className="m-2"/>
+              className="m-2 rounded-lg"/>
           </div>
         </div>
       </div>
