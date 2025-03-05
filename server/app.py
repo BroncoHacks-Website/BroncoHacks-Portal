@@ -54,7 +54,7 @@ def index():
     conn = get_db_connection()
     return "Server is Running :)"
 
-@app.route("/admin", methods=['GET'])
+@app.route("/admin", methods=['GET']) #Good
 @jwt_required()
 @cross_origin()
 def get_all_data():
@@ -82,7 +82,7 @@ def get_all_data():
     except Exception as e:
         return jsonify(status=400, message=str(e))
 
-@app.route("/admin/sql", methods=['PUT'])
+@app.route("/admin/sql", methods=['PUT']) #Good
 @jwt_required()
 @cross_origin()
 def switchit():
@@ -108,7 +108,7 @@ def switchit():
         return jsonify(status=400, message=str(e))
     
     
-@app.route("/admin/approve", methods=['PUT'])
+@app.route("/admin/approve", methods=['PUT']) #Good
 @jwt_required()
 @cross_origin()
 def approve():
@@ -234,7 +234,7 @@ def approve():
     except Exception as e:
         return jsonify(status=400, message=str(e))
     
-@app.route('/admin/download', methods=['GET'])
+@app.route('/admin/download', methods=['GET']) #Good
 @jwt_required()
 @cross_origin()
 def download_file():
@@ -250,7 +250,7 @@ def download_file():
     return send_from_directory(BASE_DIR, "database.db", as_attachment=True)
 
 #Tokens
-@app.route("/login", methods=["GET"])
+@app.route("/login", methods=["GET"]) #Good
 @cross_origin()
 def login():
     email = request.args.get('email')
@@ -279,7 +279,7 @@ def login():
     except Exception as e:
         return jsonify(status=400, message=str(e)),400
     
-@app.route("/whoami", methods=["GET"])
+@app.route("/whoami", methods=["GET"]) #Good
 @jwt_required()
 @cross_origin()
 def whoami():
@@ -292,7 +292,7 @@ def whoami():
     except Exception as e:
         return jsonify(status=400, message=str(e)),400
     
-@app.route("/logout", methods=["POST"])
+@app.route("/logout", methods=["POST"]) #Good
 @jwt_required()
 @cross_origin()
 def logout():
@@ -303,7 +303,7 @@ def logout():
     except Exception as e:
         return jsonify(status=401,message=str(e)),401
     
-@app.route("/sendPasswordReset", methods=['GET'])
+@app.route("/sendPasswordReset", methods=['GET']) #Good
 @cross_origin()
 def sendPasswordReset():
     try:
@@ -364,13 +364,12 @@ def sendPasswordReset():
                                         """
                                     }
                                 )
-            print(sendmail)
             return jsonify(status=200,message="Email Sent!"),200
 
     except Exception as e:
         return jsonify(status=400,message=str(e)),400
     
-@app.route("/resetPassword", methods=['PUT'])
+@app.route("/resetPassword", methods=['PUT']) #Good
 @jwt_required()
 @cross_origin()
 def resetPassword():
@@ -392,7 +391,7 @@ def resetPassword():
 
 
 @app.after_request
-def refresh_expiring_jwts(response):
+def refresh_expiring_jwts(response): #Done
     try:
         exp_timestamp = get_jwt()["exp"]
         now = datetime.now(timezone.utc)
@@ -409,7 +408,7 @@ def refresh_expiring_jwts(response):
         return response
 
 ########## Hackers ##########
-@app.route("/hacker", methods=['POST'])
+@app.route("/hacker", methods=['POST']) #Done
 @cross_origin()
 def create_hacker():
     try:
@@ -502,13 +501,17 @@ def create_hacker():
     except Exception as e:
         return jsonify(status=400,message=str(e)),400
     
-@app.route("/hacker", methods=['GET'])
+@app.route("/hacker", methods=['GET']) #Done
 @jwt_required()
 @cross_origin()
 def getOneHacker():
     # get req param from url
     UUID = request.args.get('UUID')
 
+    token_UUID = get_jwt_identity()
+    if str(UUID) != str(token_UUID):
+        return jsonify(status=403, message=f"Incorrect User"),403
+    
     if UUID is None:
         return jsonify(status=400, message=f"Missing UUID in query paramter"),400
     
@@ -530,22 +533,25 @@ def getOneHacker():
     except Exception as e:
         return jsonify(status=400, message=str(e)),400
     
-@app.route("/code", methods=['POST'])
+@app.route("/code", methods=['POST']) #Done
 @jwt_required()
 @cross_origin()
 def getCode():
     # get req param from url
     try:
         data = request.get_json()
-
         required_fields = ['UUID','confirmationNumber']
         for field in required_fields:
             if field not in data:
                 return jsonify(status=400, message=f"Missing {field}")
-
+        
         UUID = data['UUID']
         confirmationNumber = data["confirmationNumber"]
+        token_UUID = get_jwt_identity()
 
+        if str(UUID) != str(token_UUID):
+            return jsonify(status=403,message="Forbidden")
+        
         if UUID is None:
             return jsonify(status=400, message=f"Missing UUID in query paramter"),400
         
@@ -647,27 +653,27 @@ def changeCode():
     except Exception as e:
         return jsonify(status=400, message=str(e)),400
     
-@app.route("/hackers",  methods=['GET'])
-@jwt_required()
-@cross_origin()
-def urmom():
-    try:
-        conn = get_db_connection() 
-        posts = conn.execute('SELECT * FROM hackers').fetchall()
-        conn.close()
-        posts_list = []
+# @app.route("/hackers",  methods=['GET'])
+# @jwt_required()
+# @cross_origin()
+# def urmom():
+#     try:
+#         conn = get_db_connection() 
+#         posts = conn.execute('SELECT * FROM hackers').fetchall()
+#         conn.close()
+#         posts_list = []
 
-        for row in posts:
-            hacker = dict(row)
-            del hacker["password"]
-            # hacker['password'] = hacker['password'].decode('utf-8')  # Convert bytes to string
-            posts_list.append(hacker)
+#         for row in posts:
+#             hacker = dict(row)
+#             del hacker["password"]
+#             # hacker['password'] = hacker['password'].decode('utf-8')  # Convert bytes to string
+#             posts_list.append(hacker)
         
-        return jsonify(status=200,message="success",hackers=posts_list)
-    except Exception as e:
-        return jsonify(status=400,message=str(e))
+#         return jsonify(status=200,message="success",hackers=posts_list)
+#     except Exception as e:
+#         return jsonify(status=400,message=str(e))
     
-@app.route("/hacker", methods=['PUT'])
+@app.route("/hacker", methods=['PUT']) #Done
 @jwt_required()
 @cross_origin()
 def update_hacker():
@@ -686,6 +692,9 @@ def update_hacker():
         discord = data.get('discord', None)
         school = data.get('school', None)
 
+        token_UUID = get_jwt_identity()
+        if str(UUID) != str(token_UUID):
+            return jsonify(status=403,message="Forbidden")
 
         try:
             int(UUID)
@@ -732,7 +741,7 @@ def update_hacker():
 
 ########## Team ########## 
 
-@app.route("/team", methods=['GET'])
+@app.route("/team", methods=['GET']) #Done
 @jwt_required()
 @cross_origin()
 def get_users_team():
@@ -760,6 +769,20 @@ def get_users_team():
         team_member_1 = conn.execute("SELECT UUID, firstName, lastName, email, school, discord FROM hackers WHERE UUID = ?", (team["teamMember1"],)).fetchone()
         team_member_2 = conn.execute("SELECT UUID, firstName, lastName, email, school, discord FROM hackers WHERE UUID = ?", (team["teamMember2"],)).fetchone()
         team_member_3 = conn.execute("SELECT UUID, firstName, lastName, email, school, discord FROM hackers WHERE UUID = ?", (team["teamMember3"],)).fetchone()
+
+        token_UUID = get_jwt_identity()
+        UUIDs = []
+        if owner:
+            UUIDs.append(str(owner["UUID"]))
+        if team_member_1:
+            UUIDs.append(str(team_member_1["UUID"]))
+        if team_member_2:
+            UUIDs.append(str(team_member_2["UUID"]))
+        if team_member_3:
+            UUIDs.append(str(team_member_3["UUID"]))
+        if (str(token_UUID) not in UUIDs):
+            return jsonify(message= "hacker is not in a team, TOKEN NOT ACCEPTED", status=403)
+
         
         #otherwise, return the team id and the team name
         return jsonify({
@@ -809,7 +832,7 @@ def get_users_team():
     finally:
         conn.close()
 
-@app.route("/team", methods=["POST"])
+@app.route("/team", methods=["POST"]) #Done
 @jwt_required()
 @cross_origin()
 def create_tuah():
@@ -825,6 +848,10 @@ def create_tuah():
         
         team_name = data.get("teamName")
         owner = data.get("owner")
+
+        token_UUID = get_jwt_identity()
+        if str(owner) != str(token_UUID):
+            return jsonify(message= "Invalid Token", status=403)
 
 
         if team_name == "":
@@ -889,7 +916,7 @@ def create_tuah():
     finally:
         conn.close()
 
-@app.route("/team", methods=["DELETE"])
+@app.route("/team", methods=["DELETE"]) #Done
 @jwt_required()
 @cross_origin()
 def delete_tuah():
@@ -905,6 +932,10 @@ def delete_tuah():
         
         team_id = data.get("teamID")
         owner = data.get("owner")
+
+        token_UUID = get_jwt_identity()
+        if str(owner) != str(token_UUID):
+            return jsonify(message= "Invalid Token", status=403)
 
         try:
             int(owner)
@@ -942,7 +973,7 @@ def delete_tuah():
     finally:
         conn.close()
 
-@app.route("/team/removeTeamMember", methods=['PUT'])
+@app.route("/team/removeTeamMember", methods=['PUT']) #Done
 @jwt_required()
 @cross_origin()
 def remove_that_playa():
@@ -954,6 +985,10 @@ def remove_that_playa():
         team_id = data.get("teamID")
         owner = data.get("owner")
         team_member_to_kick = data.get("teamMember")
+
+        token_UUID = get_jwt_identity()
+        if str(owner) != str(token_UUID):
+            return jsonify(message= "Invalid Token", status=403)
 
         conn = get_db_connection()
 
@@ -1047,7 +1082,7 @@ def get_team():
     except Exception as e:
         return jsonify(status=400, message=str(e))
         
-@app.route("/team/leave", methods=["PUT"])
+@app.route("/team/leave", methods=["PUT"]) #Done
 @jwt_required()
 @cross_origin()
 def memberLeave():
@@ -1066,6 +1101,10 @@ def memberLeave():
             
         teamID = data["teamID"]
         member = data["teamMember"]
+
+        token_UUID = get_jwt_identity()
+        if str(member) != str(token_UUID):
+            return jsonify(message= "Invalid Token", status=403)
 
         try:
             int(teamID)
@@ -1149,6 +1188,10 @@ def switcheroo():
         owner = data['owner']
         member = data['teamMember']
         teamID = data['teamID']
+
+        token_UUID = get_jwt_identity()
+        if str(owner) != str(token_UUID):
+            return jsonify(message= "Invalid Token", status=403)
         
         # Check if owner and member are ints
         try:
@@ -1263,6 +1306,9 @@ def addTeamMember():
         try:
             teamID = int(data['teamID'])
             member = int(data['teamMember'])
+            token_UUID = get_jwt_identity()
+            if str(member) != str(token_UUID):
+                return jsonify(message= "Invalid Token", status=403)
         except ValueError:
             return jsonify(status=422, message="Unprocessable Entity (Invalid data type)")
 
@@ -1326,6 +1372,10 @@ def send_application():
         
         team_id = data.get("teamID")
         owner = data.get("owner")
+        token_UUID = get_jwt_identity()
+        if str(owner) != str(token_UUID):
+            return jsonify(message= "Invalid Token", status=403)
+        
 
         conn = get_db_connection()
 
@@ -1452,6 +1502,11 @@ def changeTeamName():
         teamID = data['teamID']
         newName = data['newName'] # do i have to validate the name for anything? idk
 
+        token_UUID = get_jwt_identity()
+        hacker = get_hacker_by_id(token_UUID)
+        if str(hacker["teamID"]) != str(teamID):
+            return jsonify(message= "Invalid Token", status=403)
+
         # check if teamID is int
         try:
             int(teamID)
@@ -1471,7 +1526,6 @@ def changeTeamName():
         # update teamName
         try:
             conn = get_db_connection()
-            print(newName, teamID)
             conn.execute('UPDATE teams SET teamName=? WHERE teamID=?', (newName, str(teamID),))
             conn.commit()
             

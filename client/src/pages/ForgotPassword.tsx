@@ -18,7 +18,6 @@ function ForgotPassword() {
             ": *note that the email sent will most likely be sent to spam, so check your spam folder"
         );
       }
-      console.log(json);
     } catch {
       alert("An error has occured");
     }
