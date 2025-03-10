@@ -15,8 +15,8 @@ import Devs from "./pages/Devs";
 import Secret from "./pages/HiddenCard";
 import Competitors from "./pages/Competitors";
 
-export const uri = "http://127.0.0.1:8000/";
-// export const uri = "https://bhportal.onrender.com/";
+// export const uri = "http://127.0.0.1:8000/";
+export const uri = "https://bhportal.onrender.com/";
 
 function App() {
   return (
