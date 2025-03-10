@@ -83,6 +83,9 @@ def get_all_data():
     except Exception as e:
         conn.close()
         return jsonify(status=400, message=str(e))
+    finally:
+        if conn:
+            conn.close()
 
 @app.route("/admin/sql", methods=['PUT']) #Good
 @jwt_required()
@@ -110,6 +113,9 @@ def switchit():
     except Exception as e:
         conn.close()
         return jsonify(status=400, message=str(e))
+    finally:
+        if conn:
+            conn.close()
     
     
 @app.route("/admin/approve", methods=['PUT']) #Good
@@ -238,6 +244,9 @@ def approve():
         
     except Exception as e:
         return jsonify(status=400, message=str(e))
+    finally:
+        if conn:
+            conn.close()
     
 @app.route('/admin/download', methods=['GET']) #Good
 @jwt_required()
@@ -283,6 +292,9 @@ def login():
                 return jsonify(status=403,message="Incorrect Password"),403
     except Exception as e:
         return jsonify(status=400, message=str(e)),400
+    finally:
+        if conn:
+            conn.close()
     
 @app.route("/whoami", methods=["GET"]) #Good
 @jwt_required()
@@ -373,6 +385,9 @@ def sendPasswordReset():
 
     except Exception as e:
         return jsonify(status=400,message=str(e)),400
+    finally:
+        if conn:
+            conn.close()
     
 @app.route("/resetPassword", methods=['PUT']) #Good
 @jwt_required()
@@ -393,6 +408,9 @@ def resetPassword():
             return jsonify(status=401,message="Session Has Expired"),401
     except Exception as e:
         return jsonify(status=400, message=str(e)),400
+    finally:
+        if conn:
+            conn.close()
 
 
 @app.after_request
@@ -505,6 +523,9 @@ def create_hacker():
         return jsonify(status=200, message="Hacker created successfully", hacker=new_hacker, token=access_token),200
     except Exception as e:
         return jsonify(status=400,message=str(e)),400
+    finally:
+        if conn:
+            conn.close()
     
 @app.route("/hacker", methods=['GET']) #Done
 @jwt_required()
@@ -537,6 +558,9 @@ def getOneHacker():
             return jsonify(status=200, message="Hacker Found", hacker=next(iter(hacker_list))),200
     except Exception as e:
         return jsonify(status=400, message=str(e)),400
+    finally:
+        if conn:
+            conn.close()
     
 @app.route("/code", methods=['POST']) #Done
 @jwt_required()
@@ -589,6 +613,9 @@ def getCode():
 
     except Exception as e:
         return jsonify(status=400, message=str(e)),400
+    finally:
+        if conn:
+            conn.close()
     
 @app.route("/code", methods=['PUT'])
 @jwt_required()
@@ -657,6 +684,9 @@ def changeCode():
         return jsonify(status=200, message="New Verification Code is Sent!"),200
     except Exception as e:
         return jsonify(status=400, message=str(e)),400
+    finally:
+        if conn:
+            conn.close()
     
 # @app.route("/hackers",  methods=['GET'])
 # @jwt_required()
@@ -739,7 +769,8 @@ def update_hacker():
     except Exception as e:
         return jsonify(status=500, message=str(e))
     finally:
-        conn.close()
+        if conn:
+            conn.close()
 
 ########## Team ########## 
 
@@ -832,7 +863,8 @@ def get_users_team():
     except Exception as e:
         return jsonify({"message": str(e), "status":500})
     finally:
-        conn.close()
+        if conn:
+            conn.close()
 
 @app.route("/team", methods=["POST"]) #Done
 @jwt_required()
@@ -916,7 +948,8 @@ def create_tuah():
     except Exception as e:
         return jsonify(message=str(e),status=500)
     finally:
-        conn.close()
+        if conn:
+            conn.close()
 
 @app.route("/team", methods=["DELETE"]) #Done
 @jwt_required()
@@ -1083,6 +1116,9 @@ def get_team():
         return jsonify(status=200, message="success", teams=all_teams)
     except Exception as e:
         return jsonify(status=400, message=str(e))
+    finally:
+        if conn:
+            conn.close()
         
 @app.route("/team/leave", methods=["PUT"]) #Done
 @jwt_required()
@@ -1170,6 +1206,9 @@ def memberLeave():
         return jsonify(status=200, message="Success", hacker=next(iter(convert_res)))
     except Exception as e:
         return jsonify(status=400, message=str(e))
+    finally:
+        if conn:
+            conn.close()
     
 @app.route("/team/owner", methods=["PUT"])
 @jwt_required()
@@ -1290,6 +1329,9 @@ def switcheroo():
             return jsonify(status=404, message="boohoo")
     except Exception as e:
         return jsonify(status=400, message=str(e))
+    finally:
+        if conn:
+            conn.close()
     
 @app.route("/team/addTeamMember", methods=["PUT"])
 @jwt_required()
@@ -1362,6 +1404,9 @@ def addTeamMember():
         return jsonify(status=200, message="Success", hacker=dict(get_hacker), team=dict(get_team))
     except Exception as e:
         return jsonify(status=500, message=str(e))
+    finally:
+        if conn:
+            conn.close()
     
 @app.route("/team/sendApplication", methods=['PUT'])
 @jwt_required()
@@ -1543,6 +1588,9 @@ def changeTeamName():
         
     except Exception as e:
         return jsonify(status=400, message=str(e))
+    finally:
+        if conn:
+            conn.close()
     
 if __name__ == "__main__":
     app.run(debug=True)
