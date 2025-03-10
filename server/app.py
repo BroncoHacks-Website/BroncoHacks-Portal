@@ -1185,19 +1185,24 @@ def memberLeave():
             return jsonify(status=404, message="Not a member of team")
         
         # change team db and shift members over
-        if (isMem1):
-            shift = conn.execute('UPDATE teams SET teamMember1=?, teamMember2=?, teamMember3=NULL', (teamData["teamMember2"],teamData["teamMember3"],))
-        elif (isMem2):
-            shift = conn.execute('UPDATE teams SET teamMember2=?, teamMember3=NULL', (teamData["teamMember3"],))
-        else:
-            shift = conn.execute('UPDATE teams SET teamMember3=NULL')
+        if isMem1:
+            conn.execute(
+                'UPDATE teams SET teamMember1=?, teamMember2=?, teamMember3=NULL WHERE teamID=?', 
+                (teamData["teamMember2"], teamData["teamMember3"], teamID,)
+            )
+        elif isMem2:
+            conn.execute(
+                'UPDATE teams SET teamMember2=?, teamMember3=NULL WHERE teamID=?', 
+                (teamData["teamMember3"], teamID,)
+            )
+        elif isMem3:
+            conn.execute(
+                'UPDATE teams SET teamMember3=NULL WHERE teamID=?', 
+                (teamID,)
+            )
             
         # remove teamID from hacker
         remove = conn.execute('UPDATE hackers SET teamID=NULL WHERE UUID=?', (member,))
-        
-        if teamData["status"] == "approved":
-            conn.execute("UPDATE teams SET status = 'unregistered' WHERE teamID = ?", (teamID,))
-        conn.commit()
         
         res = conn.execute('SELECT UUID, teamID FROM hackers WHERE UUID=?', (member,))
         convert_res = [dict(row) for row in res]
