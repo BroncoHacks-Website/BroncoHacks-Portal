@@ -132,7 +132,9 @@ function Login() {
               </div>
             </div>
 
-            <span className="text-red-500 text-sm">{requestMessage}</span>
+            <span className="text-red-500 text-sm text-center">
+              {requestMessage}
+            </span>
             {isLoading && (
               <div role="status">
                 <svg
