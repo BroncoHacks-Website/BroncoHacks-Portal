@@ -10,6 +10,7 @@ from flask_cors import CORS, cross_origin
 from dotenv import load_dotenv
 import os
 import requests
+import certifi
 import sqlitecloud
 
 #Settings
@@ -20,11 +21,12 @@ jwt = JWTManager(app)
 CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
 load_dotenv()
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+os.environ['SSL_CERT_FILE'] = certifi.where()
 
 
 def get_db_connection():
-    conn = sqlite3.connect('database.db')
-    conn.row_factory = sqlite3.Row
+    conn = sqlitecloud.connect("sqlitecloud://ckd05cqthz.g2.sqlite.cloud:8860/database.db?apikey=" + str(os.getenv("SQLITE")))
+    conn.row_factory = sqlitecloud.Row
     return conn
 
 def generate_team_id():
@@ -51,7 +53,6 @@ def generate_confirmation_number():
 #Admin
 @app.route("/")
 def index():
-    conn = get_db_connection()
     return "Server is Running :)"
 
 @app.route("/admin", methods=['GET']) #Good
@@ -77,9 +78,10 @@ def get_all_data():
         for team in teams:
             temu = dict(team)
             tuah.append(temu)
-        
+        conn.close()
         return jsonify(status=200, message="successfully got all data", hackers=hawk, teams=tuah)
     except Exception as e:
+        conn.close()
         return jsonify(status=400, message=str(e))
 
 @app.route("/admin/sql", methods=['PUT']) #Good
@@ -101,10 +103,12 @@ def switchit():
         
         conn.execute(sql)
         conn.commit()
+        conn.close()
         return jsonify(status=200,message="Succesfully ran: " + str(sql))
 
 
     except Exception as e:
+        conn.close()
         return jsonify(status=400, message=str(e))
     
     
@@ -143,6 +147,7 @@ def approve():
                 return jsonify(status=404, message="Team does not exist")
             conn.close()
         except:
+            conn.close()
             return jsonify(status=404, message="Team does not exist")
         
         # change status
@@ -576,7 +581,7 @@ def getCode():
             return jsonify(status=404, message="Hacker Not Found"),404
         else:
             if hacker_list[0]["confirmationNumber"] == int(confirmationNumber):
-                conn.execute("UPDATE hackers SET isConfirmed = ? WHERE UUID = ?", (True, UUID))
+                conn.execute("UPDATE hackers SET isConfirmed = ? WHERE UUID = ?", (1, int(UUID),))
                 conn.commit()
                 return jsonify(status=200, message="Account is now confirmed"),200
             else:
@@ -700,8 +705,7 @@ def update_hacker():
             int(UUID)
         except:
             return jsonify(status=422, message="Unprocessable Entity (wrong data type for: UUID)")
-
-        UUID = int(UUID)
+        UUID = str(UUID)
         conn = get_db_connection()
         cursor = conn.cursor()
         if not UUID:
@@ -712,7 +716,6 @@ def update_hacker():
             hacker = cursor.fetchone()
             if hacker is None:
                 return jsonify(message= "UUID not found",status=404)
-            
             # update hacker info
             if first_name and (first_name != hacker["firstName"]):
                 cursor.execute("UPDATE hackers SET firstName = ? WHERE UUID = ?", (first_name, UUID))
@@ -729,8 +732,7 @@ def update_hacker():
 
         conn.commit()
 
-        cursor.execute('SELECT UUID, teamID, firstName, lastName, email, school, discord, confirmationNumber, isConfirmed, isAdmin FROM hackers WHERE UUID = ?', (UUID,))
-        updated_hacker = cursor.fetchone()
+        updated_hacker  = cursor.execute('SELECT UUID, teamID, firstName, lastName, email, school, discord, confirmationNumber, isConfirmed, isAdmin FROM hackers WHERE UUID = ?', (UUID,))
 
         return jsonify(status=200, message="successfully updated hacker", hacker=dict(updated_hacker))
 
