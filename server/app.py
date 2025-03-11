@@ -25,7 +25,7 @@ os.environ['SSL_CERT_FILE'] = certifi.where()
 
 
 def get_db_connection():
-    conn = sqlitecloud.connect("sqlitecloud://cdmasrg2nz.g6.sqlite.cloud:8860/database.db?apikey=" + str(os.getenv("SQLITE")))
+    conn = sqlitecloud.connect("sqlitecloud://ckd05cqthz.g2.sqlite.cloud:8860/prod.db?apikey=" + str(os.getenv("SQLITE")))
     conn.row_factory = sqlitecloud.Row
     return conn
 
