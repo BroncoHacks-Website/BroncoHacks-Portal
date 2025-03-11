@@ -21,8 +21,22 @@ function Competitors() {
         });
         const json = await res.json();
         if (json["status"] !== 200) return;
+        const newTeams = json["teams"];
+        newTeams.push({
+          teamName: "The Codekages",
+          owner: "Ryan Miller",
+          teamMember1: "Roberto Castro",
+          teamMember2: "Alexander Paras",
+          teamMember3: "Brandon Hoang",
+        });
+        newTeams.push({
+          teamName: "British Bakers",
+          owner: "Carlos Vargas",
+          teamMember1: "Brandon Shippy",
+          teamMember2: "Gian David Marquez",
+          teamMember3: "",
+        });
         setTeams(json["teams"]);
-        console.log(json);
       } catch (e) {
         console.log(e);
       } finally {
