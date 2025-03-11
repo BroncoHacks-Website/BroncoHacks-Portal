@@ -47,33 +47,32 @@ function Competitors() {
   }, []);
 
   return (
-    <>
-      <div className="bg-indigo-300 min-h-[85vh] flex flex-col items-center">
-        <div className="bg-white min-w-2/3 m-4 p-3 rounded-lg shadow-lg flex flex-col items-center">
-          <div>
-            <h1 className="text-4xl font-bold p-5">Approved Teams</h1>
-          </div>
-          <table className="bg-gray-1 text-black m-2 text-center w-full border-collapse border-gray-300 text-sm sm:text-base">
+    <div className="bg-indigo-300 min-h-[85vh] flex flex-col items-center px-4 sm:px-8">
+      <div className="bg-white w-full max-w-[90vw] sm:max-w-[60vw] m-4 px-6 pb-6 rounded-lg shadow-lg flex flex-col items-center">
+        <h1 className="text-2xl sm:text-4xl font-bold p-3 sm:p-5">
+          Approved Teams
+        </h1>
+        <div className="w-full overflow-x-auto">
+          <table className="bg-gray-1 text-black text-xs sm:text-sm md:text-base w-full border-collapse border-gray-300">
             <thead>
               <tr className="bg-[#c3d3eb]">
-                <th className="px-3 py-1 first:rounded-tl-lg">Team Name</th>
-                <th className="px-3 py-1">Team Representative</th>
-                <th className="px-3 py-1">Member</th>
-                <th className="px-3 py-1">Member</th>
-                <th className="px-3 py-1 last:rounded-tr-lg">Member</th>
+                <th className="px-2 sm:px-3 py-1 first:rounded-tl-lg">
+                  Team Name
+                </th>
+                <th className="px-2 sm:px-3 py-1">Representative</th>
+                <th className="px-2 sm:px-3 py-1">Member</th>
+                <th className="px-2 sm:px-3 py-1">Member</th>
+                <th className="px-2 sm:px-3 py-1 last:rounded-tr-lg">Member</th>
               </tr>
             </thead>
             {loading ? (
               <tbody>
                 <tr>
                   <td colSpan={5} className="text-center py-4">
-                    <div
-                      role="status"
-                      className="flex justify-center items-center w-full h-full"
-                    >
+                    <div className="flex justify-center items-center w-full h-full">
                       <svg
                         aria-hidden="true"
-                        className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                        className="w-6 h-6 sm:w-8 sm:h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
                         viewBox="0 0 100 101"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
@@ -96,17 +95,19 @@ function Competitors() {
               <tbody>
                 {teams.map((team, index) => (
                   <tr key={index} className="odd:bg-gray-100 even:bg-white">
-                    <td className="hover:bg-gray-50 px-3 py-1 text-[#8cb3ed]">
+                    <td className="hover:bg-gray-50 px-2 sm:px-3 py-1 text-[#8cb3ed]">
                       {team.teamName}
                     </td>
-                    <td className="hover:bg-gray-50 px-3 py-1">{team.owner}</td>
-                    <td className="hover:bg-gray-50 px-3 py-1">
+                    <td className="hover:bg-gray-50 px-2 sm:px-3 py-1">
+                      {team.owner}
+                    </td>
+                    <td className="hover:bg-gray-50 px-2 sm:px-3 py-1">
                       {team.teamMember1}
                     </td>
-                    <td className="hover:bg-gray-50 px-3 py-1">
+                    <td className="hover:bg-gray-50 px-2 sm:px-3 py-1">
                       {team.teamMember2}
                     </td>
-                    <td className="hover:bg-gray-50 px-3 py-1">
+                    <td className="hover:bg-gray-50 px-2 sm:px-3 py-1">
                       {team.teamMember3}
                     </td>
                   </tr>
@@ -116,7 +117,7 @@ function Competitors() {
           </table>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
