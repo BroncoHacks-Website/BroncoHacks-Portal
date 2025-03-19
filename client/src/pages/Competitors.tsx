@@ -36,6 +36,13 @@ function Competitors() {
           teamMember2: "Gian David Marquez",
           teamMember3: "",
         });
+        newTeams.push({
+          teamName: "Seagulls Taking Bread",
+          owner: "Alex Eng",
+          teamMember1: "Jason Fuentes",
+          teamMember2: "Kelechi Duru",
+          teamMember3: "",
+        });
         setTeams(json["teams"]);
       } catch (e) {
         console.log(e);
