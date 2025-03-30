@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import "../index.css";
+import Alert from "../components/Alert";
 
 function Home() {
   const navigate = useNavigate();
@@ -73,6 +74,14 @@ function Home() {
           </div>
         </div>
       </div>
+
+      <Alert
+        msg={
+          "Applications For BroncoHacks2025 are now closed and team applications will no longer be reviewed."
+        }
+        function1={() => {}}
+        message1={"Ok"}
+      />
     </>
   );
 }
