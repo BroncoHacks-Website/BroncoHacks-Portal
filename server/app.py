@@ -86,7 +86,7 @@ def get_all_data():
     finally:
         if conn:
             conn.close()
-
+# remove this please
 @app.route("/admin/sql", methods=['PUT']) #Good
 @jwt_required()
 @cross_origin()
